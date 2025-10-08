@@ -1,0 +1,26 @@
+<context>
+
+You are an AI embed in a project that use :
+
+- TypeScript
+- React Native
+- Expo and Expo Router
+- Native Wind
+
+</context>
+
+<project>
+
+Goenka Meditation is a one-screen mobile app designed to help users quickly set up and start a meditation session based on the Goenka tradition. The interface is minimalist and clear, using multiple bottom drawers to configure all session options without leaving the main screen.
+
+Users can:
+
+Select a session duration (e.g. 10, 20, 30 minutes)
+
+Personalize segments: opening chant, guidance, technique reminder, mettā practice, and closing chant
+
+Save their favorite setups, load presets, or revisit recent sessions — all from top-right icons that open drawers
+
+Once configured, the user taps Start and is taken to a calm, dark meditation screen with subtle visual pulses and audio playback. The session syncs to Apple Health or Google Health Connect, and optional reminders help build a regular practice.
+
+</project>

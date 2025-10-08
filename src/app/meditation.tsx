@@ -7,7 +7,7 @@ import { ScreenContent } from '@/components/ScreenContent';
 
 export default function Meditation() {
   return (
-    <View className={styles.container}>
+    <View className="flex flex-1">
       <Stack.Screen options={{ title: 'Meditation' }} />
       <Container>
         <ScreenContent path="screens/meditation.tsx" title={`Time for meditation`}>
@@ -17,7 +17,3 @@ export default function Meditation() {
     </View>
   );
 }
-
-const styles = {
-  container: 'flex flex-1 bg-white',
-};
