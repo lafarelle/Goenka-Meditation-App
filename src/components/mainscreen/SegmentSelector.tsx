@@ -1,0 +1,152 @@
+import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useContext } from 'react';
+import { Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { AudioSelectionContext } from './AudioSelectionProvider';
+
+interface SegmentButtonProps {
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  isEnabled: boolean;
+  selectedName?: string;
+  onPress: () => void;
+  isDark: boolean;
+}
+
+const SegmentButton = React.memo<SegmentButtonProps>(
+  ({ title, icon, isEnabled, selectedName, onPress, isDark }) => {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        className={`rounded-xl p-4 ${
+          isEnabled
+            ? 'border border-amber-500/30 bg-amber-500/20'
+            : isDark
+              ? 'bg-white/5'
+              : 'bg-black/5'
+        }`}
+        accessibilityRole="button"
+        accessibilityLabel={`${title}: ${selectedName || 'None selected'}`}>
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row items-center gap-3">
+            <View
+              className={`rounded-full p-2 ${isEnabled ? 'bg-amber-500/30' : isDark ? 'bg-white/10' : 'bg-black/10'}`}>
+              <Ionicons
+                name={icon}
+                size={20}
+                color={isEnabled ? '#F59E0B' : isDark ? '#9CA3AF' : '#6B7280'}
+              />
+            </View>
+            <View className="flex-1">
+              <Text
+                className={`text-sm font-medium ${isEnabled ? 'text-amber-500' : isDark ? 'text-white' : 'text-gray-900'}`}>
+                {title}
+              </Text>
+              {selectedName && (
+                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  {selectedName}
+                </Text>
+              )}
+            </View>
+          </View>
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={isEnabled ? '#F59E0B' : isDark ? '#6B7280' : '#9CA3AF'}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  }
+);
+
+SegmentButton.displayName = 'SegmentButton';
+
+export function SegmentSelector() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  const segments = useSessionStore((state) => state.segments);
+  const audioSelectionContext = useContext(AudioSelectionContext);
+
+  if (!audioSelectionContext) {
+    throw new Error('SegmentSelector must be used within AudioSelectionProvider');
+  }
+
+  const {
+    openingChantDrawerRef,
+    openingGuidanceDrawerRef,
+    techniqueReminderDrawerRef,
+    mettaDrawerRef,
+    closingChantDrawerRef,
+  } = audioSelectionContext;
+
+  // Helper to get selected audio summary
+  const getSelectedAudioSummary = (segmentType: SessionSegmentType): string | undefined => {
+    const selectedIds = segments[segmentType]?.selectedAudioIds || [];
+    if (selectedIds.length === 0) return undefined;
+
+    if (selectedIds.length === 1) {
+      // For now, just show the count. In a real app, you might want to store the audio names
+      return '1 audio selected';
+    }
+
+    return `${selectedIds.length} audios selected`;
+  };
+
+  const segmentConfigs = [
+    {
+      type: 'openingChant' as SessionSegmentType,
+      title: 'Opening Chant',
+      icon: 'musical-notes' as keyof typeof Ionicons.glyphMap,
+      drawerRef: openingChantDrawerRef,
+    },
+    {
+      type: 'openingGuidance' as SessionSegmentType,
+      title: 'Opening Guidance',
+      icon: 'book-outline' as keyof typeof Ionicons.glyphMap,
+      drawerRef: openingGuidanceDrawerRef,
+    },
+    {
+      type: 'techniqueReminder' as SessionSegmentType,
+      title: 'Technique Reminder',
+      icon: 'bulb-outline' as keyof typeof Ionicons.glyphMap,
+      drawerRef: techniqueReminderDrawerRef,
+    },
+    {
+      type: 'metta' as SessionSegmentType,
+      title: 'Mettā Practice',
+      icon: 'heart-outline' as keyof typeof Ionicons.glyphMap,
+      drawerRef: mettaDrawerRef,
+    },
+    {
+      type: 'closingChant' as SessionSegmentType,
+      title: 'Closing Chant',
+      icon: 'musical-note' as keyof typeof Ionicons.glyphMap,
+      drawerRef: closingChantDrawerRef,
+    },
+  ];
+
+  return (
+    <>
+      <View className="w-full gap-3">
+        <Text
+          className={`mb-1 text-sm font-medium uppercase tracking-wide ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          Session Segments
+        </Text>
+
+        {segmentConfigs.map((config) => (
+          <SegmentButton
+            key={config.type}
+            title={config.title}
+            icon={config.icon}
+            isEnabled={segments[config.type]?.isEnabled || false}
+            selectedName={getSelectedAudioSummary(config.type)}
+            onPress={() => config.drawerRef.current?.present()}
+            isDark={isDark}
+          />
+        ))}
+      </View>
+    </>
+  );
+}

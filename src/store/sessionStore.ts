@@ -1,14 +1,14 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 export type SessionSegmentType =
-  | "openingChant"
-  | "openingGuidance"
-  | "techniqueReminder"
-  | "metta"
-  | "closingChant"
-  | "silent";
+  | 'openingChant'
+  | 'openingGuidance'
+  | 'techniqueReminder'
+  | 'metta'
+  | 'closingChant'
+  | 'silent';
 
-export type TechniqueType = "anapana" | "vipassana";
+export type TechniqueType = 'anapana' | 'vipassana';
 
 export interface SessionSegment {
   type: SessionSegmentType;
@@ -19,7 +19,7 @@ export interface SessionSegment {
   isEnabled: boolean;
   // For technique reminder segment
   techniqueType?: TechniqueType;
-  selectedAudioId?: string; // Track selected audio ID for all segments
+  selectedAudioIds: string[]; // Array of selected audio IDs in playback order
   // Optional: add color if it's tied to the segment type and not just UI
   // color?: string;
 }
@@ -27,48 +27,49 @@ export interface SessionSegment {
 // Define initial segments configuration - ALL DISABLED by default for silent-only sessions
 export const initialSegments: Record<SessionSegmentType, SessionSegment> = {
   openingChant: {
-    type: "openingChant",
+    type: 'openingChant',
     durationSec: 120,
-    label: "Opening Chant",
+    label: 'Opening Chant',
     fileUri: undefined,
-    isEnabled: false, // Changed to false
-    selectedAudioId: undefined,
+    isEnabled: false,
+    selectedAudioIds: [],
   },
   openingGuidance: {
-    type: "openingGuidance",
+    type: 'openingGuidance',
     durationSec: 60,
-    label: "Opening Guidance",
-    isEnabled: false, // Changed to false
-    selectedAudioId: undefined,
+    label: 'Opening Guidance',
+    isEnabled: false,
+    selectedAudioIds: [],
   },
   techniqueReminder: {
-    type: "techniqueReminder",
+    type: 'techniqueReminder',
     durationSec: 60,
-    label: "Technique Reminder",
-    isEnabled: false, // Changed to false
-    techniqueType: "anapana", // Default technique
-    selectedAudioId: undefined,
+    label: 'Technique Reminder',
+    isEnabled: false,
+    techniqueType: 'anapana', // Default technique
+    selectedAudioIds: [],
   },
   metta: {
-    type: "metta",
+    type: 'metta',
     durationSec: 300,
-    label: "Mettā Practice",
-    isEnabled: false, // Changed to false
-    selectedAudioId: undefined,
+    label: 'Mettā Practice',
+    isEnabled: false,
+    selectedAudioIds: [],
   },
   closingChant: {
-    type: "closingChant",
+    type: 'closingChant',
     durationSec: 120,
-    label: "Closing Chant",
+    label: 'Closing Chant',
     fileUri: undefined,
-    isEnabled: false, // Changed to false
-    selectedAudioId: undefined,
+    isEnabled: false,
+    selectedAudioIds: [],
   },
   silent: {
-    type: "silent",
+    type: 'silent',
     durationSec: 0,
-    label: "Silent Meditation",
+    label: 'Silent Meditation',
     isEnabled: true, // This remains enabled for silent-only sessions
+    selectedAudioIds: [],
   }, // durationSec will be calculated
 };
 
@@ -77,18 +78,10 @@ interface SessionState {
   segments: Record<SessionSegmentType, SessionSegment>;
   setSegmentEnabled: (type: SessionSegmentType, isEnabled: boolean) => void;
   setSegmentDuration: (type: SessionSegmentType, durationSec: number) => void;
-  setSegmentFileUri: (
-    type: SessionSegmentType,
-    fileUri: string | undefined
-  ) => void;
-  setSegmentAudioId: (
-    type: SessionSegmentType,
-    audioId: string | undefined
-  ) => void;
-  setSegmentTechniqueType: (
-    type: SessionSegmentType,
-    techniqueType: TechniqueType
-  ) => void;
+  setSegmentFileUri: (type: SessionSegmentType, fileUri: string | undefined) => void;
+  setSegmentAudioIds: (type: SessionSegmentType, audioIds: string[]) => void;
+  toggleAudioInSegment: (type: SessionSegmentType, audioId: string) => void;
+  setSegmentTechniqueType: (type: SessionSegmentType, techniqueType: TechniqueType) => void;
   setTotalDurationMinutes: (minutes: number) => void;
   resetSession: () => void;
   getActiveSegmentsDurationSec: () => number;
@@ -117,7 +110,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   setSegmentFileUri: (type, fileUri) =>
     set((state) => {
-      if (type === "openingChant" || type === "closingChant") {
+      if (type === 'openingChant' || type === 'closingChant') {
         return {
           segments: {
             ...state.segments,
@@ -128,17 +121,39 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       return state; // Do nothing if not a chant segment
     }),
 
-  setSegmentAudioId: (type, audioId) =>
+  setSegmentAudioIds: (type, audioIds) =>
     set((state) => ({
       segments: {
         ...state.segments,
-        [type]: { ...state.segments[type], selectedAudioId: audioId },
+        [type]: { ...state.segments[type], selectedAudioIds: audioIds },
       },
     })),
 
+  toggleAudioInSegment: (type, audioId) =>
+    set((state) => {
+      const currentIds = state.segments[type].selectedAudioIds;
+      const index = currentIds.indexOf(audioId);
+
+      let newIds: string[];
+      if (index > -1) {
+        // Remove if already selected
+        newIds = currentIds.filter((id) => id !== audioId);
+      } else {
+        // Add to end of array
+        newIds = [...currentIds, audioId];
+      }
+
+      return {
+        segments: {
+          ...state.segments,
+          [type]: { ...state.segments[type], selectedAudioIds: newIds },
+        },
+      };
+    }),
+
   setSegmentTechniqueType: (type, techniqueType) =>
     set((state) => {
-      if (type === "techniqueReminder") {
+      if (type === 'techniqueReminder') {
         return {
           segments: {
             ...state.segments,
@@ -161,7 +176,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   getActiveSegmentsDurationSec: () => {
     const { segments } = get();
     return Object.values(segments).reduce((acc, segment) => {
-      if (segment.type !== "silent" && segment.isEnabled) {
+      if (segment.type !== 'silent' && segment.isEnabled) {
         return acc + segment.durationSec;
       }
       return acc;
