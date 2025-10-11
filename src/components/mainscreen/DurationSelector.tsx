@@ -11,11 +11,8 @@ export function DurationSelector() {
   };
 
   return (
-    <View className="w-full rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-      <Text className="mb-2 text-center text-lg font-semibold text-stone-800">
-        Session Duration
-      </Text>
-      <Text className="mb-4 text-center text-4xl font-bold text-amber-600">
+    <View className="w-full">
+      <Text className="mb-2 text-center text-4xl font-bold text-amber-600">
         {totalDurationMinutes} min
       </Text>
       <Slider

@@ -1,7 +1,8 @@
+import { Button } from '@/components/ui/Button';
 import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useContext } from 'react';
-import { Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { AudioSelectionContext } from './AudioSelectionProvider';
 
 interface SegmentButtonProps {
@@ -10,11 +11,10 @@ interface SegmentButtonProps {
   isEnabled: boolean;
   selectedName?: string;
   onPress: () => void;
-  isDark: boolean;
 }
 
 const SegmentButton = React.memo<SegmentButtonProps>(
-  ({ title, icon, isEnabled, selectedName, onPress, isDark }) => {
+  ({ title, icon, isEnabled, selectedName, onPress }) => {
     return (
       <TouchableOpacity
         onPress={onPress}
@@ -46,11 +46,13 @@ const SegmentButton = React.memo<SegmentButtonProps>(
 SegmentButton.displayName = 'SegmentButton';
 
 export function SegmentSelector() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
-
   const segments = useSessionStore((state) => state.segments);
+  const resetSession = useSessionStore((state) => state.resetSession);
   const audioSelectionContext = useContext(AudioSelectionContext);
+
+  const handleClear = () => {
+    resetSession();
+  };
 
   if (!audioSelectionContext) {
     throw new Error('SegmentSelector must be used within AudioSelectionProvider');
@@ -113,9 +115,17 @@ export function SegmentSelector() {
   return (
     <>
       <View className="w-full gap-3">
-        <Text className="mb-1 text-sm font-medium uppercase tracking-wide text-stone-600">
-          Session Segments
-        </Text>
+        <View className="flex-row items-center justify-between">
+          <Text className="text-sm font-medium uppercase tracking-wide text-stone-600">
+            Session Segments
+          </Text>
+          <Button
+            title="Clear"
+            onPress={handleClear}
+            className=" px-3 py-1"
+            textClassName="text-xs text-white"
+          />
+        </View>
 
         {segmentConfigs.map((config) => (
           <SegmentButton
@@ -125,7 +135,6 @@ export function SegmentSelector() {
             isEnabled={segments[config.type]?.isEnabled || false}
             selectedName={getSelectedAudioSummary(config.type)}
             onPress={() => config.drawerRef.current?.present()}
-            isDark={isDark}
           />
         ))}
       </View>
