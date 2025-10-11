@@ -20,7 +20,7 @@ export function MainScreen() {
         <SessionPreview />
 
         <Link href="/meditation" asChild>
-          <Button title="Start Meditation" />
+          <Button title="Start Meditation" className="py-4" />
         </Link>
       </ScrollView>
     </AudioSelectionProvider>
