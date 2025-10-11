@@ -1,7 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
-import { SessionSegment, SessionSegmentType } from "./sessionStore";
+import { createSegmentsCopy } from '@/utils/sessionUtils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { SessionSegment, SessionSegmentType } from './sessionStore';
 
 export type SavedSession = {
   id: string;
@@ -33,19 +34,10 @@ export const useSavedSessionsStore = create(
       saved: [],
 
       saveSession: (name, totalDuration, segments) => {
-        const segmentsCopy: Record<SessionSegmentType, SessionSegment> = {
-          openingChant: { ...segments.openingChant },
-          openingGuidance: { ...segments.openingGuidance },
-          techniqueReminder: { ...segments.techniqueReminder },
-          metta: { ...segments.metta },
-          closingChant: { ...segments.closingChant },
-          silent: { ...segments.silent },
-        };
+        const segmentsCopy = createSegmentsCopy(segments);
 
         const newSession: SavedSession = {
-          id: `saved_session_${Date.now()}_${Math.random()
-            .toString(36)
-            .substr(2, 9)}`,
+          id: `saved_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           name,
           totalDuration,
           segments: segmentsCopy,
@@ -80,21 +72,16 @@ export const useSavedSessionsStore = create(
       getRecentlyUsedSessions: (limit = 5) => {
         return [...get().saved]
           .filter((session) => session.lastUsed)
-          .sort(
-            (a, b) =>
-              new Date(b.lastUsed!).getTime() - new Date(a.lastUsed!).getTime()
-          )
+          .sort((a, b) => new Date(b.lastUsed!).getTime() - new Date(a.lastUsed!).getTime())
           .slice(0, limit);
       },
 
       getMostUsedSessions: (limit = 5) => {
-        return [...get().saved]
-          .sort((a, b) => b.useCount - a.useCount)
-          .slice(0, limit);
+        return [...get().saved].sort((a, b) => b.useCount - a.useCount).slice(0, limit);
       },
     }),
     {
-      name: "saved-sessions",
+      name: 'saved-sessions',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

@@ -1,11 +1,13 @@
 import { segmentTypeToAudioMap } from '@/data/audioData';
 import { usePreferencesStore } from '@/store/preferencesStore';
+import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { formatDuration, getEffectiveDuration } from '@/utils/preferences';
+import { createSegmentsCopy, isValidSessionName } from '@/utils/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 interface SessionPreviewProps {
   onSaveSession?: () => void;
@@ -14,6 +16,7 @@ interface SessionPreviewProps {
 export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   const { segments, totalDurationMinutes, getSilentDurationSec } = useSessionStore();
   const { preferences } = usePreferencesStore();
+  const { saveSession } = useSavedSessionsStore();
 
   const orderedSegmentTypes: SessionSegmentType[] = [
     'openingChant',
@@ -66,6 +69,32 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
     return totalDurationMinutes * 60;
   };
 
+  const handleSaveSession = () => {
+    // Show input dialog
+    Alert.prompt(
+      'Save Session',
+      'Enter a name for this meditation session:',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Save',
+          onPress: (name?: string) => {
+            if (isValidSessionName(name)) {
+              const segmentsCopy = createSegmentsCopy(segments);
+              saveSession(name!.trim(), totalDurationMinutes, segmentsCopy);
+              Alert.alert('Success', 'Session saved successfully!');
+            } else {
+              Alert.alert('Error', 'Please enter a valid session name.');
+            }
+          },
+        },
+      ],
+      'plain-text',
+      '',
+      'default'
+    );
+  };
+
   return (
     <View className="mb-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
       <View className="mb-4 flex-row items-center justify-between">
@@ -73,14 +102,12 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
           <Ionicons name="time-outline" size={20} color="#F59E0B" className="mr-2" />
           <Text className="ml-2 text-lg font-semibold text-stone-800">Session Preview</Text>
         </View>
-        {onSaveSession && (
-          <TouchableOpacity
-            onPress={onSaveSession}
-            className="flex-row items-center rounded-lg bg-amber-500 px-4 py-2">
-            <Ionicons name="save-outline" size={16} color="#1F2937" />
-            <Text className="ml-2 font-medium text-stone-800">Save</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          onPress={handleSaveSession}
+          className="flex-row items-center rounded-lg bg-amber-500 px-4 py-2">
+          <Ionicons name="save-outline" size={16} color="#1F2937" />
+          <Text className="ml-2 font-medium text-stone-800">Save Session</Text>
+        </TouchableOpacity>
       </View>
 
       {isSilentOnlySession ? (

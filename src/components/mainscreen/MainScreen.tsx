@@ -1,18 +1,27 @@
 import { Button } from '@/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { AudioSelectionProvider } from './AudioSelectionProvider';
 import { DurationSelector } from './DurationSelector';
+import { SavedSessionDrawer } from './SavedSessionDrawer';
 import { SegmentSelector } from './SegmentSelector';
 import { SessionPreview } from './SessionPreview';
 
 export function MainScreen() {
+  const [isSavedSessionsDrawerVisible, setIsSavedSessionsDrawerVisible] = useState(false);
+
   return (
     <AudioSelectionProvider>
       <View className="flex-1 bg-stone-50">
-        {/* Header with Settings Button - icon at top right */}
+        {/* Header with Saved Sessions and Settings buttons */}
         <View className="flex-row items-center px-6 pb-4 pt-16">
+          <TouchableOpacity
+            onPress={() => setIsSavedSessionsDrawerVisible(true)}
+            className="items-center p-2">
+            <Ionicons name="bookmark-outline" size={24} color="#57534e" />
+          </TouchableOpacity>
           <View className="flex-1" />
           <Link href="/settings" asChild>
             <TouchableOpacity className="items-center p-2">
@@ -35,6 +44,12 @@ export function MainScreen() {
             <Button title="Start Meditation" className="py-4" />
           </Link>
         </ScrollView>
+
+        {/* Saved Sessions Drawer */}
+        <SavedSessionDrawer
+          isVisible={isSavedSessionsDrawerVisible}
+          onClose={() => setIsSavedSessionsDrawerVisible(false)}
+        />
       </View>
     </AudioSelectionProvider>
   );
