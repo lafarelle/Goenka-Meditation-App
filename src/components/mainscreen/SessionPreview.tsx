@@ -1,6 +1,8 @@
 import { segmentTypeToAudioMap } from '@/data/audioData';
+import { usePreferencesStore } from '@/store/preferencesStore';
 import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
+import { formatDuration, getEffectiveDuration } from '@/utils/preferences';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -11,6 +13,7 @@ interface SessionPreviewProps {
 
 export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   const { segments, totalDurationMinutes, getSilentDurationSec } = useSessionStore();
+  const { preferences } = usePreferencesStore();
 
   const orderedSegmentTypes: SessionSegmentType[] = [
     'openingChant',
@@ -157,10 +160,44 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
 
       {/* Total Duration */}
       <View className="mt-4 border-t border-stone-200 pt-4">
-        <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-semibold text-stone-800">Total</Text>
-          <Text className="text-lg font-semibold text-amber-600">{totalDurationMinutes} min</Text>
-        </View>
+        {(() => {
+          const effectiveDuration = getEffectiveDuration(
+            totalDurationMinutes,
+            segments,
+            preferences.timingPreference
+          );
+
+          return (
+            <View className="space-y-2">
+              <View className="flex-row items-center justify-between">
+                <Text className="text-lg font-semibold text-stone-800">
+                  {preferences.timingPreference === 'total' ? 'Total Session' : 'Silent Meditation'}
+                </Text>
+                <Text className="text-lg font-semibold text-amber-600">
+                  {formatDuration(effectiveDuration.silentMinutes)}
+                </Text>
+              </View>
+
+              {preferences.timingPreference === 'silent' && effectiveDuration.audioMinutes > 0 && (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-stone-600">+ Audio Content</Text>
+                  <Text className="text-sm text-stone-600">
+                    {formatDuration(effectiveDuration.audioMinutes)}
+                  </Text>
+                </View>
+              )}
+
+              {preferences.timingPreference === 'silent' && (
+                <View className="flex-row items-center justify-between border-t border-stone-200 pt-2">
+                  <Text className="font-semibold text-stone-800">Total Session</Text>
+                  <Text className="font-semibold text-amber-600">
+                    {formatDuration(effectiveDuration.totalMinutes)}
+                  </Text>
+                </View>
+              )}
+            </View>
+          );
+        })()}
       </View>
     </View>
   );

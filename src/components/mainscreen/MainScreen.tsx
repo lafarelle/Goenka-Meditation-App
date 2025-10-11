@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/Button';
+import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { AudioSelectionProvider } from './AudioSelectionProvider';
 import { DurationSelector } from './DurationSelector';
 import { SegmentSelector } from './SegmentSelector';
@@ -9,20 +10,32 @@ import { SessionPreview } from './SessionPreview';
 export function MainScreen() {
   return (
     <AudioSelectionProvider>
-      <ScrollView
-        className="flex-1 bg-stone-50"
-        contentContainerClassName="gap-6 px-6 py-24"
-        showsVerticalScrollIndicator={false}>
-        <Text className="text-center text-3xl font-bold text-stone-800">Meditate with Goenka</Text>
-        <DurationSelector />
-        <SegmentSelector />
+      <View className="flex-1 bg-stone-50">
+        {/* Header with Settings Button - icon at top right */}
+        <View className="flex-row items-center px-6 pb-4 pt-16">
+          <View className="flex-1" />
+          <Link href="/details" asChild>
+            <TouchableOpacity className="items-center p-2">
+              <Ionicons name="settings-outline" size={24} color="#57534e" />
+            </TouchableOpacity>
+          </Link>
+        </View>
 
-        <SessionPreview />
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="gap-6 px-6 py-6"
+          showsVerticalScrollIndicator={false}>
+          <Text className="text-center text-4xl font-bold text-stone-800 mb-4 -mt-4">GOENKA</Text>
+          <DurationSelector />
+          <SegmentSelector />
 
-        <Link href="/meditation" asChild>
-          <Button title="Start Meditation" className="py-4" />
-        </Link>
-      </ScrollView>
+          <SessionPreview />
+
+          <Link href="/meditation" asChild>
+            <Button title="Start Meditation" className="py-4" />
+          </Link>
+        </ScrollView>
+      </View>
     </AudioSelectionProvider>
   );
 }

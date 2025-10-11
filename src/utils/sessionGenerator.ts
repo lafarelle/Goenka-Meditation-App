@@ -1,5 +1,6 @@
 import { getRandomGongAudio, getRandomTechniqueAudio } from '@/data/audioData';
 import { SessionSegment, SessionSegmentType } from '@/store/sessionStore';
+import { calculateSessionTiming } from '@/utils/preferences';
 
 export interface SessionAudioSegment {
   type: SessionSegmentType | 'gong';
@@ -21,9 +22,15 @@ export interface GeneratedSession {
  */
 export function generateMeditationSession(
   segments: Record<SessionSegmentType, SessionSegment>,
-  totalDurationMinutes: number
+  totalDurationMinutes: number,
+  timingPreference: 'total' | 'silent' = 'total'
 ): GeneratedSession {
-  const totalDurationSec = totalDurationMinutes * 60;
+  // Calculate timing based on user preference
+  const { totalDurationSec, silentDurationSec } = calculateSessionTiming(
+    totalDurationMinutes,
+    segments,
+    timingPreference
+  );
   const orderedSegmentTypes: SessionSegmentType[] = [
     'openingChant',
     'openingGuidance',
@@ -58,8 +65,8 @@ export function generateMeditationSession(
     0
   );
 
-  // Calculate remaining time for silent meditation (accounting for gong)
-  const silentDurationSec = Math.max(0, totalDurationSec - totalAudioDurationSec - gongDurationSec);
+  // Use the calculated silent duration from timing preference
+  const finalSilentDurationSec = Math.max(0, silentDurationSec - gongDurationSec);
 
   // Process each segment in order
   for (const segmentType of orderedSegmentTypes) {
@@ -67,16 +74,16 @@ export function generateMeditationSession(
 
     if (segmentType === 'silent') {
       // Add silent meditation segment if there's time for it
-      if (silentDurationSec > 0) {
+      if (finalSilentDurationSec > 0) {
         audioSegments.push({
           type: 'silent',
           label: 'Silent Meditation',
-          silenceDurationSec: silentDurationSec,
-          durationSec: silentDurationSec,
+          silenceDurationSec: finalSilentDurationSec,
+          durationSec: finalSilentDurationSec,
           startTimeSec: currentTimeSec,
-          endTimeSec: currentTimeSec + silentDurationSec,
+          endTimeSec: currentTimeSec + finalSilentDurationSec,
         });
-        currentTimeSec += silentDurationSec;
+        currentTimeSec += finalSilentDurationSec;
       }
     } else if (segment.isEnabled) {
       // Add audio segment

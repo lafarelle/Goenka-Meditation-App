@@ -1,5 +1,7 @@
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
+import { calculateSessionTiming } from '@/utils/preferences';
 import { create } from 'zustand';
+import { usePreferencesStore } from './preferencesStore';
 
 export type SessionSegmentType =
   | 'openingChant'
@@ -189,11 +191,15 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   // Calculate silent duration based on total and other active segments
   getSilentDurationSec: () => {
-    const { totalDurationMinutes } = get();
-    const activeSegmentsTotalSec = get().getActiveSegmentsDurationSec();
-    const totalDurationSec = totalDurationMinutes * 60;
-    const silentDuration = totalDurationSec - activeSegmentsTotalSec;
-    // Ensure silent duration is not negative
-    return Math.max(0, silentDuration);
+    const { totalDurationMinutes, segments } = get();
+    const preferences = usePreferencesStore.getState().preferences;
+
+    const { silentDurationSec } = calculateSessionTiming(
+      totalDurationMinutes,
+      segments,
+      preferences.timingPreference
+    );
+
+    return silentDurationSec;
   },
 }));
