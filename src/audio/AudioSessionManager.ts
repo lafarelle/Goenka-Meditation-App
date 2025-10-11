@@ -1,5 +1,6 @@
 import { segmentTypeToAudioMap } from '@/data/audioData';
 import { useSessionStore } from '@/store/sessionStore';
+import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { AudioPlayer } from './AudioPlayer';
 import { AudioPreloader } from './AudioPreloader';
 import { MeditationTimer } from './MeditationTimer';
@@ -86,7 +87,11 @@ export class AudioSessionManager {
 
     if (segments.openingChant.isEnabled && segments.openingChant.selectedAudioIds.length > 0) {
       beforeSilentAudioIds.push(...segments.openingChant.selectedAudioIds);
-      beforeSilentDuration += segments.openingChant.durationSec;
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'openingChant',
+        segments.openingChant.selectedAudioIds,
+        segments.openingChant.durationSec
+      );
     }
 
     if (
@@ -94,7 +99,11 @@ export class AudioSessionManager {
       segments.openingGuidance.selectedAudioIds.length > 0
     ) {
       beforeSilentAudioIds.push(...segments.openingGuidance.selectedAudioIds);
-      beforeSilentDuration += segments.openingGuidance.durationSec;
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'openingGuidance',
+        segments.openingGuidance.selectedAudioIds,
+        segments.openingGuidance.durationSec
+      );
     }
 
     if (
@@ -102,7 +111,11 @@ export class AudioSessionManager {
       segments.techniqueReminder.selectedAudioIds.length > 0
     ) {
       beforeSilentAudioIds.push(...segments.techniqueReminder.selectedAudioIds);
-      beforeSilentDuration += segments.techniqueReminder.durationSec;
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'techniqueReminder',
+        segments.techniqueReminder.selectedAudioIds,
+        segments.techniqueReminder.durationSec
+      );
     }
 
     // Collect after-silent audio (metta, closing chant)
@@ -111,12 +124,20 @@ export class AudioSessionManager {
 
     if (segments.metta.isEnabled && segments.metta.selectedAudioIds.length > 0) {
       afterSilentAudioIds.push(...segments.metta.selectedAudioIds);
-      afterSilentDuration += segments.metta.durationSec;
+      afterSilentDuration += getSegmentDisplayDuration(
+        'metta',
+        segments.metta.selectedAudioIds,
+        segments.metta.durationSec
+      );
     }
 
     if (segments.closingChant.isEnabled && segments.closingChant.selectedAudioIds.length > 0) {
       afterSilentAudioIds.push(...segments.closingChant.selectedAudioIds);
-      afterSilentDuration += segments.closingChant.durationSec;
+      afterSilentDuration += getSegmentDisplayDuration(
+        'closingChant',
+        segments.closingChant.selectedAudioIds,
+        segments.closingChant.durationSec
+      );
     }
 
     // Calculate silent duration
