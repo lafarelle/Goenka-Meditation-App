@@ -1,5 +1,6 @@
 import { segmentTypeToAudioMap } from '@/data/audioData';
 import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
+import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -96,7 +97,10 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               const segment = segments[type];
               if (!segment) return null;
 
-              const duration = type === 'silent' ? getSilentDurationSec() : segment.durationSec;
+              const duration =
+                type === 'silent'
+                  ? getSilentDurationSec()
+                  : getSegmentDisplayDuration(type, segment.selectedAudioIds, segment.durationSec);
               if (duration === 0) return null;
 
               const color = getSegmentColor(type);
@@ -114,7 +118,9 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               if (!segment) return null;
 
               const displayDurationSec =
-                type === 'silent' ? getSilentDurationSec() : segment.durationSec;
+                type === 'silent'
+                  ? getSilentDurationSec()
+                  : getSegmentDisplayDuration(type, segment.selectedAudioIds, segment.durationSec);
 
               if (displayDurationSec === 0) return null;
 

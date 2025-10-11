@@ -1,3 +1,4 @@
+import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { create } from 'zustand';
 
 export type SessionSegmentType =
@@ -177,7 +178,10 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     const { segments } = get();
     return Object.values(segments).reduce((acc, segment) => {
       if (segment.type !== 'silent' && segment.isEnabled) {
-        return acc + segment.durationSec;
+        return (
+          acc +
+          getSegmentDisplayDuration(segment.type, segment.selectedAudioIds, segment.durationSec)
+        );
       }
       return acc;
     }, 0);
