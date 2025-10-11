@@ -9,11 +9,11 @@ import React, { createContext, useRef } from 'react';
 import { AudioSelectionDrawer, AudioSelectionDrawerRef } from './AudioSelectionDrawer';
 
 interface AudioSelectionContextType {
-  openingChantDrawerRef: React.RefObject<AudioSelectionDrawerRef>;
-  openingGuidanceDrawerRef: React.RefObject<AudioSelectionDrawerRef>;
-  techniqueReminderDrawerRef: React.RefObject<AudioSelectionDrawerRef>;
-  mettaDrawerRef: React.RefObject<AudioSelectionDrawerRef>;
-  closingChantDrawerRef: React.RefObject<AudioSelectionDrawerRef>;
+  openingChantDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
+  openingGuidanceDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
+  techniqueReminderDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
+  mettaDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
+  closingChantDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
 }
 
 export const AudioSelectionContext = createContext<AudioSelectionContextType | null>(null);

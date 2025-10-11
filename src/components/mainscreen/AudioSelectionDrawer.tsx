@@ -1,9 +1,13 @@
 import { AudioItem } from '@/schemas/mainSchema';
 import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
 import { Ionicons } from '@expo/vector-icons';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetFlatList,
+  TouchableOpacity,
+} from '@gorhom/bottom-sheet';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
-import { Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { Text, useColorScheme, View } from 'react-native';
 
 interface AudioSelectionDrawerProps {
   segmentType: SessionSegmentType;
@@ -188,6 +192,8 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         handleIndicatorStyle={{
           backgroundColor: isDark ? '#4B5563' : '#D1D5DB',
         }}
+        keyboardBehavior="interactive"
+        keyboardBlurBehavior="restore"
         style={{ zIndex: 9999 }}>
         {/* Header */}
         <View
@@ -229,13 +235,14 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         </View>
 
         {/* Options List */}
-        <BottomSheetScrollView
+        <BottomSheetFlatList
+          data={audioOptions}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
           contentContainerStyle={{ paddingVertical: 16 }}
-          showsVerticalScrollIndicator={false}>
-          {audioOptions.map((item) => (
-            <View key={keyExtractor(item)}>{renderItem({ item })}</View>
-          ))}
-        </BottomSheetScrollView>
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        />
       </BottomSheet>
     );
   }
