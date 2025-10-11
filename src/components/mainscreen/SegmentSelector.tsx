@@ -1,32 +1,34 @@
 import { Button } from '@/components/ui/Button';
 import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
-import { Ionicons } from '@expo/vector-icons';
 import React, { useContext } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { AudioSelectionContext } from './AudioSelectionProvider';
 
 interface SegmentButtonProps {
   title: string;
-  icon: keyof typeof Ionicons.glyphMap;
+  number: number;
   isEnabled: boolean;
   selectedName?: string;
   onPress: () => void;
 }
 
 const SegmentButton = React.memo<SegmentButtonProps>(
-  ({ title, icon, isEnabled, selectedName, onPress }) => {
+  ({ title, number, isEnabled, selectedName, onPress }) => {
     return (
       <TouchableOpacity
         onPress={onPress}
-        className={`rounded-xl p-4 ${
+        className={`rounded-xl p-4 px-6 ${
           isEnabled ? 'border border-amber-500/30 bg-amber-50' : 'border border-stone-200 bg-white'
         }`}
         accessibilityRole="button"
         accessibilityLabel={`${title}: ${selectedName || 'None selected'}`}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <View className={`rounded-full p-2 ${isEnabled ? 'bg-amber-100' : 'bg-stone-100'}`}>
-              <Ionicons name={icon} size={20} color={isEnabled ? '#F59E0B' : '#6B7280'} />
+            <View className={`rounded-lg p-2 ${isEnabled ? 'bg-amber-100' : 'bg-stone-100'}`}>
+              <Text
+                className={`text-xs font-bold ${isEnabled ? 'text-amber-600' : 'text-stone-500'}`}>
+                {number}
+              </Text>
             </View>
             <View className="flex-1">
               <Text
@@ -36,7 +38,7 @@ const SegmentButton = React.memo<SegmentButtonProps>(
               {selectedName && <Text className="text-xs text-stone-600">{selectedName}</Text>}
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={isEnabled ? '#F59E0B' : '#9CA3AF'} />
+          <Text className={`text-xl ${isEnabled ? 'text-amber-600' : 'text-stone-400'}`}>›</Text>
         </View>
       </TouchableOpacity>
     );
@@ -83,31 +85,31 @@ export function SegmentSelector() {
     {
       type: 'openingChant' as SessionSegmentType,
       title: 'Opening Chant',
-      icon: 'musical-notes' as keyof typeof Ionicons.glyphMap,
+      number: 1,
       drawerRef: openingChantDrawerRef,
     },
     {
       type: 'openingGuidance' as SessionSegmentType,
       title: 'Opening Guidance',
-      icon: 'book-outline' as keyof typeof Ionicons.glyphMap,
+      number: 2,
       drawerRef: openingGuidanceDrawerRef,
     },
     {
       type: 'techniqueReminder' as SessionSegmentType,
       title: 'Technique Reminder',
-      icon: 'bulb-outline' as keyof typeof Ionicons.glyphMap,
+      number: 3,
       drawerRef: techniqueReminderDrawerRef,
     },
     {
       type: 'metta' as SessionSegmentType,
       title: 'Mettā Practice',
-      icon: 'heart-outline' as keyof typeof Ionicons.glyphMap,
+      number: 4,
       drawerRef: mettaDrawerRef,
     },
     {
       type: 'closingChant' as SessionSegmentType,
       title: 'Closing Chant',
-      icon: 'musical-note' as keyof typeof Ionicons.glyphMap,
+      number: 5,
       drawerRef: closingChantDrawerRef,
     },
   ];
@@ -131,7 +133,7 @@ export function SegmentSelector() {
           <SegmentButton
             key={config.type}
             title={config.title}
-            icon={config.icon}
+            number={config.number}
             isEnabled={segments[config.type]?.isEnabled || false}
             selectedName={getSelectedAudioSummary(config.type)}
             onPress={() => config.drawerRef.current?.present()}
