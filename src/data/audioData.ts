@@ -37,169 +37,120 @@ const audioFiles = {
 // Opening Chant Audios
 export const openingChantAudios: AudioItem[] = [
   {
-    id: 'none',
-    name: 'None',
-    duration: '0:00',
-    description: 'No opening chant',
-    fileUri: undefined,
-  },
-  {
     id: 'oc1',
     name: 'Traditional Opening Chant',
-    duration: '2:00', // Estimated duration, adjust as needed
+    duration: '2:21', // Real duration: 141 seconds
     description: "Goenka's traditional opening chant",
     fileUri: audioFiles.openingChants.OC1,
-    isGoenkaVoice: true,
   },
 ];
 
 // Opening Guidance Audios
 export const guidanceAudios: AudioItem[] = [
   {
-    id: 'none',
-    name: 'None',
-    duration: '0:00',
-    description: 'No opening guidance',
-    fileUri: undefined,
-  },
-  {
     id: 'ew1',
-    name: 'Guidance - Beginning',
-    duration: '1:00', // Estimated duration
-    description: 'Initial guidance for meditation',
+    name: 'Entering Words 1',
+    duration: '0:09', // Real duration: 9 seconds
+    description: 'Basic meditation instructions',
     fileUri: audioFiles.openingGuidance.EW1,
-    isGoenkaVoice: true,
   },
   {
     id: 'ew2',
-    name: 'Guidance - Advanced',
-    duration: '1:30', // Estimated duration
+    name: 'Entering Words 2',
+    duration: '0:17', // Real duration: 17 seconds
     description: 'Advanced meditation guidance',
     fileUri: audioFiles.openingGuidance.EW2,
-    isGoenkaVoice: true,
   },
 ];
 
 // Technique Reminder Audios - Anapana and Vipassana
 export const techniqueAudios: AudioItem[] = [
-  {
-    id: 'none',
-    name: 'None',
-    duration: '0:00',
-    description: 'No technique reminder',
-    fileUri: undefined,
-  },
   // Anapana reminders
   {
     id: 'a1',
-    name: 'Anapana Reminder 1',
-    duration: '1:00',
-    description: 'Mindfulness of breathing - Version 1',
+    name: 'Anapana 1',
+    duration: '1:32', // Real duration: 92 seconds
+    description: 'Basic breath awareness technique',
     fileUri: audioFiles.anapana.A1,
-    isGoenkaVoice: true,
   },
   {
     id: 'a2',
-    name: 'Anapana Reminder 2',
-    duration: '1:00',
-    description: 'Mindfulness of breathing - Version 2',
+    name: 'Anapana 2',
+    duration: '1:39', // Real duration: 99 seconds
+    description: 'Advanced breath awareness technique',
     fileUri: audioFiles.anapana.A2,
-    isGoenkaVoice: true,
   },
   // Vipassana reminders
   {
     id: 'v1',
-    name: 'Vipassana Reminder 1',
-    duration: '1:00',
-    description: 'Insight meditation - Version 1',
+    name: 'Vipassana 1',
+    duration: '0:20', // Real duration: 20 seconds
+    description: 'Basic body scanning technique',
     fileUri: audioFiles.vipassana.V1,
-    isGoenkaVoice: true,
   },
   {
     id: 'v2',
-    name: 'Vipassana Reminder 2',
-    duration: '1:00',
-    description: 'Insight meditation - Version 2',
+    name: 'Vipassana 2',
+    duration: '0:19', // Real duration: 19 seconds
+    description: 'Intermediate body scanning',
     fileUri: audioFiles.vipassana.V2,
-    isGoenkaVoice: true,
   },
   {
     id: 'v3',
-    name: 'Vipassana Reminder 3',
-    duration: '1:00',
-    description: 'Insight meditation - Version 3',
+    name: 'Vipassana 3',
+    duration: '0:08', // Real duration: 8 seconds
+    description: 'Advanced body scanning',
     fileUri: audioFiles.vipassana.V3,
-    isGoenkaVoice: true,
   },
   {
     id: 'v4',
-    name: 'Vipassana Reminder 4',
-    duration: '1:00',
-    description: 'Insight meditation - Version 4',
+    name: 'Vipassana 4',
+    duration: '0:18', // Real duration: 18 seconds
+    description: 'Full body awareness practice',
     fileUri: audioFiles.vipassana.V4,
-    isGoenkaVoice: true,
   },
   {
     id: 'v5',
-    name: 'Vipassana Reminder 5',
-    duration: '1:00',
-    description: 'Insight meditation - Version 5',
+    name: 'Vipassana 5',
+    duration: '1:18', // Real duration: 78 seconds
+    description: 'Deep body scanning technique',
     fileUri: audioFiles.vipassana.V5,
-    isGoenkaVoice: true,
   },
   {
     id: 'v6',
-    name: 'Vipassana Reminder 6',
-    duration: '1:00',
-    description: 'Insight meditation - Version 6',
+    name: 'Vipassana 6',
+    duration: '0:17', // Real duration: 17 seconds
+    description: 'Master level body scanning',
     fileUri: audioFiles.vipassana.V6,
-    isGoenkaVoice: true,
   },
 ];
 
 // Metta Practice Audios
 export const mettaAudios: AudioItem[] = [
   {
-    id: 'none',
-    name: 'None',
-    duration: '0:00',
-    description: 'No metta practice',
-    fileUri: undefined,
-  },
-  {
     id: 'm1',
-    name: 'Traditional Mettā',
-    duration: '5:00', // Estimated duration
-    description: 'Classic loving-kindness practice',
+    name: 'Metta Practice',
+    duration: '1:33', // Real duration: 93 seconds
+    description: 'Loving-kindness meditation practice',
     fileUri: audioFiles.metta.M1,
-    isGoenkaVoice: true,
   },
 ];
 
 // Closing Chant Audios
 export const closingChantAudios: AudioItem[] = [
   {
-    id: 'none',
-    name: 'None',
-    duration: '0:00',
-    description: 'No closing chant',
-    fileUri: undefined,
-  },
-  {
     id: 'cc1',
-    name: 'Closing Chant - Short',
-    duration: '2:30', // Estimated duration
-    description: 'Traditional short closing chant',
+    name: 'Closing Chant 1',
+    duration: '3:05', // Real duration: 185 seconds
+    description: 'Traditional closing chant with metta',
     fileUri: audioFiles.closingChant.CC1,
-    isGoenkaVoice: true,
   },
   {
     id: 'cc2',
-    name: 'Closing Chant - Extended',
-    duration: '3:30', // Estimated duration
+    name: 'Closing Chant 2',
+    duration: '4:14', // Real duration: 254 seconds
     description: 'Extended closing chant',
     fileUri: audioFiles.closingChant.CC2,
-    isGoenkaVoice: true,
   },
 ];
 

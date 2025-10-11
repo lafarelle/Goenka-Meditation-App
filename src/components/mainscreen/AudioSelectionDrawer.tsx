@@ -54,7 +54,7 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(
             </Text>
 
             {/* Metadata row */}
-            {(option.duration !== '0:00' || option.isGoenkaVoice) && (
+            {option.duration !== '0:00' && (
               <View className="mt-2 flex-row flex-wrap items-center gap-3">
                 {option.duration && option.duration !== '0:00' && (
                   <View className="flex-row items-center gap-1">
@@ -68,17 +68,11 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(
                     </Text>
                   </View>
                 )}
-                {option.isGoenkaVoice && (
-                  <View className="flex-row items-center gap-1 rounded-full bg-amber-500/20 px-2 py-0.5">
-                    <Ionicons name="person" size={12} color="#F59E0B" />
-                    <Text className="text-xs font-medium text-amber-500">Goenka</Text>
-                  </View>
-                )}
               </View>
             )}
 
-            {/* Description for items without duration/voice metadata */}
-            {option.description && option.duration === '0:00' && !option.isGoenkaVoice && (
+            {/* Description for items without duration metadata */}
+            {option.description && option.duration === '0:00' && (
               <Text className={`mt-1 text-xs ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
                 {option.description}
               </Text>
@@ -118,7 +112,6 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
     );
     const toggleAudioInSegment = useSessionStore((state) => state.toggleAudioInSegment);
     const setSegmentEnabled = useSessionStore((state) => state.setSegmentEnabled);
-    const setSegmentAudioIds = useSessionStore((state) => state.setSegmentAudioIds);
 
     useImperativeHandle(ref, () => ({
       present: () => bottomSheetRef.current?.expand(),
@@ -140,11 +133,6 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
       },
       [segmentType, toggleAudioInSegment, setSegmentEnabled, selectedAudioIds]
     );
-
-    const handleClearAll = useCallback(() => {
-      setSegmentAudioIds(segmentType, []);
-      setSegmentEnabled(segmentType, false);
-    }, [segmentType, setSegmentAudioIds, setSegmentEnabled]);
 
     const handleDone = useCallback(() => {
       bottomSheetRef.current?.close();
@@ -219,19 +207,6 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
               <Ionicons name="checkmark" size={24} color="#10B981" />
             </TouchableOpacity>
           </View>
-
-          {/* Action buttons */}
-          {selectedAudioIds.length > 0 && (
-            <View className="mt-2 flex-row gap-2">
-              <TouchableOpacity
-                onPress={handleClearAll}
-                className={`flex-1 rounded-lg px-3 py-2 ${isDark ? 'bg-red-500/20' : 'bg-red-50'}`}
-                accessibilityRole="button"
-                accessibilityLabel="Clear all">
-                <Text className="text-center text-sm font-medium text-red-500">Clear All</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
 
         {/* Options List */}
