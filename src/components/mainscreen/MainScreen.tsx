@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native';
 import { AudioSelectionProvider } from './AudioSelectionProvider';
 import { DurationSelector } from './DurationSelector';
 import { SegmentSelector } from './SegmentSelector';
+import { SessionPreview } from './SessionPreview';
 
 export function MainScreen() {
   return (
@@ -14,6 +15,8 @@ export function MainScreen() {
         showsVerticalScrollIndicator={false}>
         <DurationSelector />
         <SegmentSelector />
+
+        <SessionPreview />
 
         <Link href="/meditation" asChild>
           <Button title="Start Meditation" />
