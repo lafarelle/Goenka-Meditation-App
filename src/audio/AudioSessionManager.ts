@@ -16,6 +16,7 @@ export class AudioSessionManager {
     onError?: (error: string) => void;
   } = {};
   private isInitialized = false;
+  private currentAudioIndex = 0; // Track current audio index in the current segment
 
   constructor() {
     this.sessionState = {
@@ -152,6 +153,9 @@ export class AudioSessionManager {
       isPlaying: true,
     });
 
+    // Reset audio index for before-silent segment
+    this.currentAudioIndex = 0;
+
     // Play the first audio file
     const firstAudioId = this.session.segments.beforeSilent.audioIds[0];
     const audioFile = this.getAudioFile(firstAudioId);
@@ -171,12 +175,13 @@ export class AudioSessionManager {
     const currentSegment = this.sessionState.currentSegment;
 
     if (currentSegment === 'beforeSilent') {
-      // Check if there are more before-silent audios to play
-      const remainingAudios = this.session.segments.beforeSilent.audioIds.slice(1);
+      // Move to next audio in before-silent segment
+      this.currentAudioIndex++;
+      const audioIds = this.session.segments.beforeSilent.audioIds;
 
-      if (remainingAudios.length > 0) {
+      if (this.currentAudioIndex < audioIds.length) {
         // Play next audio
-        const nextAudioId = remainingAudios[0];
+        const nextAudioId = audioIds[this.currentAudioIndex];
         const audioFile = this.getAudioFile(nextAudioId);
 
         if (audioFile) {
@@ -189,12 +194,13 @@ export class AudioSessionManager {
       // All before-silent audio finished, start silent meditation
       await this.startSilentMeditation();
     } else if (currentSegment === 'afterSilent') {
-      // Check if there are more after-silent audios to play
-      const remainingAudios = this.session.segments.afterSilent.audioIds.slice(1);
+      // Move to next audio in after-silent segment
+      this.currentAudioIndex++;
+      const audioIds = this.session.segments.afterSilent.audioIds;
 
-      if (remainingAudios.length > 0) {
+      if (this.currentAudioIndex < audioIds.length) {
         // Play next audio
-        const nextAudioId = remainingAudios[0];
+        const nextAudioId = audioIds[this.currentAudioIndex];
         const audioFile = this.getAudioFile(nextAudioId);
 
         if (audioFile) {
@@ -239,6 +245,9 @@ export class AudioSessionManager {
       currentSegment: 'afterSilent',
       isPlaying: true,
     });
+
+    // Reset audio index for after-silent segment
+    this.currentAudioIndex = 0;
 
     // Play the first after-silent audio file
     const firstAudioId = this.session.segments.afterSilent.audioIds[0];
