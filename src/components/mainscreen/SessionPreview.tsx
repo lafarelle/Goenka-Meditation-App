@@ -63,20 +63,18 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   };
 
   return (
-    <View className="mb-8 rounded-2xl bg-white p-6 shadow-lg dark:bg-gray-800">
+    <View className="mb-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
       <View className="mb-4 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <Ionicons name="time-outline" size={20} color="#F59E0B" className="mr-2" />
-          <Text className="ml-2 text-lg font-semibold text-gray-900 dark:text-white">
-            Session Preview
-          </Text>
+          <Text className="ml-2 text-lg font-semibold text-stone-800">Session Preview</Text>
         </View>
         {onSaveSession && (
           <TouchableOpacity
             onPress={onSaveSession}
             className="flex-row items-center rounded-lg bg-amber-500 px-4 py-2">
             <Ionicons name="save-outline" size={16} color="#1F2937" />
-            <Text className="ml-2 font-medium text-gray-900">Save</Text>
+            <Text className="ml-2 font-medium text-stone-800">Save</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -84,20 +82,16 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
       {isSilentOnlySession ? (
         // Silent-only session display
         <View className="items-center py-8">
-          <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+          <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-stone-100">
             <Ionicons name="leaf-outline" size={32} color="#F59E0B" />
           </View>
-          <Text className="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
-            Silent Meditation
-          </Text>
-          <Text className="text-center text-gray-600 dark:text-gray-400">
-            Pure silent meditation session
-          </Text>
+          <Text className="mb-2 text-xl font-semibold text-stone-800">Silent Meditation</Text>
+          <Text className="text-center text-stone-600">Pure silent meditation session</Text>
         </View>
       ) : (
         <View className="mb-8">
           {/* Timeline Bar */}
-          <View className="mb-4 h-3 flex-row overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+          <View className="mb-4 h-3 flex-row overflow-hidden rounded-full bg-stone-200">
             {enabledSegments.map((type) => {
               const segment = segments[type];
               if (!segment) return null;
@@ -134,17 +128,15 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
                   <View className="flex-1 flex-row items-center">
                     <View className={`h-3 w-3 ${color} mr-3 rounded-full`} />
                     <View className="flex-1">
-                      <Text className="font-medium text-gray-900 dark:text-white">
-                        {segment.label}
-                      </Text>
+                      <Text className="font-medium text-stone-800">{segment.label}</Text>
                       {selectedAudioNames.length > 0 && selectedAudioNames[0] !== 'None' && (
-                        <Text className="text-sm text-gray-600 dark:text-gray-400">
+                        <Text className="text-sm text-stone-600">
                           {selectedAudioNames.join(', ')}
                         </Text>
                       )}
                     </View>
                   </View>
-                  <Text className="font-medium text-gray-600 dark:text-gray-400">
+                  <Text className="font-medium text-stone-600">
                     {displayDurationMin > 0 ? `${displayDurationMin} min` : ''}
                     {displayDurationMin > 0 && displayRemainderSec > 0 ? ' ' : ''}
                     {displayRemainderSec > 0 ? `${displayRemainderSec} sec` : ''}
@@ -158,10 +150,10 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
       )}
 
       {/* Total Duration */}
-      <View className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
+      <View className="mt-4 border-t border-stone-200 pt-4">
         <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-semibold text-gray-900 dark:text-white">Total</Text>
-          <Text className="text-lg font-semibold text-amber-500">{totalDurationMinutes} min</Text>
+          <Text className="text-lg font-semibold text-stone-800">Total</Text>
+          <Text className="text-lg font-semibold text-amber-600">{totalDurationMinutes} min</Text>
         </View>
       </View>
     </View>

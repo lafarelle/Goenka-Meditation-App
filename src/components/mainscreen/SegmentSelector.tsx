@@ -19,41 +19,24 @@ const SegmentButton = React.memo<SegmentButtonProps>(
       <TouchableOpacity
         onPress={onPress}
         className={`rounded-xl p-4 ${
-          isEnabled
-            ? 'border border-amber-500/30 bg-amber-500/20'
-            : isDark
-              ? 'bg-white/5'
-              : 'bg-black/5'
+          isEnabled ? 'border border-amber-500/30 bg-amber-50' : 'border border-stone-200 bg-white'
         }`}
         accessibilityRole="button"
         accessibilityLabel={`${title}: ${selectedName || 'None selected'}`}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-3">
-            <View
-              className={`rounded-full p-2 ${isEnabled ? 'bg-amber-500/30' : isDark ? 'bg-white/10' : 'bg-black/10'}`}>
-              <Ionicons
-                name={icon}
-                size={20}
-                color={isEnabled ? '#F59E0B' : isDark ? '#9CA3AF' : '#6B7280'}
-              />
+            <View className={`rounded-full p-2 ${isEnabled ? 'bg-amber-100' : 'bg-stone-100'}`}>
+              <Ionicons name={icon} size={20} color={isEnabled ? '#F59E0B' : '#6B7280'} />
             </View>
             <View className="flex-1">
               <Text
-                className={`text-sm font-medium ${isEnabled ? 'text-amber-500' : isDark ? 'text-white' : 'text-gray-900'}`}>
+                className={`text-sm font-medium ${isEnabled ? 'text-amber-700' : 'text-stone-800'}`}>
                 {title}
               </Text>
-              {selectedName && (
-                <Text className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                  {selectedName}
-                </Text>
-              )}
+              {selectedName && <Text className="text-xs text-stone-600">{selectedName}</Text>}
             </View>
           </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={isEnabled ? '#F59E0B' : isDark ? '#6B7280' : '#9CA3AF'}
-          />
+          <Ionicons name="chevron-forward" size={20} color={isEnabled ? '#F59E0B' : '#9CA3AF'} />
         </View>
       </TouchableOpacity>
     );
@@ -130,8 +113,7 @@ export function SegmentSelector() {
   return (
     <>
       <View className="w-full gap-3">
-        <Text
-          className={`mb-1 text-sm font-medium uppercase tracking-wide ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+        <Text className="mb-1 text-sm font-medium uppercase tracking-wide text-stone-600">
           Session Segments
         </Text>
 
