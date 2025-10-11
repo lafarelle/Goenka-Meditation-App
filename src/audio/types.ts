@@ -9,6 +9,10 @@ export interface AudioSessionState {
 export interface MeditationSession {
   totalDurationMinutes: number;
   segments: {
+    gong?: {
+      audioId: string;
+      duration: number;
+    };
     beforeSilent: {
       audioIds: string[];
       duration: number;

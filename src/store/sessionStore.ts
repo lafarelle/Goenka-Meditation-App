@@ -9,6 +9,7 @@ export type SessionSegmentType =
   | 'techniqueReminder'
   | 'metta'
   | 'closingChant'
+  | 'gong'
   | 'silent';
 
 export type TechniqueType = 'anapana' | 'vipassana';
@@ -64,6 +65,13 @@ export const initialSegments: Record<SessionSegmentType, SessionSegment> = {
     durationSec: 120,
     label: 'Closing Chant',
     fileUri: undefined,
+    isEnabled: false,
+    selectedAudioIds: [],
+  },
+  gong: {
+    type: 'gong',
+    durationSec: 5,
+    label: 'Gong',
     isEnabled: false,
     selectedAudioIds: [],
   },

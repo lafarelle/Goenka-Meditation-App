@@ -1,4 +1,5 @@
-import { segmentTypeToAudioMap } from '@/data/audioData';
+import { getGongAudioByPreference, segmentTypeToAudioMap } from '@/data/audioData';
+import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { AudioPlayer } from './AudioPlayer';
@@ -18,6 +19,8 @@ export class AudioSessionManager {
   } = {};
   private isInitialized = false;
   private currentAudioIndex = 0; // Track current audio index in the current segment
+  private isEndGongPlaying = false; // Track if we're playing the end gong
+  private silentPauseTimer: ReturnType<typeof setTimeout> | null = null; // Timer for silent pauses
 
   constructor() {
     this.sessionState = {
@@ -71,8 +74,13 @@ export class AudioSessionManager {
       const sessionStore = useSessionStore.getState();
       this.session = this.buildSessionFromStore(sessionStore);
 
-      // Start with before-silent audio
-      await this.playBeforeSilentAudio();
+      // Start with gong if configured
+      if (this.session.segments.gong) {
+        await this.playGong();
+      } else {
+        // Start with before-silent audio
+        await this.playBeforeSilentAudio();
+      }
     } catch (error) {
       this.handleError(`Failed to start session: ${error}`);
     }
@@ -80,6 +88,17 @@ export class AudioSessionManager {
 
   private buildSessionFromStore(store: any): MeditationSession {
     const { totalDurationMinutes, segments } = store;
+    const preferences = usePreferencesStore.getState().preferences;
+
+    // Check for gong preference
+    const gongAudio = getGongAudioByPreference(preferences.gongPreference);
+    let gongSegment = null;
+    if (gongAudio) {
+      gongSegment = {
+        audioId: gongAudio.id,
+        duration: 5, // 5 seconds for gong
+      };
+    }
 
     // Collect before-silent audio (opening chant, guidance, technique reminder)
     const beforeSilentAudioIds: string[] = [];
@@ -147,6 +166,7 @@ export class AudioSessionManager {
     return {
       totalDurationMinutes,
       segments: {
+        ...(gongSegment && { gong: gongSegment }),
         beforeSilent: {
           audioIds: beforeSilentAudioIds,
           duration: beforeSilentDuration,
@@ -160,6 +180,27 @@ export class AudioSessionManager {
         },
       },
     };
+  }
+
+  private async playGong(): Promise<void> {
+    if (!this.session?.segments.gong) return;
+
+    this.isEndGongPlaying = false; // Reset flag for start gong
+    this.updateState({
+      currentSegment: 'gong',
+      isPlaying: true,
+    });
+
+    const gongAudioId = this.session.segments.gong.audioId;
+    const audioFile = this.getAudioFile(gongAudioId);
+
+    if (audioFile) {
+      await this.audioPlayer.loadAudio(gongAudioId, audioFile);
+      await this.audioPlayer.play();
+    } else {
+      // If no valid gong audio, skip to before-silent audio
+      await this.playBeforeSilentAudio();
+    }
   }
 
   private async playBeforeSilentAudio(): Promise<void> {
@@ -195,12 +236,18 @@ export class AudioSessionManager {
 
     const currentSegment = this.sessionState.currentSegment;
 
-    if (currentSegment === 'beforeSilent') {
+    if (currentSegment === 'gong') {
+      // Gong finished, add silent pause then move to before-silent audio
+      await this.playSilentPause();
+      await this.playBeforeSilentAudio();
+    } else if (currentSegment === 'beforeSilent') {
       // Move to next audio in before-silent segment
       this.currentAudioIndex++;
       const audioIds = this.session.segments.beforeSilent.audioIds;
 
       if (this.currentAudioIndex < audioIds.length) {
+        // Add silent pause before next audio
+        await this.playSilentPause();
         // Play next audio
         const nextAudioId = audioIds[this.currentAudioIndex];
         const audioFile = this.getAudioFile(nextAudioId);
@@ -212,7 +259,8 @@ export class AudioSessionManager {
         }
       }
 
-      // All before-silent audio finished, start silent meditation
+      // All before-silent audio finished, add silent pause then start silent meditation
+      await this.playSilentPause();
       await this.startSilentMeditation();
     } else if (currentSegment === 'afterSilent') {
       // Move to next audio in after-silent segment
@@ -220,6 +268,8 @@ export class AudioSessionManager {
       const audioIds = this.session.segments.afterSilent.audioIds;
 
       if (this.currentAudioIndex < audioIds.length) {
+        // Add silent pause before next audio
+        await this.playSilentPause();
         // Play next audio
         const nextAudioId = audioIds[this.currentAudioIndex];
         const audioFile = this.getAudioFile(nextAudioId);
@@ -231,8 +281,12 @@ export class AudioSessionManager {
         }
       }
 
-      // All audio finished, session complete
-      this.handleSessionComplete();
+      // All audio finished, add silent pause then check for end gong
+      await this.playSilentPause();
+      await this.handleSessionComplete();
+    } else if (currentSegment === 'gong' && this.isEndGong()) {
+      // End gong finished, finalize session
+      this.finalizeSession();
     }
   }
 
@@ -262,6 +316,9 @@ export class AudioSessionManager {
   private async playAfterSilentAudio(): Promise<void> {
     if (!this.session) return;
 
+    // Add silent pause before after-silent audio
+    await this.playSilentPause();
+
     this.updateState({
       currentSegment: 'afterSilent',
       isPlaying: true,
@@ -279,7 +336,7 @@ export class AudioSessionManager {
       await this.audioPlayer.play();
     } else {
       // If no valid audio, session complete
-      this.handleSessionComplete();
+      await this.handleSessionComplete();
     }
   }
 
@@ -323,7 +380,61 @@ export class AudioSessionManager {
     this.callbacks.onError?.(error);
   }
 
-  private handleSessionComplete(): void {
+  private async handleSessionComplete(): Promise<void> {
+    // Check if we should play end gong
+    const preferences = usePreferencesStore.getState().preferences;
+    if (preferences.gongPreference !== 'none') {
+      await this.playEndGong();
+    } else {
+      this.finalizeSession();
+    }
+  }
+
+  private async playEndGong(): Promise<void> {
+    if (!this.session) return;
+
+    this.isEndGongPlaying = true;
+    this.updateState({
+      currentSegment: 'gong',
+      isPlaying: true,
+    });
+
+    const preferences = usePreferencesStore.getState().preferences;
+    const gongAudio = getGongAudioByPreference(preferences.gongPreference);
+
+    if (gongAudio) {
+      const audioFile = this.getAudioFile(gongAudio.id);
+      if (audioFile) {
+        await this.audioPlayer.loadAudio(gongAudio.id, audioFile);
+        await this.audioPlayer.play();
+        return;
+      }
+    }
+
+    // If no valid gong audio, finalize session
+    this.finalizeSession();
+  }
+
+  private isEndGong(): boolean {
+    return this.isEndGongPlaying;
+  }
+
+  private async playSilentPause(durationSeconds: number = 10): Promise<void> {
+    return new Promise((resolve) => {
+      this.updateState({
+        currentSegment: 'silent',
+        isPlaying: false,
+      });
+
+      this.silentPauseTimer = setTimeout(() => {
+        this.silentPauseTimer = null;
+        resolve();
+      }, durationSeconds * 1000);
+    });
+  }
+
+  private finalizeSession(): void {
+    this.isEndGongPlaying = false;
     this.updateState({
       currentSegment: null,
       isPlaying: false,
@@ -335,7 +446,13 @@ export class AudioSessionManager {
   // Public methods for controlling the session
   async pause(): Promise<void> {
     if (this.sessionState.currentSegment === 'silent') {
-      this.meditationTimer.pause();
+      if (this.silentPauseTimer) {
+        // Pause silent pause timer
+        clearTimeout(this.silentPauseTimer);
+        this.silentPauseTimer = null;
+      } else {
+        this.meditationTimer.pause();
+      }
     } else {
       await this.audioPlayer.pause();
     }
@@ -343,7 +460,12 @@ export class AudioSessionManager {
 
   async resume(): Promise<void> {
     if (this.sessionState.currentSegment === 'silent') {
-      this.meditationTimer.resume();
+      if (this.silentPauseTimer) {
+        // Resume silent pause timer (restart it)
+        await this.playSilentPause();
+      } else {
+        this.meditationTimer.resume();
+      }
     } else {
       await this.audioPlayer.play();
     }
@@ -352,6 +474,10 @@ export class AudioSessionManager {
   async stop(): Promise<void> {
     this.meditationTimer.stop();
     await this.audioPlayer.stop();
+    if (this.silentPauseTimer) {
+      clearTimeout(this.silentPauseTimer);
+      this.silentPauseTimer = null;
+    }
     this.updateState({
       currentSegment: null,
       isPlaying: false,
@@ -367,6 +493,10 @@ export class AudioSessionManager {
   async cleanup(): Promise<void> {
     this.meditationTimer.stop();
     await this.audioPlayer.cleanup();
+    if (this.silentPauseTimer) {
+      clearTimeout(this.silentPauseTimer);
+      this.silentPauseTimer = null;
+    }
     await AudioPreloader.cleanup();
   }
 }

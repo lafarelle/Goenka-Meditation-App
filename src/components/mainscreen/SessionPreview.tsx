@@ -133,13 +133,13 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               const selectedAudioNames = getSelectedAudioNames(type);
 
               return (
-                <View key={type} className="flex-row items-center justify-between">
+                <View key={type} className="mb-4 flex-row items-center justify-between">
                   <View className="flex-1 flex-row items-center">
                     <View className={`h-3 w-3 ${color} mr-3 rounded-full`} />
                     <View className="flex-1">
                       <Text className="font-medium text-stone-800">{segment.label}</Text>
                       {selectedAudioNames.length > 0 && selectedAudioNames[0] !== 'None' && (
-                        <Text className="text-sm text-stone-600">
+                        <Text className="text-xs text-stone-600">
                           {selectedAudioNames.join(', ')}
                         </Text>
                       )}
@@ -188,9 +188,9 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               )}
 
               {preferences.timingPreference === 'silent' && (
-                <View className="flex-row items-center justify-between border-t border-stone-200 pt-2">
-                  <Text className="font-semibold text-stone-800">Total Session</Text>
-                  <Text className="font-semibold text-amber-600">
+                <View className="mt-4 flex-row items-center justify-between border-t border-stone-200 pt-2">
+                  <Text className="mt-1 text-lg font-semibold text-stone-800">Total Session</Text>
+                  <Text className="mt-1 text-lg font-semibold text-amber-600">
                     {formatDuration(effectiveDuration.totalMinutes)}
                   </Text>
                 </View>

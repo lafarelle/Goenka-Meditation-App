@@ -1,11 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { DEFAULT_PREFERENCES, MeditationPreferences, TimingPreference } from './types';
+import {
+  DEFAULT_PREFERENCES,
+  GongPreference,
+  MeditationPreferences,
+  TimingPreference,
+} from './types';
 
 type PreferencesState = {
   preferences: MeditationPreferences;
   setTimingPreference: (preference: TimingPreference) => void;
+  setGongPreference: (preference: GongPreference) => void;
   resetPreferences: () => void;
 };
 
@@ -19,6 +25,14 @@ export const usePreferencesStore = create<PreferencesState>()(
           preferences: {
             ...state.preferences,
             timingPreference: preference,
+          },
+        })),
+
+      setGongPreference: (preference) =>
+        set((state) => ({
+          preferences: {
+            ...state.preferences,
+            gongPreference: preference,
           },
         })),
 

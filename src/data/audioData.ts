@@ -154,6 +154,24 @@ export const closingChantAudios: AudioItem[] = [
   },
 ];
 
+// Gong Audios
+export const gongAudios: AudioItem[] = [
+  {
+    id: 'g1',
+    name: 'Gong 1',
+    duration: '0:05', // Real duration: 5 seconds
+    description: 'Traditional meditation gong',
+    fileUri: audioFiles.gongs.G1,
+  },
+  {
+    id: 'g2',
+    name: 'Gong 2',
+    duration: '0:05', // Real duration: 5 seconds
+    description: 'Alternative meditation gong',
+    fileUri: audioFiles.gongs.G2,
+  },
+];
+
 // Helper function to get random audio file for technique types
 export function getRandomTechniqueAudio(techniqueType: 'anapana' | 'vipassana') {
   if (techniqueType === 'anapana') {
@@ -165,6 +183,14 @@ export function getRandomTechniqueAudio(techniqueType: 'anapana' | 'vipassana') 
     const randomIndex = Math.floor(Math.random() * vipassanaFiles.length);
     return vipassanaFiles[randomIndex];
   }
+}
+
+// Helper function to get gong audio by preference
+export function getGongAudioByPreference(preference: 'none' | 'G1' | 'G2'): AudioItem | null {
+  if (preference === 'none') return null;
+
+  const gongId = preference.toLowerCase(); // 'G1' -> 'g1', 'G2' -> 'g2'
+  return gongAudios.find((gong) => gong.id === gongId) || null;
 }
 
 // Helper function to get random gong sound for session start
@@ -181,5 +207,6 @@ export const segmentTypeToAudioMap: SegmentTypeToAudioMap = {
   techniqueReminder: techniqueAudios,
   metta: mettaAudios,
   closingChant: closingChantAudios,
+  gong: gongAudios,
   silent: [],
 };
