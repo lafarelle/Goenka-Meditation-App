@@ -2,6 +2,7 @@ import { getGongAudioByPreference, segmentTypeToAudioMap } from '@/data/audioDat
 import { AudioSessionState, MeditationSession } from '@/schemas/audio';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSessionStore } from '@/store/sessionStore';
+import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { calculateSessionTiming } from '@/utils/timing';
 import { AudioPlayer } from './AudioPlayer';
 import { AudioPreloader } from './AudioPreloader';
@@ -134,29 +135,56 @@ export class AudioSessionManager {
 
     // Collect before-silent audio (opening chant, guidance, technique reminder)
     const beforeSilentAudioIds: string[] = [];
+    let beforeSilentDuration = 0;
     if (segments.openingChant.isEnabled && segments.openingChant.selectedAudioIds.length > 0) {
       beforeSilentAudioIds.push(...segments.openingChant.selectedAudioIds);
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'openingChant',
+        segments.openingChant.selectedAudioIds,
+        segments.openingChant.durationSec
+      );
     }
     if (
       segments.openingGuidance.isEnabled &&
       segments.openingGuidance.selectedAudioIds.length > 0
     ) {
       beforeSilentAudioIds.push(...segments.openingGuidance.selectedAudioIds);
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'openingGuidance',
+        segments.openingGuidance.selectedAudioIds,
+        segments.openingGuidance.durationSec
+      );
     }
     if (
       segments.techniqueReminder.isEnabled &&
       segments.techniqueReminder.selectedAudioIds.length > 0
     ) {
       beforeSilentAudioIds.push(...segments.techniqueReminder.selectedAudioIds);
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'techniqueReminder',
+        segments.techniqueReminder.selectedAudioIds,
+        segments.techniqueReminder.durationSec
+      );
     }
 
     // Collect after-silent audio (metta, closing chant)
     const afterSilentAudioIds: string[] = [];
+    let afterSilentDuration = 0;
     if (segments.metta.isEnabled && segments.metta.selectedAudioIds.length > 0) {
       afterSilentAudioIds.push(...segments.metta.selectedAudioIds);
+      afterSilentDuration += getSegmentDisplayDuration(
+        'metta',
+        segments.metta.selectedAudioIds,
+        segments.metta.durationSec
+      );
     }
     if (segments.closingChant.isEnabled && segments.closingChant.selectedAudioIds.length > 0) {
       afterSilentAudioIds.push(...segments.closingChant.selectedAudioIds);
+      afterSilentDuration += getSegmentDisplayDuration(
+        'closingChant',
+        segments.closingChant.selectedAudioIds,
+        segments.closingChant.durationSec
+      );
     }
 
     return {
@@ -165,14 +193,14 @@ export class AudioSessionManager {
         ...(gongSegment && { gong: gongSegment }),
         beforeSilent: {
           audioIds: beforeSilentAudioIds,
-          duration: timing.audioDurationSec / 2, // Half of audio time for before-silent
+          duration: beforeSilentDuration,
         },
         silent: {
           duration: timing.silentDurationSec,
         },
         afterSilent: {
           audioIds: afterSilentAudioIds,
-          duration: timing.audioDurationSec / 2, // Half of audio time for after-silent
+          duration: afterSilentDuration,
         },
       },
     };
@@ -523,7 +551,7 @@ export class AudioSessionManager {
       this.silentPauseTimer = setTimeout(() => {
         this.silentPauseTimer = null;
         resolve();
-      }, durationSeconds * 1000);
+      }, durationSeconds * 100);
     });
   }
 

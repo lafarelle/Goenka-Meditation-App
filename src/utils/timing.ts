@@ -20,11 +20,11 @@ export function calculateSessionTiming(
   timingPreference: 'total' | 'silent'
 ): SessionTiming {
   const totalDurationSec = totalDurationMinutes * 60;
-  
+
   // Calculate total audio duration from all enabled segments
   let audioDurationSec = 0;
   let gongDurationSec = 0;
-  
+
   Object.entries(segments).forEach(([type, segment]) => {
     if (segment.isEnabled && type !== 'silent') {
       const segmentDuration = getSegmentDisplayDuration(
@@ -32,7 +32,7 @@ export function calculateSessionTiming(
         segment.selectedAudioIds,
         segment.durationSec
       );
-      
+
       if (type === 'gong') {
         gongDurationSec += segmentDuration;
       } else {
@@ -43,13 +43,16 @@ export function calculateSessionTiming(
 
   // Calculate pause duration (10 seconds between segments)
   const pauseDurationSec = calculatePauseDuration(segments);
-  
+
   // Calculate silent meditation duration
   let silentDurationSec: number;
-  
+
   if (timingPreference === 'total') {
     // Silent duration = total - audio - gong - pauses
-    silentDurationSec = Math.max(0, totalDurationSec - audioDurationSec - gongDurationSec - pauseDurationSec);
+    silentDurationSec = Math.max(
+      0,
+      totalDurationSec - audioDurationSec - gongDurationSec - pauseDurationSec
+    );
   } else {
     // Silent duration is the specified total, audio duration is calculated from remaining time
     silentDurationSec = totalDurationSec;
@@ -68,13 +71,15 @@ export function calculateSessionTiming(
 /**
  * Calculates the total pause duration between segments
  */
-export function calculatePauseDuration(segments: Record<SessionSegmentType, SessionSegment>): number {
-  const pauseDuration = 10; // 10 seconds per pause
+export function calculatePauseDuration(
+  segments: Record<SessionSegmentType, SessionSegment>
+): number {
+  const pauseDuration = 1; // 1 second per pause
   let pauseCount = 0;
 
   // Count enabled segments
-  const enabledSegments = Object.values(segments).filter(segment => 
-    segment.isEnabled && segment.type !== 'silent'
+  const enabledSegments = Object.values(segments).filter(
+    (segment) => segment.isEnabled && segment.type !== 'silent'
   );
 
   // Pauses between segments (n-1 pauses for n segments)
