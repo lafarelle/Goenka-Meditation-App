@@ -39,6 +39,18 @@ export default function Meditation() {
     }
   }, [error, clearError]);
 
+  // Handle session completion - navigate back to main screen
+  useEffect(() => {
+    if (
+      sessionState.currentSegment === null &&
+      sessionState.progress === 1 &&
+      !sessionState.isPlaying
+    ) {
+      // Session completed, navigate back to main screen
+      router.back();
+    }
+  }, [sessionState.currentSegment, sessionState.progress, sessionState.isPlaying]);
+
   // Calculate remaining time from session state
   const remainingTime = sessionState.remainingTime || 0;
 

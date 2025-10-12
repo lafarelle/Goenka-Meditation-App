@@ -25,6 +25,7 @@ export class AudioSessionManager {
   private totalSessionDuration = 0; // Total session duration in seconds
   private sessionStartTime = 0; // When the session started
   private isTransitioning = false; // Flag to prevent multiple simultaneous transitions
+  private attemptedTransitions = new Set<string>(); // Track which transitions have been attempted
 
   constructor() {
     this.sessionState = {
@@ -280,9 +281,14 @@ export class AudioSessionManager {
     const currentSegment = this.sessionState.currentSegment;
 
     if (currentSegment === 'gong') {
-      // Gong finished, add silent pause then move to before-silent audio
-      await this.playSilentPause();
-      await this.playBeforeSilentAudio();
+      if (this.isEndGong()) {
+        // End gong finished, finalize session
+        this.finalizeSession();
+      } else {
+        // Start gong finished, add silent pause then move to before-silent audio
+        await this.playSilentPause();
+        await this.playBeforeSilentAudio();
+      }
     } else if (currentSegment === 'beforeSilent') {
       // Move to next audio in before-silent segment
       this.currentAudioIndex++;
@@ -487,16 +493,26 @@ export class AudioSessionManager {
       silentEnd + afterSilentDuration + afterSilentPauses + afterSilentEndPause;
 
     // Transition logic based on elapsed time
-    if (currentSegment === 'gong' && elapsedSeconds >= beforeSilentEnd) {
+    if (
+      currentSegment === 'gong' &&
+      elapsedSeconds >= beforeSilentEnd &&
+      !this.attemptedTransitions.has('gong->beforeSilent')
+    ) {
       console.log('Transitioning from gong to beforeSilent');
+      this.attemptedTransitions.add('gong->beforeSilent');
       this.transitionToBeforeSilent();
-    } else if (currentSegment === 'beforeSilent' && elapsedSeconds >= beforeSilentEnd) {
+    } else if (
+      currentSegment === 'beforeSilent' &&
+      elapsedSeconds >= beforeSilentEnd &&
+      !this.attemptedTransitions.has('beforeSilent->silent')
+    ) {
       console.log('Transitioning from beforeSilent to silent');
+      this.attemptedTransitions.add('beforeSilent->silent');
       this.transitionToSilent();
     } else if (
       currentSegment === 'silent' &&
       elapsedSeconds >= silentEnd &&
-      !this.isTransitioning
+      !this.attemptedTransitions.has('silent->afterSilent')
     ) {
       console.log(
         'Transitioning from silent to afterSilent, elapsed:',
@@ -504,9 +520,15 @@ export class AudioSessionManager {
         'silentEnd:',
         silentEnd
       );
+      this.attemptedTransitions.add('silent->afterSilent');
       this.transitionToAfterSilent();
-    } else if (currentSegment === 'afterSilent' && elapsedSeconds >= afterSilentEnd) {
+    } else if (
+      currentSegment === 'afterSilent' &&
+      elapsedSeconds >= afterSilentEnd &&
+      !this.attemptedTransitions.has('afterSilent->complete')
+    ) {
       console.log('Transitioning from afterSilent to complete');
+      this.attemptedTransitions.add('afterSilent->complete');
       this.handleSessionComplete();
     }
   }
