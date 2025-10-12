@@ -1,88 +1,13 @@
+import {
+  createInitialSegments,
+  SessionSegment,
+  SessionSegmentType,
+  TechniqueType,
+} from '@/schemas/session';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
-import { calculateSessionTiming } from '@/utils/preferences';
+import { calculateSessionTiming } from '@/utils/timing';
 import { create } from 'zustand';
 import { usePreferencesStore } from './preferencesStore';
-
-export type SessionSegmentType =
-  | 'openingChant'
-  | 'openingGuidance'
-  | 'techniqueReminder'
-  | 'metta'
-  | 'closingChant'
-  | 'gong'
-  | 'silent';
-
-export type TechniqueType = 'anapana' | 'vipassana';
-
-export interface SessionSegment {
-  type: SessionSegmentType;
-  durationSec: number;
-  label?: string;
-  fileUri?: string; // for chants
-  // Add an enabled flag, true by default for most, false for silent initially
-  isEnabled: boolean;
-  // For technique reminder segment
-  techniqueType?: TechniqueType;
-  selectedAudioIds: string[]; // Array of selected audio IDs in playback order
-  // Optional: add color if it's tied to the segment type and not just UI
-  // color?: string;
-}
-
-// Define initial segments configuration - ALL DISABLED by default for silent-only sessions
-export const initialSegments: Record<SessionSegmentType, SessionSegment> = {
-  openingChant: {
-    type: 'openingChant',
-    durationSec: 120,
-    label: 'Opening Chant',
-    fileUri: undefined,
-    isEnabled: false,
-    selectedAudioIds: [],
-  },
-  openingGuidance: {
-    type: 'openingGuidance',
-    durationSec: 60,
-    label: 'Opening Guidance',
-    isEnabled: false,
-    selectedAudioIds: [],
-  },
-  techniqueReminder: {
-    type: 'techniqueReminder',
-    durationSec: 60,
-    label: 'Technique Reminder',
-    isEnabled: false,
-    techniqueType: 'anapana', // Default technique
-    selectedAudioIds: [],
-  },
-  metta: {
-    type: 'metta',
-    durationSec: 300,
-    label: 'Mettā Practice',
-    isEnabled: false,
-    selectedAudioIds: [],
-  },
-  closingChant: {
-    type: 'closingChant',
-    durationSec: 120,
-    label: 'Closing Chant',
-    fileUri: undefined,
-    isEnabled: false,
-    selectedAudioIds: [],
-  },
-  gong: {
-    type: 'gong',
-    durationSec: 5,
-    label: 'Gong',
-    isEnabled: false,
-    selectedAudioIds: [],
-  },
-  silent: {
-    type: 'silent',
-    durationSec: 0,
-    label: 'Silent Meditation',
-    isEnabled: true, // This remains enabled for silent-only sessions
-    selectedAudioIds: [],
-  }, // durationSec will be calculated
-};
 
 interface SessionState {
   totalDurationMinutes: number; // in minutes
@@ -101,7 +26,7 @@ interface SessionState {
 
 export const useSessionStore = create<SessionState>((set, get) => ({
   totalDurationMinutes: 20,
-  segments: { ...initialSegments }, // Initialize with a copy of default segments
+  segments: createInitialSegments(), // Initialize with default segments
 
   setSegmentEnabled: (type, isEnabled) =>
     set((state) => ({
@@ -180,7 +105,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   resetSession: () =>
     set({
       totalDurationMinutes: 20,
-      segments: { ...initialSegments }, // Reset to a fresh copy of initial segments
+      segments: createInitialSegments(), // Reset to fresh initial segments
     }),
 
   // Helper to get total duration of all *enabled* segments (excluding silent)

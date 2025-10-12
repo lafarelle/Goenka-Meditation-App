@@ -1,10 +1,10 @@
+// Comprehensive session utilities
+
 import { SavedSession } from '@/schemas/savedSession';
 import { SessionSegment, SessionSegmentType } from '@/schemas/session';
 
 /**
  * Loads a saved session into the current session store
- * @param session - The saved session to load
- * @param sessionStore - The session store methods
  */
 export function loadSessionIntoStore(
   session: SavedSession,
@@ -44,8 +44,6 @@ export function loadSessionIntoStore(
 
 /**
  * Creates a deep copy of session segments to avoid reference issues
- * @param segments - The segments to copy
- * @returns A deep copy of the segments
  */
 export function createSegmentsCopy(
   segments: Record<SessionSegmentType, SessionSegment>
@@ -68,31 +66,13 @@ export function createSegmentsCopy(
 
 /**
  * Validates if a session name is valid
- * @param name - The session name to validate
- * @returns True if the name is valid, false otherwise
  */
 export function isValidSessionName(name: string | undefined): boolean {
   return Boolean(name && name.trim() && name.trim().length > 0);
 }
 
 /**
- * Formats session duration for display
- * @param minutes - Duration in minutes
- * @returns Formatted duration string
- */
-export function formatSessionDuration(minutes: number): string {
-  if (minutes < 60) {
-    return `${minutes} min`;
-  }
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
-}
-
-/**
  * Formats date for display
- * @param dateString - ISO date string
- * @returns Formatted date string
  */
 export function formatSessionDate(dateString: string): string {
   const date = new Date(dateString);
@@ -105,8 +85,6 @@ export function formatSessionDate(dateString: string): string {
 
 /**
  * Gets session usage text
- * @param useCount - Number of times the session has been used
- * @returns Formatted usage text
  */
 export function getSessionUsageText(useCount: number): string {
   if (useCount === 0) return '';

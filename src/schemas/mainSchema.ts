@@ -1,26 +1,5 @@
-import { SessionSegmentType } from "@/store/sessionStore";
-
-// ---- Audio Interfaces ----
-export interface AudioItem {
-  id: string;
-  name: string;
-  duration: string; // Format: "mm:ss"
-  description: string;
-  fileUri: any | undefined; // React Native audio resource or undefined
-  isGoenkaVoice?: boolean;
-}
-
-export interface ChantOption {
-  name: string;
-  duration?: number; // duration in minutes
-  isGoenkaVoice?: boolean;
-}
-
-export interface GuidanceOption {
-  name: string;
-  duration?: number; // duration in minutes
-  isGoenkaVoice?: boolean;
-}
+import { SessionSegmentType } from "./session";
+import { AudioItem } from "./audio";
 
 // ---- Configuration Types ----
 export const defaultConfiguration = {

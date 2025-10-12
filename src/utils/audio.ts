@@ -1,3 +1,5 @@
+// Comprehensive audio utilities
+
 import { segmentTypeToAudioMap } from '@/data/audioData';
 import { AudioItem } from '@/schemas/audio';
 

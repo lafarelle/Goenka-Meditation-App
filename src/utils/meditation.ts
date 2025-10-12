@@ -1,6 +1,8 @@
+// Comprehensive meditation utilities
+
 import { getRandomGongAudio, getRandomTechniqueAudio } from '@/data/audioData';
 import { SessionSegment, SessionSegmentType } from '@/schemas/session';
-import { calculateSessionTiming } from '@/utils/timing';
+import { calculateSessionTiming } from './timing';
 
 export interface SessionAudioSegment {
   type: SessionSegmentType | 'gong';
@@ -31,6 +33,7 @@ export function generateMeditationSession(
     segments,
     timingPreference
   );
+
   const orderedSegmentTypes: SessionSegmentType[] = [
     'openingChant',
     'openingGuidance',
@@ -58,11 +61,6 @@ export function generateMeditationSession(
   // Calculate total duration of all enabled audio segments
   const enabledAudioSegments = orderedSegmentTypes.filter(
     (type) => type !== 'silent' && segments[type].isEnabled
-  );
-
-  const totalAudioDurationSec = enabledAudioSegments.reduce(
-    (acc, type) => acc + segments[type].durationSec,
-    0
   );
 
   // Use the calculated silent duration from timing preference

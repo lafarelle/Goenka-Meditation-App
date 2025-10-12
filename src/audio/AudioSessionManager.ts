@@ -1,11 +1,11 @@
 import { getGongAudioByPreference, segmentTypeToAudioMap } from '@/data/audioData';
+import { AudioSessionState, MeditationSession } from '@/schemas/audio';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSessionStore } from '@/store/sessionStore';
-import { calculateSessionTiming } from '@/utils/preferences';
+import { calculateSessionTiming } from '@/utils/timing';
 import { AudioPlayer } from './AudioPlayer';
 import { AudioPreloader } from './AudioPreloader';
 import { MeditationTimer } from './MeditationTimer';
-import { AudioSessionState, MeditationSession } from './types';
 
 export class AudioSessionManager {
   private audioPlayer: AudioPlayer;
@@ -108,44 +108,7 @@ export class AudioSessionManager {
       preferences.timingPreference
     );
 
-    // Add silent pauses between audio segments
-    const pauseDuration = this.calculateSilentPauseDuration();
-
-    return timing.totalDurationSec + pauseDuration;
-  }
-
-  private calculateSilentPauseDuration(): number {
-    if (!this.session) return 0;
-
-    const { segments } = this.session;
-    const pauseDuration = 10; // 10 seconds per pause
-
-    // Count the number of pauses needed
-    let pauseCount = 0;
-
-    // Pause after gong (if present)
-    if (segments.gong) pauseCount++;
-
-    // Pauses between before-silent audio files
-    if (segments.beforeSilent.audioIds.length > 1) {
-      pauseCount += segments.beforeSilent.audioIds.length - 1;
-    }
-
-    // Pause before silent meditation (if there's before-silent audio)
-    if (segments.beforeSilent.audioIds.length > 0) pauseCount++;
-
-    // Pause before after-silent audio (if there's silent meditation)
-    if (segments.silent.duration > 0 && segments.afterSilent.audioIds.length > 0) pauseCount++;
-
-    // Pauses between after-silent audio files
-    if (segments.afterSilent.audioIds.length > 1) {
-      pauseCount += segments.afterSilent.audioIds.length - 1;
-    }
-
-    // Pause before end gong (if there's after-silent audio)
-    if (segments.afterSilent.audioIds.length > 0 && segments.gong) pauseCount++;
-
-    return pauseCount * pauseDuration;
+    return timing.totalDurationSec;
   }
 
   private buildSessionFromStore(store: any): MeditationSession {
@@ -414,14 +377,23 @@ export class AudioSessionManager {
     const { segments } = this.session;
     const currentSegment = this.sessionState.currentSegment;
 
-    // Calculate transition points including pauses
+    // Use centralized timing calculation
+    const preferences = usePreferencesStore.getState().preferences;
+    const sessionStore = useSessionStore.getState();
+    const timing = calculateSessionTiming(
+      sessionStore.totalDurationMinutes,
+      sessionStore.segments,
+      preferences.timingPreference
+    );
+
+    // Calculate transition points using centralized timing
     const gongDuration = segments.gong ? 5 : 0;
     const beforeSilentDuration = segments.beforeSilent.duration;
     const silentDuration = segments.silent.duration;
     const afterSilentDuration = segments.afterSilent.duration;
 
-    // Calculate pause durations
-    const pauseDuration = 10; // 10 seconds per pause
+    // Use pause duration from timing utility
+    const pauseDuration = timing.pauseDurationSec / this.getPauseCount();
     const gongPause = segments.gong ? pauseDuration : 0;
     const beforeSilentPauses =
       Math.max(0, segments.beforeSilent.audioIds.length - 1) * pauseDuration;
@@ -448,6 +420,37 @@ export class AudioSessionManager {
     } else if (currentSegment === 'afterSilent' && elapsedSeconds >= afterSilentEnd) {
       this.handleSessionComplete();
     }
+  }
+
+  private getPauseCount(): number {
+    if (!this.session) return 0;
+
+    const { segments } = this.session;
+    let pauseCount = 0;
+
+    // Pause after gong (if present)
+    if (segments.gong) pauseCount++;
+
+    // Pauses between before-silent audio files
+    if (segments.beforeSilent.audioIds.length > 1) {
+      pauseCount += segments.beforeSilent.audioIds.length - 1;
+    }
+
+    // Pause before silent meditation (if there's before-silent audio)
+    if (segments.beforeSilent.audioIds.length > 0) pauseCount++;
+
+    // Pause before after-silent audio (if there's silent meditation)
+    if (segments.silent.duration > 0 && segments.afterSilent.audioIds.length > 0) pauseCount++;
+
+    // Pauses between after-silent audio files
+    if (segments.afterSilent.audioIds.length > 1) {
+      pauseCount += segments.afterSilent.audioIds.length - 1;
+    }
+
+    // Pause before end gong (if there's after-silent audio)
+    if (segments.afterSilent.audioIds.length > 0 && segments.gong) pauseCount++;
+
+    return pauseCount;
   }
 
   private async transitionToBeforeSilent(): Promise<void> {

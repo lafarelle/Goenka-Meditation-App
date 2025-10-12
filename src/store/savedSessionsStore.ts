@@ -1,18 +1,9 @@
-import { createSegmentsCopy } from '@/utils/sessionUtils';
+import { createSegmentsCopy } from '@/utils/session';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { SessionSegment, SessionSegmentType } from './sessionStore';
-
-export type SavedSession = {
-  id: string;
-  name: string;
-  totalDuration: number;
-  segments: Record<SessionSegmentType, SessionSegment>;
-  createdAt: string;
-  lastUsed?: string;
-  useCount: number;
-};
+import { SessionSegment, SessionSegmentType } from '@/schemas/session';
+import { SavedSession } from '@/schemas/savedSession';
 
 type SavedSessionsState = {
   saved: SavedSession[];

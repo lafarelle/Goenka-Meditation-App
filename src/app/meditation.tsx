@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 import { useAudioSession } from '@/audio/useAudioSession';
-import { formatTime, getSessionTotalDuration } from '@/utils/meditationTimer';
+import { getSessionTotalDuration } from '@/utils/meditationTimer';
+import { formatTime } from '@/utils/timing';
 
 export default function Meditation() {
   const {

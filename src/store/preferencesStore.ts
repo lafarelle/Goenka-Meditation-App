@@ -6,7 +6,7 @@ import {
   GongPreference,
   MeditationPreferences,
   TimingPreference,
-} from './types';
+} from '@/schemas/preferences';
 
 type PreferencesState = {
   preferences: MeditationPreferences;
