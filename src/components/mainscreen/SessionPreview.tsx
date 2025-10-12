@@ -1,7 +1,8 @@
 import { segmentTypeToAudioMap } from '@/data/audioData';
+import { SessionSegmentType } from '@/schemas/session';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
-import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
+import { useSessionStore } from '@/store/sessionStore';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { formatDuration, getEffectiveDuration } from '@/utils/preferences';
 import { createSegmentsCopy, isValidSessionName } from '@/utils/sessionUtils';
@@ -30,6 +31,7 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   // Get enabled segments only
   const enabledSegments = orderedSegmentTypes.filter((type) => {
     const segment = segments[type];
+    if (!segment) return false;
     if (type === 'silent') {
       // Include silent if there's any silent duration or if it's the only thing enabled
       return (
@@ -59,8 +61,10 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
     if (!segment || segment.selectedAudioIds.length === 0) return ['None'];
 
     const audioOptions = segmentTypeToAudioMap[type];
+    if (!audioOptions) return ['None'];
+
     return segment.selectedAudioIds
-      .map((id) => audioOptions.find((audio) => audio.id === id)?.name)
+      .map((id: string) => audioOptions.find((audio) => audio.id === id)?.name)
       .filter(Boolean) as string[];
   };
 
@@ -201,7 +205,9 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
                   {preferences.timingPreference === 'total' ? 'Total Session' : 'Silent Meditation'}
                 </Text>
                 <Text className="text-lg font-semibold text-amber-600">
-                  {formatDuration(effectiveDuration.silentMinutes)}
+                  {preferences.timingPreference === 'total'
+                    ? formatDuration(totalDurationMinutes)
+                    : formatDuration(effectiveDuration.silentMinutes)}
                 </Text>
               </View>
 

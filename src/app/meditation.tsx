@@ -63,9 +63,7 @@ export default function Meditation() {
     <View className="flex flex-1 bg-black">
       <Stack.Screen
         options={{
-          title: 'Meditation',
-          headerStyle: { backgroundColor: '#000000' },
-          headerTintColor: '#ffffff',
+          headerShown: false,
         }}
       />
 
