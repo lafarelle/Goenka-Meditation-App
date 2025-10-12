@@ -1,4 +1,5 @@
-import { AudioItem, SegmentTypeToAudioMap } from '@/schemas/mainSchema';
+import { AudioItem } from '@/schemas';
+import { SegmentTypeToAudioMap } from '@/schemas/mainSchema';
 
 // Audio file references using require() for React Native
 const audioFiles = {

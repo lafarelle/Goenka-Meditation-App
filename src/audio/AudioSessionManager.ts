@@ -3,7 +3,7 @@ import { AudioSessionState, MeditationSession } from '@/schemas/audio';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
-import { calculateSessionTiming } from '@/utils/timing';
+import { calculateSessionTiming } from '@/utils/preferences/timingUtils';
 import { AudioPlayer } from './AudioPlayer';
 import { AudioPreloader } from './AudioPreloader';
 import { MeditationTimer } from './MeditationTimer';
@@ -106,7 +106,9 @@ export class AudioSessionManager {
     const timing = calculateSessionTiming(
       sessionStore.totalDurationMinutes,
       sessionStore.segments,
-      preferences.timingPreference
+      preferences.timingPreference,
+      preferences.pauseDuration,
+      preferences.gongPreference
     );
 
     return timing.totalDurationSec;
@@ -544,14 +546,18 @@ export class AudioSessionManager {
     return this.isEndGongPlaying;
   }
 
-  private async playSilentPause(durationSeconds: number = 10): Promise<void> {
+  private async playSilentPause(durationSeconds?: number): Promise<void> {
+    // Use user's pause duration preference if not specified
+    const pauseDuration =
+      durationSeconds ?? usePreferencesStore.getState().preferences.pauseDuration;
+
     return new Promise((resolve) => {
       // Don't change the playing state during silent pauses
       // The session timer continues running, so isPlaying should remain true
       this.silentPauseTimer = setTimeout(() => {
         this.silentPauseTimer = null;
         resolve();
-      }, durationSeconds * 100);
+      }, pauseDuration * 1000);
     });
   }
 

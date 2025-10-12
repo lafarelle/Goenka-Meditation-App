@@ -4,7 +4,11 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
-import { formatDuration, getEffectiveDuration } from '@/utils/preferences';
+import {
+  formatDuration,
+  formatDurationWithSeconds,
+  getEffectiveDuration,
+} from '@/utils/preferences';
 import { createSegmentsCopy, isValidSessionName } from '@/utils/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
@@ -195,8 +199,20 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
           const effectiveDuration = getEffectiveDuration(
             totalDurationMinutes,
             segments,
-            preferences.timingPreference
+            preferences.timingPreference,
+            preferences.pauseDuration,
+            preferences.gongPreference
           );
+
+          // Calculate exact seconds for all components
+          const audioDurationSec = effectiveDuration.audioDurationSec || 0;
+          const gongDurationSec = effectiveDuration.gongDurationSec || 0;
+          const pauseDurationSec = effectiveDuration.pauseDurationSec || 0;
+
+          // Calculate total duration manually to ensure all components are included
+          const silentDurationSec = effectiveDuration.silentMinutes * 60;
+          const totalDurationSec =
+            audioDurationSec + gongDurationSec + pauseDurationSec + silentDurationSec;
 
           return (
             <View className="space-y-2">
@@ -211,20 +227,40 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
                 </Text>
               </View>
 
-              {preferences.timingPreference === 'silent' && effectiveDuration.audioMinutes > 0 && (
+              {effectiveDuration.audioMinutes > 0 && (
                 <View className="flex-row items-center justify-between">
                   <Text className="text-sm text-stone-600">+ Audio Content</Text>
                   <Text className="text-sm text-stone-600">
-                    {formatDuration(effectiveDuration.audioMinutes)}
+                    {formatDurationWithSeconds(audioDurationSec)}
                   </Text>
                 </View>
               )}
 
-              {preferences.timingPreference === 'silent' && (
+              {gongDurationSec > 0 && (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-stone-600">+ Gong</Text>
+                  <Text className="text-sm text-stone-600">
+                    {formatDurationWithSeconds(gongDurationSec)}
+                  </Text>
+                </View>
+              )}
+
+              {preferences.pauseDuration > 0 && pauseDurationSec > 0 && (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-sm text-stone-600">+ Pause Duration</Text>
+                  <Text className="text-sm text-stone-600">
+                    {formatDurationWithSeconds(pauseDurationSec)}
+                  </Text>
+                </View>
+              )}
+
+              {(effectiveDuration.audioMinutes > 0 ||
+                gongDurationSec > 0 ||
+                (preferences.pauseDuration > 0 && pauseDurationSec > 0)) && (
                 <View className="mt-4 flex-row items-center justify-between border-t border-stone-200 pt-2">
                   <Text className="mt-1 text-lg font-semibold text-stone-800">Total Session</Text>
                   <Text className="mt-1 text-lg font-semibold text-amber-600">
-                    {formatDuration(effectiveDuration.totalMinutes)}
+                    {formatDurationWithSeconds(totalDurationSec)}
                   </Text>
                 </View>
               )}
