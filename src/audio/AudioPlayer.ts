@@ -63,7 +63,7 @@ export class AudioPlayer {
     }
 
     try {
-      this.player.play();
+      await this.player.play();
       this.isPlaying = true;
     } catch (error) {
       this.callbacks.onError?.(`Failed to play audio: ${error}`);
@@ -72,10 +72,10 @@ export class AudioPlayer {
   }
 
   async pause(): Promise<void> {
-    if (!this.player || !this.isPlaying) return;
+    if (!this.player) return;
 
     try {
-      this.player.pause();
+      await this.player.pause();
       this.isPlaying = false;
     } catch (error) {
       this.callbacks.onError?.(`Failed to pause audio: ${error}`);
@@ -86,8 +86,8 @@ export class AudioPlayer {
     if (!this.player) return;
 
     try {
-      this.player.pause();
-      this.player.seekTo(0);
+      await this.player.pause();
+      await this.player.seekTo(0);
       this.isPlaying = false;
     } catch (error) {
       this.callbacks.onError?.(`Failed to stop audio: ${error}`);
@@ -131,7 +131,7 @@ export class AudioPlayer {
   async cleanup(): Promise<void> {
     if (this.player) {
       try {
-        this.player.pause();
+        await this.player.pause();
         this.player = null;
       } catch (error) {
         this.callbacks.onError?.(`Failed to cleanup audio: ${error}`);
