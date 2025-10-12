@@ -24,6 +24,7 @@ export class AudioSessionManager {
   private silentPauseTimer: ReturnType<typeof setTimeout> | null = null; // Timer for silent pauses
   private totalSessionDuration = 0; // Total session duration in seconds
   private sessionStartTime = 0; // When the session started
+  private isTransitioning = false; // Flag to prevent multiple simultaneous transitions
 
   constructor() {
     this.sessionState = {
@@ -248,6 +249,10 @@ export class AudioSessionManager {
       return;
     }
 
+    // Prevent multiple calls to this method
+    if (this.sessionState.currentSegment === 'beforeSilent' || this.isTransitioning) return;
+
+    // Update state immediately to prevent multiple calls
     this.updateState({
       currentSegment: 'beforeSilent',
       isPlaying: true,
@@ -331,6 +336,9 @@ export class AudioSessionManager {
   private async startSilentMeditation(): Promise<void> {
     if (!this.session) return;
 
+    // Prevent multiple calls to this method
+    if (this.sessionState.currentSegment === 'silent' || this.isTransitioning) return;
+
     this.updateState({
       currentSegment: 'silent',
       isPlaying: true, // Keep playing state true during silent meditation
@@ -348,13 +356,35 @@ export class AudioSessionManager {
   private async playAfterSilentAudio(): Promise<void> {
     if (!this.session) return;
 
+    console.log(
+      'playAfterSilentAudio called, currentSegment:',
+      this.sessionState.currentSegment,
+      'isTransitioning:',
+      this.isTransitioning
+    );
+
+    // State is already updated in transitionToAfterSilent, so we can proceed
+
+    // Check if there are any after-silent audio files
+    if (
+      !this.session.segments.afterSilent.audioIds ||
+      this.session.segments.afterSilent.audioIds.length === 0
+    ) {
+      console.log('No after-silent audio files, completing session');
+      // No after-silent audio, go directly to session complete
+      await this.handleSessionComplete();
+      return;
+    }
+
+    console.log(
+      'Playing after-silent audio, audioIds:',
+      this.session.segments.afterSilent.audioIds
+    );
+
+    // State is already updated in transitionToAfterSilent
+
     // Add silent pause before after-silent audio
     await this.playSilentPause();
-
-    this.updateState({
-      currentSegment: 'afterSilent',
-      isPlaying: true,
-    });
 
     // Reset audio index for after-silent segment
     this.currentAudioIndex = 0;
@@ -363,10 +393,14 @@ export class AudioSessionManager {
     const firstAudioId = this.session.segments.afterSilent.audioIds[0];
     const audioFile = this.getAudioFile(firstAudioId);
 
+    console.log('First audio ID:', firstAudioId, 'Audio file:', audioFile);
+
     if (audioFile) {
+      console.log('Loading and playing audio...');
       await this.audioPlayer.loadAudio(firstAudioId, audioFile);
       await this.audioPlayer.play();
     } else {
+      console.log('No valid audio file, completing session');
       // If no valid audio, session complete
       await this.handleSessionComplete();
     }
@@ -414,6 +448,11 @@ export class AudioSessionManager {
     const { segments } = this.session;
     const currentSegment = this.sessionState.currentSegment;
 
+    // Prevent transitions if we're already transitioning
+    if (this.isTransitioning) {
+      return;
+    }
+
     // Use centralized timing calculation
     const preferences = usePreferencesStore.getState().preferences;
     const sessionStore = useSessionStore.getState();
@@ -449,12 +488,25 @@ export class AudioSessionManager {
 
     // Transition logic based on elapsed time
     if (currentSegment === 'gong' && elapsedSeconds >= beforeSilentEnd) {
+      console.log('Transitioning from gong to beforeSilent');
       this.transitionToBeforeSilent();
     } else if (currentSegment === 'beforeSilent' && elapsedSeconds >= beforeSilentEnd) {
+      console.log('Transitioning from beforeSilent to silent');
       this.transitionToSilent();
-    } else if (currentSegment === 'silent' && elapsedSeconds >= silentEnd) {
+    } else if (
+      currentSegment === 'silent' &&
+      elapsedSeconds >= silentEnd &&
+      !this.isTransitioning
+    ) {
+      console.log(
+        'Transitioning from silent to afterSilent, elapsed:',
+        elapsedSeconds,
+        'silentEnd:',
+        silentEnd
+      );
       this.transitionToAfterSilent();
     } else if (currentSegment === 'afterSilent' && elapsedSeconds >= afterSilentEnd) {
+      console.log('Transitioning from afterSilent to complete');
       this.handleSessionComplete();
     }
   }
@@ -491,15 +543,45 @@ export class AudioSessionManager {
   }
 
   private async transitionToBeforeSilent(): Promise<void> {
-    await this.playBeforeSilentAudio();
+    // Prevent multiple transitions to the same segment or concurrent transitions
+    if (this.sessionState.currentSegment === 'beforeSilent' || this.isTransitioning) return;
+    this.isTransitioning = true;
+    try {
+      await this.playBeforeSilentAudio();
+    } finally {
+      this.isTransitioning = false;
+    }
   }
 
   private async transitionToSilent(): Promise<void> {
-    await this.startSilentMeditation();
+    // Prevent multiple transitions to the same segment or concurrent transitions
+    if (this.sessionState.currentSegment === 'silent' || this.isTransitioning) return;
+    this.isTransitioning = true;
+    try {
+      await this.startSilentMeditation();
+    } finally {
+      this.isTransitioning = false;
+    }
   }
 
   private async transitionToAfterSilent(): Promise<void> {
-    await this.playAfterSilentAudio();
+    // Prevent multiple transitions to the same segment or concurrent transitions
+    if (this.sessionState.currentSegment === 'afterSilent' || this.isTransitioning) return;
+    console.log('Transitioning to after-silent audio...');
+    this.isTransitioning = true;
+
+    // Update state immediately to prevent multiple calls
+    this.updateState({
+      currentSegment: 'afterSilent',
+      isPlaying: true,
+    });
+
+    try {
+      await this.playAfterSilentAudio();
+    } finally {
+      this.isTransitioning = false;
+      console.log('Transition to after-silent completed, isTransitioning reset to false');
+    }
   }
 
   private calculateTotalRemainingTime(): number {
