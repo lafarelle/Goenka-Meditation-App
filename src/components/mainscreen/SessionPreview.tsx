@@ -209,13 +209,35 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
           const gongDurationSec = effectiveDuration.gongDurationSec || 0;
           const pauseDurationSec = effectiveDuration.pauseDurationSec || 0;
 
-          // Calculate total duration manually to ensure all components are included
+          // Check for warning condition first
+          const nonSilentDurationSec = audioDurationSec + gongDurationSec + pauseDurationSec;
+          const selectedDurationSec = totalDurationMinutes * 60;
+          const showWarning =
+            preferences.timingPreference === 'total' && nonSilentDurationSec >= selectedDurationSec;
+
+          // Calculate total duration based on timing preference and warning condition
           const silentDurationSec = effectiveDuration.silentMinutes * 60;
           const totalDurationSec =
-            audioDurationSec + gongDurationSec + pauseDurationSec + silentDurationSec;
+            preferences.timingPreference === 'total'
+              ? showWarning
+                ? nonSilentDurationSec // Use full audio + gong + pause duration when warning
+                : totalDurationMinutes * 60 // Use selected duration when no warning
+              : audioDurationSec + gongDurationSec + pauseDurationSec + silentDurationSec; // Calculate total for silent preference
 
           return (
             <View className="space-y-2">
+              {/* Warning message */}
+              {showWarning && (
+                <View className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
+                  <Text className="text-sm font-medium text-red-800">
+                    ⚠️ Warning: Audio content, gong, and pauses (
+                    {formatDurationWithSeconds(nonSilentDurationSec)}) exceed or equal the selected
+                    duration ({formatDuration(totalDurationMinutes)}). There will be no silent
+                    meditation time.
+                  </Text>
+                </View>
+              )}
+
               <View className="flex-row items-center justify-between">
                 <Text className="text-lg font-semibold text-stone-800">
                   {preferences.timingPreference === 'total' ? 'Total Session' : 'Silent Meditation'}
@@ -258,7 +280,9 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
                 gongDurationSec > 0 ||
                 (preferences.pauseDuration > 0 && pauseDurationSec > 0)) && (
                 <View className="mt-4 flex-row items-center justify-between border-t border-stone-200 pt-2">
-                  <Text className="mt-1 text-lg font-semibold text-stone-800">Total Session</Text>
+                  <Text className="mt-1 text-lg font-semibold text-stone-800">
+                    {preferences.timingPreference === 'total' ? 'Actual Duration' : 'Total Session'}
+                  </Text>
                   <Text className="mt-1 text-lg font-semibold text-amber-600">
                     {formatDurationWithSeconds(totalDurationSec)}
                   </Text>

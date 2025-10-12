@@ -111,6 +111,18 @@ export class AudioSessionManager {
       preferences.gongPreference
     );
 
+    // Check for warning condition - if audio + gong + pause >= selected duration
+    const nonSilentDurationSec =
+      timing.audioDurationSec + timing.gongDurationSec + timing.pauseDurationSec;
+    const selectedDurationSec = sessionStore.totalDurationMinutes * 60;
+    const showWarning =
+      preferences.timingPreference === 'total' && nonSilentDurationSec >= selectedDurationSec;
+
+    // If warning, use the full duration of audio + gong + pause
+    if (showWarning) {
+      return nonSilentDurationSec;
+    }
+
     return timing.totalDurationSec;
   }
 
@@ -329,13 +341,8 @@ export class AudioSessionManager {
   }
 
   private async handleSessionComplete(): Promise<void> {
-    // Check if we should play end gong
-    const preferences = usePreferencesStore.getState().preferences;
-    if (preferences.gongPreference !== 'none') {
-      await this.playEndGong();
-    } else {
-      this.finalizeSession();
-    }
+    // Always play end gong - use selected gong or default to G1
+    await this.playEndGong();
   }
 
   private async playAfterSilentAudio(): Promise<void> {
@@ -527,7 +534,12 @@ export class AudioSessionManager {
     });
 
     const preferences = usePreferencesStore.getState().preferences;
-    const gongAudio = getGongAudioByPreference(preferences.gongPreference);
+    let gongAudio = getGongAudioByPreference(preferences.gongPreference);
+
+    // If no gong was selected for the beginning, use G1 as default for the end
+    if (!gongAudio) {
+      gongAudio = getGongAudioByPreference('G1');
+    }
 
     if (gongAudio) {
       const audioFile = this.getAudioFile(gongAudio.id);
