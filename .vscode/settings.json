@@ -1,0 +1,37 @@
+
+{
+  "mcp.servers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {
+        "WORKSPACE_PATH": "${workspaceFolder}",
+        "INDEX_DEPTH": "deep",
+        "INCLUDE_DEPENDENCIES": "true"
+      }
+    }
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.expo/**": true,
+    "**/.expo-shared/**": true,
+    "**/ios/build/**": true,
+    "**/android/build/**": true,
+    "**/android/.gradle/**": true,
+    "**/.bundle/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.expo": true,
+    "**/.expo-shared": true,
+    "**/ios/Pods": true,
+    "**/ios/build": true,
+    "**/android/build": true,
+    "**/android/.gradle": true,
+    "**/.bundle": true,
+    "**/dist": true,
+    "**/.cache": true
+  }
+}
