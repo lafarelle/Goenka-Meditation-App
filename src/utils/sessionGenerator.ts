@@ -55,16 +55,6 @@ export function generateMeditationSession(
   });
   currentTimeSec += gongDurationSec;
 
-  // Calculate total duration of all enabled audio segments
-  const enabledAudioSegments = orderedSegmentTypes.filter(
-    (type) => type !== 'silent' && segments[type].isEnabled
-  );
-
-  const totalAudioDurationSec = enabledAudioSegments.reduce(
-    (acc, type) => acc + segments[type].durationSec,
-    0
-  );
-
   // Use the calculated silent duration from timing preference
   const finalSilentDurationSec = Math.max(0, silentDurationSec - gongDurationSec);
 

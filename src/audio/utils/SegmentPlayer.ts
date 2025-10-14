@@ -55,7 +55,10 @@ export class SegmentPlayer {
   }
 
   async playGong(getElapsedSeconds: () => number): Promise<void> {
-    if (!this.session?.segments.gong) return;
+    if (!this.session?.segments.gong) {
+      console.warn('[SegmentPlayer] No gong segment configured');
+      return;
+    }
 
     this.isEndGongPlaying = false; // Reset flag for start gong
     this.onStateUpdate?.({
@@ -67,11 +70,18 @@ export class SegmentPlayer {
     const audioFile = getAudioFile(gongAudioId);
 
     if (audioFile) {
-      // Track when this audio starts
-      this.onAudioStarted?.(getElapsedSeconds());
+      try {
+        // Track when this audio starts
+        this.onAudioStarted?.(getElapsedSeconds());
 
-      await this.audioPlayer.loadAudio(gongAudioId, audioFile);
-      await this.audioPlayer.play();
+        await this.audioPlayer.loadAudio(gongAudioId, audioFile);
+        await this.audioPlayer.play();
+      } catch (error) {
+        console.error('[SegmentPlayer] Error playing gong:', error);
+        throw error;
+      }
+    } else {
+      console.error('[SegmentPlayer] Gong audio file not found:', gongAudioId);
     }
   }
 
@@ -80,11 +90,17 @@ export class SegmentPlayer {
     getElapsedSeconds: () => number
   ): Promise<void> {
     if (!this.session || this.session.segments.beforeSilent.audioIds.length === 0) {
+      console.log('[SegmentPlayer] No beforeSilent audio configured, skipping');
       return;
     }
 
     // Prevent multiple calls to this method
-    if (currentSegment === 'beforeSilent' || this.isTransitioning) return;
+    if (currentSegment === 'beforeSilent' || this.isTransitioning) {
+      console.log('[SegmentPlayer] Already in beforeSilent or transitioning, skipping');
+      return;
+    }
+
+    console.log('[SegmentPlayer] Starting beforeSilent audio playback');
 
     // Update state immediately to prevent multiple calls
     this.onStateUpdate?.({
@@ -100,11 +116,18 @@ export class SegmentPlayer {
     const audioFile = getAudioFile(firstAudioId);
 
     if (audioFile) {
-      // Track when this audio starts
-      this.onAudioStarted?.(getElapsedSeconds());
+      try {
+        // Track when this audio starts
+        this.onAudioStarted?.(getElapsedSeconds());
 
-      await this.audioPlayer.loadAudio(firstAudioId, audioFile);
-      await this.audioPlayer.play();
+        await this.audioPlayer.loadAudio(firstAudioId, audioFile);
+        await this.audioPlayer.play();
+      } catch (error) {
+        console.error('[SegmentPlayer] Error playing beforeSilent audio:', error);
+        throw error;
+      }
+    } else {
+      console.error('[SegmentPlayer] BeforeSilent audio file not found:', firstAudioId);
     }
   }
 
@@ -115,22 +138,34 @@ export class SegmentPlayer {
     const audioIds = this.session.segments.beforeSilent.audioIds;
 
     if (this.currentAudioIndex < audioIds.length) {
-      // Add silent pause before next audio
-      await this.playSilentPause();
-      // Play next audio
-      const nextAudioId = audioIds[this.currentAudioIndex];
-      const audioFile = getAudioFile(nextAudioId);
+      console.log(
+        `[SegmentPlayer] Playing next beforeSilent audio (${this.currentAudioIndex + 1}/${audioIds.length})`
+      );
 
-      if (audioFile) {
-        // Track when this audio starts
-        this.onAudioStarted?.(getElapsedSeconds());
+      try {
+        // Add silent pause before next audio
+        await this.playSilentPause();
+        // Play next audio
+        const nextAudioId = audioIds[this.currentAudioIndex];
+        const audioFile = getAudioFile(nextAudioId);
 
-        await this.audioPlayer.loadAudio(nextAudioId, audioFile);
-        await this.audioPlayer.play();
-        return true;
+        if (audioFile) {
+          // Track when this audio starts
+          this.onAudioStarted?.(getElapsedSeconds());
+
+          await this.audioPlayer.loadAudio(nextAudioId, audioFile);
+          await this.audioPlayer.play();
+          return true;
+        } else {
+          console.error('[SegmentPlayer] Audio file not found:', nextAudioId);
+        }
+      } catch (error) {
+        console.error('[SegmentPlayer] Error playing next beforeSilent audio:', error);
+        throw error;
       }
     }
 
+    console.log('[SegmentPlayer] No more beforeSilent audio to play');
     return false;
   }
 
@@ -273,10 +308,16 @@ export class SegmentPlayer {
     const pauseDuration =
       durationSeconds ?? usePreferencesStore.getState().preferences.pauseDuration;
 
+    console.log(`[SegmentPlayer] Starting silent pause (${pauseDuration}s)`);
+
     return new Promise((resolve) => {
+      // Clear any existing timer first
+      this.clearSilentPauseTimer();
+
       // Don't change the playing state during silent pauses
       // The session timer continues running, so isPlaying should remain true
       this.silentPauseTimer = setTimeout(() => {
+        console.log('[SegmentPlayer] Silent pause completed');
         this.silentPauseTimer = null;
         resolve();
       }, pauseDuration * 1000);
@@ -285,9 +326,20 @@ export class SegmentPlayer {
 
   clearSilentPauseTimer(): void {
     if (this.silentPauseTimer) {
+      console.log('[SegmentPlayer] Clearing silent pause timer');
       clearTimeout(this.silentPauseTimer);
       this.silentPauseTimer = null;
     }
   }
-}
 
+  /**
+   * Cleanup resources to prevent memory leaks
+   */
+  cleanup(): void {
+    this.clearSilentPauseTimer();
+    this.session = null;
+    this.currentAudioIndex = 0;
+    this.isEndGongPlaying = false;
+    this.isTransitioning = false;
+  }
+}

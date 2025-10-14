@@ -115,9 +115,8 @@ export class AudioSessionManager {
       if (this.session.segments.gong) {
         await this.segmentPlayer.playGong(() => this.historyTracker.getElapsedSeconds());
       } else {
-        await this.segmentPlayer.playBeforeSilentAudio(
-          this.sessionState.currentSegment,
-          () => this.historyTracker.getElapsedSeconds()
+        await this.segmentPlayer.playBeforeSilentAudio(this.sessionState.currentSegment, () =>
+          this.historyTracker.getElapsedSeconds()
         );
       }
     } catch (error) {
@@ -125,10 +124,15 @@ export class AudioSessionManager {
     }
   }
 
+  /**
+   * Handles audio playback completion (event-driven transitions)
+   * This is the primary mechanism for segment transitions
+   */
   private async handleAudioFinished(): Promise<void> {
     if (!this.session) return;
 
     const currentSegment = this.sessionState.currentSegment;
+    console.log(`[AudioSessionManager] Audio finished for segment: ${currentSegment}`);
 
     // Record the playback event for the audio that just finished
     this.historyTracker.recordCurrentAudioPlayback(
@@ -139,37 +143,45 @@ export class AudioSessionManager {
       true
     );
 
-    if (currentSegment === 'gong') {
-      if (this.segmentPlayer.isEndGong()) {
-        this.finalizeSession();
-      } else {
-        await this.segmentPlayer.playSilentPause();
-        await this.segmentPlayer.playBeforeSilentAudio(
-          this.sessionState.currentSegment,
-          () => this.historyTracker.getElapsedSeconds()
+    try {
+      if (currentSegment === 'gong') {
+        if (this.segmentPlayer.isEndGong()) {
+          console.log('[AudioSessionManager] End gong finished, finalizing session');
+          this.finalizeSession();
+        } else {
+          console.log('[AudioSessionManager] Start gong finished, transitioning to beforeSilent');
+          await this.segmentPlayer.playSilentPause();
+          await this.segmentPlayer.playBeforeSilentAudio(this.sessionState.currentSegment, () =>
+            this.historyTracker.getElapsedSeconds()
+          );
+        }
+      } else if (currentSegment === 'beforeSilent') {
+        const hasMore = await this.segmentPlayer.playNextBeforeSilentAudio(() =>
+          this.historyTracker.getElapsedSeconds()
         );
-      }
-    } else if (currentSegment === 'beforeSilent') {
-      const hasMore = await this.segmentPlayer.playNextBeforeSilentAudio(() =>
-        this.historyTracker.getElapsedSeconds()
-      );
-      if (!hasMore) {
-        await this.segmentPlayer.playSilentPause();
-        await this.segmentPlayer.startSilentMeditation(
-          this.sessionState.currentSegment,
-          () => this.historyTracker.getElapsedSeconds()
+        if (!hasMore) {
+          console.log(
+            '[AudioSessionManager] All beforeSilent audio finished, transitioning to silent'
+          );
+          // Disable time-based transition since we're handling it here
+          this.transitionManager.markTransitionComplete('beforeSilent->silent');
+          await this.segmentPlayer.playSilentPause();
+          await this.segmentPlayer.startSilentMeditation(this.sessionState.currentSegment, () =>
+            this.historyTracker.getElapsedSeconds()
+          );
+        }
+      } else if (currentSegment === 'afterSilent') {
+        const hasMore = await this.segmentPlayer.playNextAfterSilentAudio(() =>
+          this.historyTracker.getElapsedSeconds()
         );
+        if (!hasMore) {
+          console.log('[AudioSessionManager] All afterSilent audio finished, completing session');
+          await this.segmentPlayer.playSilentPause();
+          await this.handleSessionComplete();
+        }
       }
-    } else if (currentSegment === 'afterSilent') {
-      const hasMore = await this.segmentPlayer.playNextAfterSilentAudio(() =>
-        this.historyTracker.getElapsedSeconds()
-      );
-      if (!hasMore) {
-        await this.segmentPlayer.playSilentPause();
-        await this.handleSessionComplete();
-      }
-    } else if (currentSegment === 'gong' && this.segmentPlayer.isEndGong()) {
-      this.finalizeSession();
+    } catch (error) {
+      this.handleError(`Error in handleAudioFinished: ${error}`);
     }
   }
 
@@ -178,11 +190,13 @@ export class AudioSessionManager {
     await this.segmentPlayer.playEndGong(() => this.historyTracker.getElapsedSeconds());
   }
 
+  /**
+   * Updates progress during audio playback
+   * Note: remainingTime is recalculated in updateState, so we don't need to pass it here
+   */
   private updateProgress(progress: number): void {
-    const remainingTime = this.calculateTotalRemainingTime();
     this.updateState({
       progress,
-      remainingTime,
     });
   }
 
@@ -223,70 +237,112 @@ export class AudioSessionManager {
     this.callbacks.onError?.(error);
   }
 
+  /**
+   * Time-based fallback transition to beforeSilent segment
+   * This should rarely trigger if event-driven transitions work correctly
+   */
   private async transitionToBeforeSilent(): Promise<void> {
     if (
       this.sessionState.currentSegment === 'beforeSilent' ||
       this.segmentPlayer.getIsTransitioning()
     )
       return;
+
+    console.log('[AudioSessionManager] Time-based transition to beforeSilent (fallback)');
     this.segmentPlayer.setIsTransitioning(true);
+
     try {
-      await this.segmentPlayer.playBeforeSilentAudio(
-        this.sessionState.currentSegment,
-        () => this.historyTracker.getElapsedSeconds()
+      // Record previous audio playback before transitioning
+      if (this.sessionState.currentSegment) {
+        this.historyTracker.recordCurrentAudioPlayback(
+          this.session,
+          this.sessionState.currentSegment,
+          this.segmentPlayer.getCurrentAudioIndex(),
+          this.currentAudioStartTime,
+          true
+        );
+      }
+
+      await this.segmentPlayer.playBeforeSilentAudio(this.sessionState.currentSegment, () =>
+        this.historyTracker.getElapsedSeconds()
       );
+    } catch (error) {
+      this.handleError(`Error in transitionToBeforeSilent: ${error}`);
     } finally {
       this.segmentPlayer.setIsTransitioning(false);
     }
   }
 
+  /**
+   * Time-based fallback transition to silent meditation
+   * This should rarely trigger if event-driven transitions work correctly
+   */
   private async transitionToSilent(): Promise<void> {
-    if (
-      this.sessionState.currentSegment === 'silent' ||
-      this.segmentPlayer.getIsTransitioning()
-    )
+    if (this.sessionState.currentSegment === 'silent' || this.segmentPlayer.getIsTransitioning())
       return;
+
+    console.log('[AudioSessionManager] Time-based transition to silent (fallback)');
     this.segmentPlayer.setIsTransitioning(true);
+
     try {
-      await this.segmentPlayer.startSilentMeditation(
-        this.sessionState.currentSegment,
-        () => this.historyTracker.getElapsedSeconds()
+      // Record previous audio playback before transitioning
+      if (this.sessionState.currentSegment) {
+        this.historyTracker.recordCurrentAudioPlayback(
+          this.session,
+          this.sessionState.currentSegment,
+          this.segmentPlayer.getCurrentAudioIndex(),
+          this.currentAudioStartTime,
+          true
+        );
+      }
+
+      await this.segmentPlayer.startSilentMeditation(this.sessionState.currentSegment, () =>
+        this.historyTracker.getElapsedSeconds()
       );
+    } catch (error) {
+      this.handleError(`Error in transitionToSilent: ${error}`);
     } finally {
       this.segmentPlayer.setIsTransitioning(false);
     }
   }
 
+  /**
+   * Time-based fallback transition to afterSilent segment
+   * This should rarely trigger if event-driven transitions work correctly
+   */
   private async transitionToAfterSilent(): Promise<void> {
     if (
       this.sessionState.currentSegment === 'afterSilent' ||
       this.segmentPlayer.getIsTransitioning()
     )
       return;
-    console.log('Transitioning to after-silent audio...');
+
+    console.log('[AudioSessionManager] Time-based transition to afterSilent (fallback)');
     this.segmentPlayer.setIsTransitioning(true);
 
-    this.historyTracker.recordCurrentAudioPlayback(
-      this.session,
-      this.sessionState.currentSegment,
-      this.segmentPlayer.getCurrentAudioIndex(),
-      this.currentAudioStartTime,
-      true
-    );
-
-    this.updateState({
-      currentSegment: 'afterSilent',
-      isPlaying: true,
-    });
-
     try {
-      await this.segmentPlayer.playAfterSilentAudio(
+      // Record previous audio playback before transitioning
+      this.historyTracker.recordCurrentAudioPlayback(
+        this.session,
         this.sessionState.currentSegment,
-        () => this.historyTracker.getElapsedSeconds()
+        this.segmentPlayer.getCurrentAudioIndex(),
+        this.currentAudioStartTime,
+        true
       );
+
+      this.updateState({
+        currentSegment: 'afterSilent',
+        isPlaying: true,
+      });
+
+      await this.segmentPlayer.playAfterSilentAudio(this.sessionState.currentSegment, () =>
+        this.historyTracker.getElapsedSeconds()
+      );
+    } catch (error) {
+      this.handleError(`Error in transitionToAfterSilent: ${error}`);
     } finally {
       this.segmentPlayer.setIsTransitioning(false);
-      console.log('Transition to after-silent completed');
+      console.log('[AudioSessionManager] Transition to afterSilent completed');
     }
   }
 
@@ -356,11 +412,23 @@ export class AudioSessionManager {
     return { ...this.sessionState };
   }
 
+  /**
+   * Cleanup all resources and prevent memory leaks
+   */
   async cleanup(): Promise<void> {
+    console.log('[AudioSessionManager] Cleaning up resources');
+
     this.sessionTimer.stop();
     await this.audioPlayer.cleanup();
-    this.segmentPlayer.clearSilentPauseTimer();
+    this.segmentPlayer.cleanup();
+    this.transitionManager.resetTransitions();
     await AudioPreloader.cleanup();
+
+    // Clear references to prevent memory leaks
+    this.session = null;
+    this.callbacks = {};
+    this.isInitialized = false;
+    this.totalSessionDuration = 0;
+    this.currentAudioStartTime = 0;
   }
 }
-

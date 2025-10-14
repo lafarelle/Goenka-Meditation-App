@@ -26,4 +26,20 @@ module.exports = defineConfig([
       'react/display-name': 'off',
     },
   },
+  {
+    files: ['**/*.test.{js,ts,tsx}', '**/__tests__/**', 'jest.setup.js'],
+    languageOptions: {
+      globals: {
+        jest: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        test: 'readonly',
+      },
+    },
+  },
 ]);

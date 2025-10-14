@@ -30,6 +30,8 @@ export class SegmentTransitionManager {
 
   setSession(session: MeditationSession): void {
     this.session = session;
+    // Reset transitions when a new session starts
+    this.resetTransitions();
   }
 
   resetTransitions(): void {
@@ -37,7 +39,17 @@ export class SegmentTransitionManager {
   }
 
   /**
+   * Mark a transition as complete to prevent time-based fallback from triggering
+   * This is called by event-driven transitions to disable the fallback mechanism
+   */
+  markTransitionComplete(transitionKey: string): void {
+    console.log(`[SegmentTransitionManager] Marking transition complete: ${transitionKey}`);
+    this.attemptedTransitions.add(transitionKey);
+  }
+
+  /**
    * Check if we need to transition to the next segment based on elapsed time
+   * This is a FALLBACK mechanism - event-driven transitions should handle most cases
    */
   checkSegmentTransition(
     elapsedSeconds: number,
@@ -59,7 +71,9 @@ export class SegmentTransitionManager {
     const timing = calculateSessionTiming(
       sessionStore.totalDurationMinutes,
       sessionStore.segments,
-      preferences.timingPreference
+      preferences.timingPreference,
+      preferences.pauseDuration,
+      preferences.gongPreference
     );
 
     // Calculate transition points using centralized timing
@@ -68,17 +82,23 @@ export class SegmentTransitionManager {
     const silentDuration = segments.silent.duration;
     const afterSilentDuration = segments.afterSilent.duration;
 
-    // Use pause duration from timing utility
-    const pauseDuration = timing.pauseDurationSec / this.getPauseCount();
-    const gongPause = segments.gong ? pauseDuration : 0;
+    // Calculate individual pause duration
+    const pauseCount = this.getPauseCount();
+    const individualPauseDuration = pauseCount > 0 ? timing.pauseDurationSec / pauseCount : 0;
+
+    const gongPause = segments.gong ? individualPauseDuration : 0;
     const beforeSilentPauses =
-      Math.max(0, segments.beforeSilent.audioIds.length - 1) * pauseDuration;
-    const beforeSilentEndPause = segments.beforeSilent.audioIds.length > 0 ? pauseDuration : 0;
+      Math.max(0, segments.beforeSilent.audioIds.length - 1) * individualPauseDuration;
+    const beforeSilentEndPause =
+      segments.beforeSilent.audioIds.length > 0 ? individualPauseDuration : 0;
     const silentEndPause =
-      segments.silent.duration > 0 && segments.afterSilent.audioIds.length > 0 ? pauseDuration : 0;
-    const afterSilentPauses = Math.max(0, segments.afterSilent.audioIds.length - 1) * pauseDuration;
+      segments.silent.duration > 0 && segments.afterSilent.audioIds.length > 0
+        ? individualPauseDuration
+        : 0;
+    const afterSilentPauses =
+      Math.max(0, segments.afterSilent.audioIds.length - 1) * individualPauseDuration;
     const afterSilentEndPause =
-      segments.afterSilent.audioIds.length > 0 && segments.gong ? pauseDuration : 0;
+      segments.afterSilent.audioIds.length > 0 && segments.gong ? individualPauseDuration : 0;
 
     const beforeSilentEnd =
       gongDuration + gongPause + beforeSilentDuration + beforeSilentPauses + beforeSilentEndPause;
@@ -86,13 +106,15 @@ export class SegmentTransitionManager {
     const afterSilentEnd =
       silentEnd + afterSilentDuration + afterSilentPauses + afterSilentEndPause;
 
-    // Transition logic based on elapsed time
+    // Transition logic based on elapsed time (FALLBACK ONLY)
     if (
       currentSegment === 'gong' &&
       elapsedSeconds >= beforeSilentEnd &&
       !this.attemptedTransitions.has('gong->beforeSilent')
     ) {
-      console.log('Transitioning from gong to beforeSilent');
+      console.log(
+        `[SegmentTransitionManager] TIME-BASED FALLBACK: gong -> beforeSilent (elapsed: ${elapsedSeconds.toFixed(1)}s, expected: ${beforeSilentEnd.toFixed(1)}s)`
+      );
       this.attemptedTransitions.add('gong->beforeSilent');
       this.onTransitionToBeforeSilent?.();
     } else if (
@@ -100,7 +122,9 @@ export class SegmentTransitionManager {
       elapsedSeconds >= beforeSilentEnd &&
       !this.attemptedTransitions.has('beforeSilent->silent')
     ) {
-      console.log('Transitioning from beforeSilent to silent');
+      console.log(
+        `[SegmentTransitionManager] TIME-BASED FALLBACK: beforeSilent -> silent (elapsed: ${elapsedSeconds.toFixed(1)}s, expected: ${beforeSilentEnd.toFixed(1)}s)`
+      );
       this.attemptedTransitions.add('beforeSilent->silent');
       this.onTransitionToSilent?.();
     } else if (
@@ -109,10 +133,7 @@ export class SegmentTransitionManager {
       !this.attemptedTransitions.has('silent->afterSilent')
     ) {
       console.log(
-        'Transitioning from silent to afterSilent, elapsed:',
-        elapsedSeconds,
-        'silentEnd:',
-        silentEnd
+        `[SegmentTransitionManager] TIME-BASED FALLBACK: silent -> afterSilent (elapsed: ${elapsedSeconds.toFixed(1)}s, expected: ${silentEnd.toFixed(1)}s)`
       );
       this.attemptedTransitions.add('silent->afterSilent');
       this.onTransitionToAfterSilent?.();
@@ -121,7 +142,9 @@ export class SegmentTransitionManager {
       elapsedSeconds >= afterSilentEnd &&
       !this.attemptedTransitions.has('afterSilent->complete')
     ) {
-      console.log('Transitioning from afterSilent to complete');
+      console.log(
+        `[SegmentTransitionManager] TIME-BASED FALLBACK: afterSilent -> complete (elapsed: ${elapsedSeconds.toFixed(1)}s, expected: ${afterSilentEnd.toFixed(1)}s)`
+      );
       this.attemptedTransitions.add('afterSilent->complete');
       this.onSessionComplete?.();
     }
@@ -161,4 +184,3 @@ export class SegmentTransitionManager {
     return pauseCount;
   }
 }
-

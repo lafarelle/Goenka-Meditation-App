@@ -1,5 +1,6 @@
-import { AudioItem } from '@/schemas/mainSchema';
-import { SessionSegmentType, useSessionStore } from '@/store/sessionStore';
+import { AudioItem } from '@/schemas/audio';
+import { SessionSegmentType } from '@/schemas/session';
+import { useSessionStore } from '@/store/sessionStore';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -103,7 +104,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
 
         // Auto-enable segment when at least one audio is selected
         const currentIds = selectedAudioIds.includes(audioId)
-          ? selectedAudioIds.filter((id) => id !== audioId)
+          ? selectedAudioIds.filter((id: string) => id !== audioId)
           : [...selectedAudioIds, audioId];
 
         setSegmentEnabled(segmentType, currentIds.length > 0);

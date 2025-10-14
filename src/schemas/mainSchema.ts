@@ -1,13 +1,13 @@
-import { SessionSegmentType } from "./session";
-import { AudioItem } from "./audio";
+import { SessionSegmentType } from './session';
+import { AudioItem } from './audio';
 
 // ---- Configuration Types ----
 export const defaultConfiguration = {
-  openingChant: "None",
-  openingGuidance: "None",
-  techniqueReminder: "None",
+  openingChant: 'None',
+  openingGuidance: 'None',
+  techniqueReminder: 'None',
   mettaPractice: 0, // Duration in minutes
-  closingChant: "None",
+  closingChant: 'None',
 };
 
 export type ConfigurationType = typeof defaultConfiguration;

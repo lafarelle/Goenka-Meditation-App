@@ -220,4 +220,3 @@ export class HistoryTracker {
     return this.currentHistorySessionId;
   }
 }
-

@@ -39,10 +39,7 @@ export function buildSessionFromStore(sessionStore: any): MeditationSession {
       segments.openingChant.durationSec
     );
   }
-  if (
-    segments.openingGuidance.isEnabled &&
-    segments.openingGuidance.selectedAudioIds.length > 0
-  ) {
+  if (segments.openingGuidance.isEnabled && segments.openingGuidance.selectedAudioIds.length > 0) {
     beforeSilentAudioIds.push(...segments.openingGuidance.selectedAudioIds);
     beforeSilentDuration += getSegmentDisplayDuration(
       'openingGuidance',
@@ -135,4 +132,3 @@ export function calculateTotalSessionDuration(
 
   return timing.totalDurationSec;
 }
-
