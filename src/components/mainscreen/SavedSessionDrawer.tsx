@@ -57,15 +57,15 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
               <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                <Ionicons name="bookmark" size={22} color="#FFFFFF" />
+                <Ionicons name="bookmark" size={22} color="#000000" />
               </View>
-              <Text className="text-2xl font-bold text-white">Saved Sessions</Text>
+              <Text className="text-2xl font-bold text-black">Saved Sessions</Text>
             </View>
             <TouchableOpacity
               onPress={onClose}
               activeOpacity={0.8}
               className="rounded-full bg-white/20 p-2">
-              <Ionicons name="close" size={24} color="#FFFFFF" />
+              <Ionicons name="close" size={24} color="#000000" />
             </TouchableOpacity>
           </View>
         </View>
