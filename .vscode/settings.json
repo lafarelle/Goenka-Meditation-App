@@ -35,11 +35,7 @@
   },
   // GitHub Copilot settings
   "github.copilot.enable": {
-    "*": true,
-    "plaintext": false,
-    "markdown": true,
-    "typescript": true,
-    "typescriptreact": true
+    "*": false
   },
   "github.copilot.advanced": {
     "debug.overrideEngine": "gpt-4",
