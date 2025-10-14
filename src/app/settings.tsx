@@ -1,8 +1,12 @@
 import { Container } from '@/components/Container';
-import { GongSelector, TimingPreferenceSelector } from '@/components/settingsscreen';
+import {
+  GongSelector,
+  PauseDurationSelector,
+  ResetDataButton,
+  TimingPreferenceSelector,
+} from '@/components/settingsscreen';
 import { Stack } from 'expo-router';
 import { ScrollView, Text, View } from 'react-native';
-import { PauseDurationSelector } from '@/components/settingsscreen/PauseDurationSelector';
 
 export default function Settings() {
   return (
@@ -20,6 +24,7 @@ export default function Settings() {
           <TimingPreferenceSelector />
           <GongSelector />
           <PauseDurationSelector />
+          <ResetDataButton />
         </ScrollView>
       </Container>
     </View>

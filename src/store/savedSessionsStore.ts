@@ -1,9 +1,9 @@
+import { SavedSession } from '@/schemas/savedSession';
+import { SessionSegment, SessionSegmentType } from '@/schemas/session';
 import { createSegmentsCopy } from '@/utils/session';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { SessionSegment, SessionSegmentType } from '@/schemas/session';
-import { SavedSession } from '@/schemas/savedSession';
 
 type SavedSessionsState = {
   saved: SavedSession[];
@@ -17,6 +17,7 @@ type SavedSessionsState = {
   getSessionById: (id: string) => SavedSession | undefined;
   getRecentlyUsedSessions: (limit?: number) => SavedSession[];
   getMostUsedSessions: (limit?: number) => SavedSession[];
+  clearAllSessions: () => void;
 };
 
 export const useSavedSessionsStore = create(
@@ -28,7 +29,7 @@ export const useSavedSessionsStore = create(
         const segmentsCopy = createSegmentsCopy(segments);
 
         const newSession: SavedSession = {
-          id: `saved_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          id: `saved_session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
           name,
           totalDuration,
           segments: segmentsCopy,
@@ -50,7 +51,7 @@ export const useSavedSessionsStore = create(
               ? {
                   ...session,
                   useCount: session.useCount + 1,
-                  lastUsed: new Date().toISOString(),
+                  lastUsedAt: new Date().toISOString(),
                 }
               : session
           ),
@@ -62,14 +63,16 @@ export const useSavedSessionsStore = create(
 
       getRecentlyUsedSessions: (limit = 5) => {
         return [...get().saved]
-          .filter((session) => session.lastUsed)
-          .sort((a, b) => new Date(b.lastUsed!).getTime() - new Date(a.lastUsed!).getTime())
+          .filter((session) => session.lastUsedAt)
+          .sort((a, b) => new Date(b.lastUsedAt!).getTime() - new Date(a.lastUsedAt!).getTime())
           .slice(0, limit);
       },
 
       getMostUsedSessions: (limit = 5) => {
         return [...get().saved].sort((a, b) => b.useCount - a.useCount).slice(0, limit);
       },
+
+      clearAllSessions: () => set({ saved: [] }),
     }),
     {
       name: 'saved-sessions',
