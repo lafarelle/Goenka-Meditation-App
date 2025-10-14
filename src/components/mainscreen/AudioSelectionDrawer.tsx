@@ -34,8 +34,10 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
     <TouchableOpacity
       onPress={onToggle}
       activeOpacity={0.8}
-      className={`mx-4 mb-2 rounded-lg p-4 ${
-        isSelected ? 'border border-amber-500 bg-amber-50' : 'border border-gray-200 bg-white'
+      className={`mx-4 mb-3 overflow-hidden rounded-2xl p-4 shadow-sm ${
+        isSelected
+          ? 'border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-yellow-50'
+          : 'border border-stone-200 bg-white'
       }`}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: isSelected }}
@@ -43,17 +45,27 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <Text
-            className={`text-base font-medium ${isSelected ? 'text-amber-700' : 'text-gray-900'}`}>
+            className={`text-base font-semibold ${isSelected ? 'text-amber-800' : 'text-stone-900'}`}>
             {option.name}
           </Text>
 
           {/* Metadata row */}
           {option.duration !== '0:00' && (
-            <View className="mt-2 flex-row flex-wrap items-center gap-3">
+            <View className="mt-2 flex-row flex-wrap items-center gap-2">
               {option.duration && option.duration !== '0:00' && (
-                <View className="flex-row items-center gap-1">
-                  <Ionicons name="time-outline" size={14} color="#6B7280" />
-                  <Text className="text-xs text-gray-600">{option.duration}</Text>
+                <View
+                  className={`flex-row items-center gap-1 rounded-full px-2 py-1 ${
+                    isSelected ? 'bg-amber-100' : 'bg-stone-100'
+                  }`}>
+                  <Ionicons
+                    name="time-outline"
+                    size={12}
+                    color={isSelected ? '#F59E0B' : '#78716c'}
+                  />
+                  <Text
+                    className={`text-xs font-medium ${isSelected ? 'text-amber-700' : 'text-stone-600'}`}>
+                    {option.duration}
+                  </Text>
                 </View>
               )}
             </View>
@@ -61,18 +73,22 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
 
           {/* Description for items without duration metadata */}
           {option.description && option.duration === '0:00' && (
-            <Text className="mt-1 text-xs text-gray-600">{option.description}</Text>
+            <Text className={`mt-1 text-xs ${isSelected ? 'text-amber-600' : 'text-stone-600'}`}>
+              {option.description}
+            </Text>
           )}
         </View>
 
         {/* Selection indicator with order */}
         <View className="ml-3 flex-col items-center justify-center">
           {isSelected && selectionOrder !== null && (
-            <View className="h-8 w-8 flex-row items-center justify-center rounded-full bg-amber-500">
-              <Text className="text-sm font-semibold text-white">{selectionOrder}</Text>
+            <View className="h-9 w-9 flex-row items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-yellow-500 shadow-md">
+              <Text className="text-base font-bold text-white">{selectionOrder}</Text>
             </View>
           )}
-          {!isSelected && <View className="h-8 w-8 rounded-full border-2 border-gray-300" />}
+          {!isSelected && (
+            <View className="h-9 w-9 rounded-full border-2 border-stone-300 bg-stone-50" />
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -152,32 +168,43 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         enablePanDownToClose
         backdropComponent={renderBackdrop}
         backgroundStyle={{
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#FFFBEB',
         }}
         handleIndicatorStyle={{
-          backgroundColor: '#D1D5DB',
+          backgroundColor: '#F59E0B',
+          width: 48,
+          height: 5,
         }}
         keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
         style={{ zIndex: 9999 }}>
         {/* Header */}
-        <View className="border-b border-gray-100 px-4 pb-4 pt-3">
+        <View className="border-b border-amber-200 bg-gradient-to-r from-amber-500 to-yellow-500 px-6 pb-5 pt-4 shadow-md">
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <Text className="text-lg font-medium text-gray-900">{title}</Text>
+              <View className="flex-row items-center gap-2">
+                <View className="h-8 w-8 items-center justify-center rounded-lg bg-white/20">
+                  <Ionicons name="musical-notes" size={18} color="#FFFFFF" />
+                </View>
+                <Text className="text-xl font-bold text-white">{title}</Text>
+              </View>
               {selectedAudioIds.length > 0 && (
-                <Text className="mt-1 text-sm text-gray-500">
-                  {selectedAudioIds.length} selected
-                </Text>
+                <View className="ml-10 mt-2 flex-row items-center gap-1">
+                  <View className="rounded-full bg-white/20 px-2 py-1">
+                    <Text className="text-xs font-bold text-white">
+                      {selectedAudioIds.length} selected
+                    </Text>
+                  </View>
+                </View>
               )}
             </View>
             <TouchableOpacity
               onPress={handleDone}
-              className="rounded-lg bg-gray-100 p-2"
+              className="rounded-full bg-white/20 p-2.5"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               accessibilityRole="button"
               accessibilityLabel="Done">
-              <Ionicons name="checkmark" size={20} color="#374151" />
+              <Ionicons name="checkmark" size={24} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
         </View>

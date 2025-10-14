@@ -49,49 +49,61 @@ export function PauseDurationSelector() {
   };
 
   return (
-    <View className="rounded-2xl bg-white p-4 shadow-sm">
-      <Text className="mb-4 text-lg font-medium text-gray-800">Pause Duration</Text>
-      <Text className="mb-4 text-sm text-gray-600">
-        Choose the pause duration between audio segments
-      </Text>
+    <View className="overflow-hidden rounded-2xl bg-white shadow-md">
+      <View className="border-b border-amber-100 bg-gradient-to-r from-amber-50 to-yellow-50 px-5 py-4">
+        <View className="flex-row items-center gap-2">
+          <View className="h-8 w-8 items-center justify-center rounded-lg bg-amber-100">
+            <Text className="text-lg">⏸️</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-lg font-bold text-stone-800">Pause Duration</Text>
+            <Text className="text-xs text-stone-600">Between audio segments</Text>
+          </View>
+        </View>
+      </View>
 
-      <View className="space-y-2">
-        {PAUSE_OPTIONS.map((option) => {
-          const isSelected = preferences.pauseDuration === option.value;
+      <View className="p-5">
+        <View className="space-y-3">
+          {PAUSE_OPTIONS.map((option) => {
+            const isSelected = preferences.pauseDuration === option.value;
 
-          return (
-            <TouchableOpacity
-              key={option.value}
-              onPress={() => handlePauseSelect(option.value)}
-              activeOpacity={0.8}
-              className={`flex-row items-center justify-between rounded-lg border p-3 ${
-                isSelected ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-gray-50'
-              }`}>
-              <View className="flex-1">
-                <Text
-                  className={`text-base font-medium ${
-                    isSelected ? 'text-yellow-900' : 'text-gray-800'
-                  }`}>
-                  {option.label}
-                </Text>
-                <Text className={`text-xs ${isSelected ? 'text-yellow-700' : 'text-gray-500'}`}>
-                  {option.description}
-                </Text>
-              </View>
-
-              <View
-                className={`h-4 w-4 rounded-full border-2 ${
-                  isSelected ? 'border-yellow-500 bg-yellow-500' : 'border-gray-300'
+            return (
+              <TouchableOpacity
+                key={option.value}
+                onPress={() => handlePauseSelect(option.value)}
+                activeOpacity={0.8}
+                className={`flex-row items-center justify-between rounded-xl border-2 p-4 ${
+                  isSelected
+                    ? 'border-amber-400 bg-gradient-to-r from-amber-50 to-yellow-50'
+                    : 'border-stone-200 bg-stone-50'
                 }`}>
-                {isSelected && (
-                  <View className="h-full w-full items-center justify-center">
-                    <View className="h-1.5 w-1.5 rounded-full bg-white" />
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+                <View className="flex-1">
+                  <Text
+                    className={`text-base font-bold ${
+                      isSelected ? 'text-amber-800' : 'text-stone-800'
+                    }`}>
+                    {option.label}
+                  </Text>
+                  <Text
+                    className={`mt-0.5 text-xs ${isSelected ? 'text-amber-600' : 'text-stone-600'}`}>
+                    {option.description}
+                  </Text>
+                </View>
+
+                <View
+                  className={`h-6 w-6 rounded-full border-2 ${
+                    isSelected ? 'border-amber-500 bg-amber-500' : 'border-stone-300 bg-white'
+                  }`}>
+                  {isSelected && (
+                    <View className="h-full w-full items-center justify-center">
+                      <View className="h-2.5 w-2.5 rounded-full bg-white" />
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
     </View>
   );

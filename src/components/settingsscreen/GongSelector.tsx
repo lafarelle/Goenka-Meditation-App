@@ -133,88 +133,110 @@ export function GongSelector() {
   );
 
   return (
-    <View className="rounded-2xl bg-white p-4 shadow-sm">
-      <Text className="mb-4 text-lg font-medium text-gray-800">Gong</Text>
-
-      {error && (
-        <View className="mb-3 rounded-lg border border-red-200 bg-red-50 p-2">
-          <Text className="text-xs text-red-700">{error}</Text>
+    <View className="overflow-hidden rounded-2xl bg-white shadow-md">
+      <View className="border-b border-amber-100 bg-gradient-to-r from-amber-50 to-yellow-50 px-5 py-4">
+        <View className="flex-row items-center gap-2">
+          <View className="h-8 w-8 items-center justify-center rounded-lg bg-amber-100">
+            <Text className="text-lg">🔔</Text>
+          </View>
+          <Text className="text-lg font-bold text-stone-800">Gong Selection</Text>
         </View>
-      )}
+      </View>
 
-      <View className="space-y-2">
-        {GONG_OPTIONS.map((option) => {
-          const isSelected = preferences.gongPreference === option.id;
-          const isPlaying = playingGong === option.id;
-          const isLoading = loadingGong === option.id;
+      <View className="p-5">
+        {error && (
+          <View className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3">
+            <View className="flex-row items-center gap-2">
+              <Text className="text-base">⚠️</Text>
+              <Text className="flex-1 text-sm font-medium text-red-700">{error}</Text>
+            </View>
+          </View>
+        )}
 
-          return (
-            <TouchableOpacity
-              key={option.id}
-              onPress={() => handleGongSelect(option.id)}
-              activeOpacity={0.8}
-              className={`flex-row items-center justify-between rounded-lg border p-3 ${
-                isSelected ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-gray-50'
-              }`}>
-              <Text
-                className={`text-base font-medium ${
-                  isSelected ? 'text-yellow-900' : 'text-gray-800'
+        <View className="space-y-3">
+          {GONG_OPTIONS.map((option) => {
+            const isSelected = preferences.gongPreference === option.id;
+            const isPlaying = playingGong === option.id;
+            const isLoading = loadingGong === option.id;
+
+            return (
+              <TouchableOpacity
+                key={option.id}
+                onPress={() => handleGongSelect(option.id)}
+                activeOpacity={0.8}
+                className={`flex-row items-center justify-between rounded-xl border-2 p-4 ${
+                  isSelected
+                    ? 'border-amber-400 bg-gradient-to-r from-amber-50 to-yellow-50'
+                    : 'border-stone-200 bg-stone-50'
                 }`}>
-                {option.name}
-              </Text>
-
-              <View className="flex-row items-center space-x-2">
-                {option.audioPath && (
-                  <TouchableOpacity
-                    onPress={() => handlePlayGong(option.id, option.audioPath)}
-                    disabled={isPlaying || isLoading}
-                    activeOpacity={0.8}
-                    className={`rounded-full px-2 py-1 ${
-                      isPlaying
-                        ? 'bg-yellow-200'
-                        : isLoading
-                          ? 'bg-yellow-100'
-                          : isSelected
-                            ? 'bg-yellow-100'
-                            : 'bg-gray-100'
+                <View className="flex-1">
+                  <Text
+                    className={`text-base font-bold ${
+                      isSelected ? 'text-amber-800' : 'text-stone-800'
                     }`}>
-                    <View className="flex-row items-center space-x-1">
-                      {isLoading && (
-                        <ActivityIndicator
-                          size="small"
-                          color={isSelected ? '#a16207' : '#6b7280'}
-                        />
-                      )}
-                      <Text
-                        className={`text-xs font-medium ${
-                          isPlaying
-                            ? 'text-yellow-800'
-                            : isLoading
-                              ? 'text-yellow-700'
-                              : isSelected
-                                ? 'text-yellow-700'
-                                : 'text-gray-600'
-                        }`}>
-                        {isPlaying ? 'Playing' : isLoading ? 'Loading' : 'Play'}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-
-                <View
-                  className={`h-4 w-4 rounded-full border-2 ${
-                    isSelected ? 'border-yellow-500 bg-yellow-500' : 'border-gray-300'
-                  }`}>
-                  {isSelected && (
-                    <View className="h-full w-full items-center justify-center">
-                      <View className="h-1.5 w-1.5 rounded-full bg-white" />
-                    </View>
-                  )}
+                    {option.name}
+                  </Text>
+                  <Text
+                    className={`mt-0.5 text-xs ${
+                      isSelected ? 'text-amber-600' : 'text-stone-600'
+                    }`}>
+                    {option.description}
+                  </Text>
                 </View>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+
+                <View className="ml-3 flex-row items-center gap-2">
+                  {option.audioPath && (
+                    <TouchableOpacity
+                      onPress={() => handlePlayGong(option.id, option.audioPath)}
+                      disabled={isPlaying || isLoading}
+                      activeOpacity={0.8}
+                      className={`rounded-full px-3 py-1.5 ${
+                        isPlaying
+                          ? 'bg-amber-200'
+                          : isLoading
+                            ? 'bg-amber-100'
+                            : isSelected
+                              ? 'bg-amber-100'
+                              : 'bg-stone-200'
+                      }`}>
+                      <View className="flex-row items-center gap-1">
+                        {isLoading && (
+                          <ActivityIndicator
+                            size="small"
+                            color={isSelected ? '#D97706' : '#78716c'}
+                          />
+                        )}
+                        <Text
+                          className={`text-xs font-bold ${
+                            isPlaying
+                              ? 'text-amber-800'
+                              : isLoading
+                                ? 'text-amber-700'
+                                : isSelected
+                                  ? 'text-amber-700'
+                                  : 'text-stone-700'
+                          }`}>
+                          {isPlaying ? 'Playing' : isLoading ? 'Loading' : 'Play'}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+
+                  <View
+                    className={`h-6 w-6 rounded-full border-2 ${
+                      isSelected ? 'border-amber-500 bg-amber-500' : 'border-stone-300 bg-white'
+                    }`}>
+                    {isSelected && (
+                      <View className="h-full w-full items-center justify-center">
+                        <View className="h-2.5 w-2.5 rounded-full bg-white" />
+                      </View>
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
     </View>
   );

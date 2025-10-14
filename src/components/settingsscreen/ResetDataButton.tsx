@@ -38,18 +38,12 @@ export function ResetDataButton() {
               removeAllBears();
 
               // Show success message
-              Alert.alert(
-                'Success',
-                'All data has been reset successfully.',
-                [{ text: 'OK' }]
-              );
+              Alert.alert('Success', 'All data has been reset successfully.', [{ text: 'OK' }]);
             } catch (error) {
               console.error('Error resetting data:', error);
-              Alert.alert(
-                'Error',
-                'Failed to reset some data. Please try again.',
-                [{ text: 'OK' }]
-              );
+              Alert.alert('Error', 'Failed to reset some data. Please try again.', [
+                { text: 'OK' },
+              ]);
             } finally {
               setIsResetting(false);
             }
@@ -60,29 +54,40 @@ export function ResetDataButton() {
   };
 
   return (
-    <View className="rounded-2xl bg-white p-4 shadow-sm">
-      <Text className="mb-2 text-lg font-medium text-gray-800">Developer Tools</Text>
-      <Text className="mb-4 text-sm text-gray-600">
-        For testing purposes only
-      </Text>
-
-      <TouchableOpacity
-        onPress={handleReset}
-        disabled={isResetting}
-        activeOpacity={0.8}
-        className={`rounded-lg border border-red-300 bg-red-50 p-4 ${
-          isResetting ? 'opacity-50' : ''
-        }`}>
-        <View className="items-center">
-          <Text className="text-base font-semibold text-red-700">
-            {isResetting ? 'Resetting...' : 'Reset All Data'}
-          </Text>
-          <Text className="mt-1 text-xs text-red-600">
-            Clear history, sessions, and preferences
-          </Text>
+    <View className="overflow-hidden rounded-2xl bg-white shadow-md">
+      <View className="border-b border-red-100 bg-gradient-to-r from-red-50 to-orange-50 px-5 py-4">
+        <View className="flex-row items-center gap-2">
+          <View className="h-8 w-8 items-center justify-center rounded-lg bg-red-100">
+            <Text className="text-lg">🛠️</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-lg font-bold text-stone-800">Developer Tools</Text>
+            <Text className="text-xs text-stone-600">For testing purposes only</Text>
+          </View>
         </View>
-      </TouchableOpacity>
+      </View>
+
+      <View className="p-5">
+        <TouchableOpacity
+          onPress={handleReset}
+          disabled={isResetting}
+          activeOpacity={0.8}
+          className={`overflow-hidden rounded-xl border-2 border-red-300 bg-gradient-to-r from-red-50 to-orange-50 p-5 shadow-sm ${
+            isResetting ? 'opacity-50' : ''
+          }`}>
+          <View className="items-center">
+            <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-red-100">
+              <Text className="text-2xl">⚠️</Text>
+            </View>
+            <Text className="text-base font-bold text-red-700">
+              {isResetting ? 'Resetting...' : 'Reset All Data'}
+            </Text>
+            <Text className="mt-1 text-center text-xs text-red-600">
+              Clear history, sessions, and preferences
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
-
