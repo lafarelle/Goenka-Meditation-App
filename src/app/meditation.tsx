@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 import { useAudioSession } from '@/audio/useAudioSession';
@@ -12,12 +12,15 @@ export default function Meditation() {
     sessionState,
     error,
     isInitialized,
+    isTimerComplete,
     startSession,
     pauseSession,
     resumeSession,
     stopSession,
     clearError,
   } = useAudioSession();
+
+  const hasShownCongrats = useRef(false);
 
   // Initialize total duration (for reference, but we use sessionState.remainingTime)
   useEffect(() => {
@@ -38,6 +41,18 @@ export default function Meditation() {
       Alert.alert('Audio Error', error, [{ text: 'OK', onPress: clearError }]);
     }
   }, [error, clearError]);
+
+  // Show congratulations when timer completes (meditation time is over)
+  useEffect(() => {
+    if (isTimerComplete && !hasShownCongrats.current) {
+      hasShownCongrats.current = true;
+      Alert.alert(
+        '🎉 Congratulations!',
+        'Well done on completing your meditation session. May you be happy, peaceful, and liberated.',
+        [{ text: 'OK' }]
+      );
+    }
+  }, [isTimerComplete]);
 
   // Handle session completion - navigate back to main screen
   useEffect(() => {

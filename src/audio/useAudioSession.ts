@@ -14,6 +14,7 @@ export function useAudioSession() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isTimerComplete, setIsTimerComplete] = useState(false);
   const sessionManagerRef = useRef<AudioSessionManager | null>(null);
 
   // Initialize session manager
@@ -38,6 +39,11 @@ export function useAudioSession() {
                 currentSegment: null,
                 progress: 1,
               }));
+            }
+          },
+          onTimerComplete: () => {
+            if (isMounted) {
+              setIsTimerComplete(true);
             }
           },
           onError: (error) => {
@@ -125,6 +131,7 @@ export function useAudioSession() {
     isLoading,
     error,
     isInitialized,
+    isTimerComplete,
     startSession,
     pauseSession,
     resumeSession,

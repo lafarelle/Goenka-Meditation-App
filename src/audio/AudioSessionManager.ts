@@ -16,6 +16,7 @@ export class AudioSessionManager {
   private callbacks: {
     onStateChange?: (state: AudioSessionState) => void;
     onSessionComplete?: () => void;
+    onTimerComplete?: () => void;
     onError?: (error: string) => void;
   } = {};
   private isInitialized = false;
@@ -52,6 +53,7 @@ export class AudioSessionManager {
   setCallbacks(callbacks: {
     onStateChange?: (state: AudioSessionState) => void;
     onSessionComplete?: () => void;
+    onTimerComplete?: () => void;
     onError?: (error: string) => void;
   }): void {
     this.callbacks = callbacks;
@@ -355,6 +357,9 @@ export class AudioSessionManager {
   }
 
   private async handleSessionComplete(): Promise<void> {
+    // Notify that the timer has completed (meditation time is over)
+    this.callbacks.onTimerComplete?.();
+
     // Always play end gong - use selected gong or default to G1
     await this.playEndGong();
   }
