@@ -152,6 +152,7 @@ export function GongSelector() {
             <TouchableOpacity
               key={option.id}
               onPress={() => handleGongSelect(option.id)}
+              activeOpacity={0.8}
               className={`flex-row items-center justify-between rounded-lg border p-3 ${
                 isSelected ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-gray-50'
               }`}>
@@ -167,6 +168,7 @@ export function GongSelector() {
                   <TouchableOpacity
                     onPress={() => handlePlayGong(option.id, option.audioPath)}
                     disabled={isPlaying || isLoading}
+                    activeOpacity={0.8}
                     className={`rounded-full px-2 py-1 ${
                       isPlaying
                         ? 'bg-yellow-200'

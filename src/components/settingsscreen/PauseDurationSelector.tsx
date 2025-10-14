@@ -63,6 +63,7 @@ export function PauseDurationSelector() {
             <TouchableOpacity
               key={option.value}
               onPress={() => handlePauseSelect(option.value)}
+              activeOpacity={0.8}
               className={`flex-row items-center justify-between rounded-lg border p-3 ${
                 isSelected ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 bg-gray-50'
               }`}>

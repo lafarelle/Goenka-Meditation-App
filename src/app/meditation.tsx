@@ -95,6 +95,7 @@ export default function Meditation() {
       <View className="absolute bottom-12 left-0 right-0 items-center">
         <TouchableOpacity
           onPress={sessionState.isPlaying ? pauseSession : resumeSession}
+          activeOpacity={0.8}
           className="rounded-full bg-white/20 p-6">
           <Ionicons name={sessionState.isPlaying ? 'pause' : 'play'} size={32} color="white" />
         </TouchableOpacity>

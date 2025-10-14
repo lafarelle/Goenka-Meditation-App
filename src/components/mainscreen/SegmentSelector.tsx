@@ -17,6 +17,7 @@ const SegmentButton = React.memo<SegmentButtonProps>(
     return (
       <TouchableOpacity
         onPress={onPress}
+        activeOpacity={0.8}
         className={`rounded-xl p-4 px-6 ${
           isEnabled ? 'border border-amber-500/30 bg-amber-50' : 'border border-stone-200 bg-white'
         }`}

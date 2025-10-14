@@ -112,6 +112,7 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
         </View>
         <TouchableOpacity
           onPress={handleSaveSession}
+          activeOpacity={0.8}
           className="flex-row items-center rounded-lg bg-amber-500 px-4 py-2">
           <Ionicons name="save-outline" size={16} color="#1F2937" />
           <Text className="ml-2 font-medium text-stone-800">Save Session</Text>

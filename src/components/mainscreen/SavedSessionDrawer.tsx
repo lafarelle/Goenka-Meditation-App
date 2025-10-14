@@ -55,7 +55,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
         {/* Header */}
         <View className="flex-row items-center justify-between border-b border-stone-200 bg-white px-6 py-4 pt-16">
           <Text className="text-xl font-bold text-stone-800">Saved Sessions</Text>
-          <TouchableOpacity onPress={onClose} className="p-2">
+          <TouchableOpacity onPress={onClose} activeOpacity={0.8} className="p-2">
             <Ionicons name="close" size={24} color="#57534e" />
           </TouchableOpacity>
         </View>
@@ -78,6 +78,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                 <TouchableOpacity
                   key={session.id}
                   onPress={() => loadSession(session.id)}
+                  activeOpacity={0.8}
                   className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
                   <View className="flex-row items-start justify-between">
                     <View className="flex-1">
@@ -111,6 +112,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                           e.stopPropagation();
                           deleteSession(session.id);
                         }}
+                        activeOpacity={0.8}
                         className="rounded-lg bg-red-50 p-2">
                         <Ionicons name="trash-outline" size={16} color="#EF4444" />
                       </TouchableOpacity>

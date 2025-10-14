@@ -32,6 +32,7 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
   return (
     <TouchableOpacity
       onPress={onToggle}
+      activeOpacity={0.8}
       className={`mx-4 mb-2 rounded-lg p-4 ${
         isSelected ? 'border border-amber-500 bg-amber-50' : 'border border-gray-200 bg-white'
       }`}

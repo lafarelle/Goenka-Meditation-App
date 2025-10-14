@@ -19,12 +19,13 @@ export function MainScreen() {
         <View className="flex-row items-center px-6 pb-4 pt-16">
           <TouchableOpacity
             onPress={() => setIsSavedSessionsDrawerVisible(true)}
+            activeOpacity={0.8}
             className="items-center p-2">
             <Ionicons name="bookmark-outline" size={24} color="#57534e" />
           </TouchableOpacity>
           <View className="flex-1" />
           <Link href="/settings" asChild>
-            <TouchableOpacity className="items-center p-2">
+            <TouchableOpacity activeOpacity={0.8} className="items-center p-2">
               <Ionicons name="settings-outline" size={24} color="#57534e" />
             </TouchableOpacity>
           </Link>

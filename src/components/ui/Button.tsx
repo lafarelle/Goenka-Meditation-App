@@ -11,6 +11,7 @@ export const Button = forwardRef<View, ButtonProps>(
     return (
       <TouchableOpacity
         ref={ref}
+        activeOpacity={0.8}
         {...touchableProps}
         className={`${styles.button} ${touchableProps.className}`}>
         <Text className={textClassName || styles.buttonText}>{title}</Text>

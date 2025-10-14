@@ -40,7 +40,7 @@ export function DurationSelector() {
 
   return (
     <View className="w-full">
-      <TouchableOpacity onPress={handleTimePress} className="mb-2">
+      <TouchableOpacity onPress={handleTimePress} activeOpacity={0.8} className="mb-2">
         <Text className="text-center text-4xl font-bold text-amber-600">
           {totalDurationMinutes} min
         </Text>
