@@ -45,6 +45,7 @@ export class HistoryTracker {
       segments,
       preferences.timingPreference,
       preferences.pauseDuration,
+      preferences.gongEnabled,
       preferences.gongPreference
     );
 

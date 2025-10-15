@@ -24,9 +24,10 @@ export function calculateAudioSegmentsDuration(
  */
 export function calculateGongDuration(
   segments: Record<SessionSegmentType, SessionSegment>,
+  gongEnabled: boolean,
   gongPreference: 'none' | 'G1' | 'G2'
 ): number {
-  if (gongPreference === 'none') return 0;
+  if (!gongEnabled || gongPreference === 'none') return 0;
 
   // Use the default gong duration from the segment
   const gongSegment = segments.gong;
@@ -39,6 +40,7 @@ export function calculateGongDuration(
 export function calculatePauseDuration(
   segments: Record<SessionSegmentType, SessionSegment>,
   pauseDurationSec: PauseDuration,
+  gongEnabled: boolean,
   gongPreference: 'none' | 'G1' | 'G2'
 ): number {
   if (pauseDurationSec === 0) return 0;
@@ -47,7 +49,7 @@ export function calculatePauseDuration(
   const enabledAudioSegments: SessionSegmentType[] = [];
 
   // Add gong if enabled
-  if (gongPreference !== 'none') {
+  if (gongEnabled && gongPreference !== 'none') {
     enabledAudioSegments.push('gong');
   }
 
@@ -80,6 +82,7 @@ export function calculateSessionTiming(
   segments: Record<SessionSegmentType, SessionSegment>,
   timingPreference: TimingPreference,
   pauseDurationSec: PauseDuration = 0,
+  gongEnabled: boolean = false,
   gongPreference: 'none' | 'G1' | 'G2' = 'none'
 ): {
   totalDurationSec: number;
@@ -90,8 +93,13 @@ export function calculateSessionTiming(
 } {
   const totalDurationSec = totalDurationMinutes * 60;
   const audioDurationSec = calculateAudioSegmentsDuration(segments);
-  const gongDurationSec = calculateGongDuration(segments, gongPreference);
-  const pauseDuration = calculatePauseDuration(segments, pauseDurationSec, gongPreference);
+  const gongDurationSec = calculateGongDuration(segments, gongEnabled, gongPreference);
+  const pauseDuration = calculatePauseDuration(
+    segments,
+    pauseDurationSec,
+    gongEnabled,
+    gongPreference
+  );
 
   if (timingPreference === 'total') {
     // Total session time is fixed, silent time is calculated
@@ -129,6 +137,7 @@ export function getEffectiveDuration(
   segments: Record<SessionSegmentType, SessionSegment>,
   timingPreference: TimingPreference,
   pauseDurationSec: PauseDuration = 0,
+  gongEnabled: boolean = false,
   gongPreference: 'none' | 'G1' | 'G2' = 'none'
 ): {
   totalMinutes: number;
@@ -145,6 +154,7 @@ export function getEffectiveDuration(
     segments,
     timingPreference,
     pauseDurationSec,
+    gongEnabled,
     gongPreference
   );
 

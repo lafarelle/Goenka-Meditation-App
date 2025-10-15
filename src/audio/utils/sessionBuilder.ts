@@ -15,17 +15,22 @@ export function buildSessionFromStore(sessionStore: any): MeditationSession {
   const timing = calculateSessionTiming(
     totalDurationMinutes,
     segments,
-    preferences.timingPreference
+    preferences.timingPreference,
+    preferences.pauseDuration,
+    preferences.gongEnabled,
+    preferences.gongPreference
   );
 
-  // Check for gong preference
-  const gongAudio = getGongAudioByPreference(preferences.gongPreference);
+  // Check for gong preference - only add if enabled
   let gongSegment = null;
-  if (gongAudio) {
-    gongSegment = {
-      audioId: gongAudio.id,
-      duration: 5, // 5 seconds for gong
-    };
+  if (preferences.gongEnabled) {
+    const gongAudio = getGongAudioByPreference(preferences.gongPreference);
+    if (gongAudio) {
+      gongSegment = {
+        audioId: gongAudio.id,
+        duration: 5, // 5 seconds for gong
+      };
+    }
   }
 
   // Collect before-silent audio (opening chant, guidance, technique reminder)
@@ -115,6 +120,7 @@ export function calculateTotalSessionDuration(
     sessionStore.segments,
     preferences.timingPreference,
     preferences.pauseDuration,
+    preferences.gongEnabled,
     preferences.gongPreference
   );
 

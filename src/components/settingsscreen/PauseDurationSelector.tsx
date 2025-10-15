@@ -44,19 +44,20 @@ interface PauseOptionProps {
 }
 
 function PauseOption({ label, isSelected, onPress }: PauseOptionProps) {
+  const buttonClass = isSelected
+    ? 'rounded border-2 px-4 py-2.5 border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
+    : 'rounded border-2 px-4 py-2.5 border-stone-800 bg-stone-100';
+
+  const textClass = isSelected
+    ? 'text-sm font-black uppercase text-amber-900'
+    : 'text-sm font-black uppercase text-stone-800';
+
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-      className={`rounded border-2 px-4 py-2.5 ${
-        isSelected
-          ? 'border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
-          : 'border-stone-800 bg-stone-100'
-      }`}>
-      <Text
-        className={`text-sm font-black uppercase ${
-          isSelected ? 'text-amber-900' : 'text-stone-800'
-        }`}>
+      className={buttonClass}>
+      <Text className={textClass}>
         {label}
       </Text>
     </Pressable>

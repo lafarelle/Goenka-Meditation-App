@@ -73,6 +73,7 @@ export class SegmentTransitionManager {
       sessionStore.segments,
       preferences.timingPreference,
       preferences.pauseDuration,
+      preferences.gongEnabled,
       preferences.gongPreference
     );
 

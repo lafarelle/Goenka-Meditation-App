@@ -5,7 +5,7 @@ import {
   TechniqueType,
 } from '@/schemas/session';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
-import { calculateSessionTiming } from '@/utils/timing';
+import { calculateSessionTiming } from '@/utils/preferences/timingUtils';
 import { create } from 'zustand';
 import { usePreferencesStore } from './preferencesStore';
 
@@ -130,7 +130,10 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     const { silentDurationSec } = calculateSessionTiming(
       totalDurationMinutes,
       segments,
-      preferences.timingPreference
+      preferences.timingPreference,
+      preferences.pauseDuration,
+      preferences.gongEnabled,
+      preferences.gongPreference
     );
 
     return silentDurationSec;

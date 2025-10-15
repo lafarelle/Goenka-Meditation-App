@@ -4,25 +4,25 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { GongPreference } from '@/store/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Switch, Text, View } from 'react-native';
 
 interface GongOption {
   id: GongPreference;
   name: string;
-  audioPath?: string;
+  audioPath: any;
 }
 
 const GONG_OPTIONS: GongOption[] = [
-  { id: 'none', name: 'None' },
   { id: 'G1', name: 'Gong 1', audioPath: require('../../../assets/audio/gongs/G1.mp3') },
   { id: 'G2', name: 'Gong 2', audioPath: require('../../../assets/audio/gongs/G2.mp3') },
 ];
 
 export function GongSelector() {
-  const { preferences, setGongPreference } = usePreferencesStore();
+  const { preferences, setGongEnabled, setGongPreference } = usePreferencesStore();
   const [audioPlayer, setAudioPlayer] = useState<AudioPlayer | null>(null);
   const [playingGong, setPlayingGong] = useState<GongPreference | null>(null);
   const [loadingGong, setLoadingGong] = useState<GongPreference | null>(null);
+  const [showGongSelector, setShowGongSelector] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export function GongSelector() {
         setPlayingGong(gongId);
         setLoadingGong(null);
         await audioPlayer.play();
-      } catch (error) {
+      } catch {
         setPlayingGong(null);
         setLoadingGong(null);
         if (timeoutRef.current) {
@@ -85,125 +85,94 @@ export function GongSelector() {
   return (
     <View className="mb-4">
       <Text className="mb-2 text-xs font-black uppercase tracking-wider text-stone-800">
-        Gong Sound
+        Beginning Gong
       </Text>
 
-      {/* Selection Buttons */}
-      <View className="mb-3 flex-row gap-2">
-        <GongSelectionButton
-          id="none"
-          name="None"
-          isSelected={preferences.gongPreference === 'none'}
-          onPress={() => setGongPreference('none')}
-        />
-        <GongSelectionButton
-          id="G1"
-          name="Gong 1"
-          isSelected={preferences.gongPreference === 'G1'}
-          onPress={() => setGongPreference('G1')}
-        />
-        <GongSelectionButton
-          id="G2"
-          name="Gong 2"
-          isSelected={preferences.gongPreference === 'G2'}
-          onPress={() => setGongPreference('G2')}
-        />
-      </View>
+      {/* Toggle Switch */}
+      <Pressable
+        onPress={() => setGongEnabled(!preferences.gongEnabled)}
+        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+        className="border-3 flex-row items-center justify-between rounded border-amber-500 bg-amber-100 px-4 py-3 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]">
+        <Text className="flex-1 text-sm font-black uppercase text-amber-900">
+          {preferences.gongEnabled ? 'Gong Enabled' : 'No Gong'}
+        </Text>
+        <View className="rounded border-2 border-stone-800 bg-amber-300 p-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <Switch
+            value={preferences.gongEnabled}
+            onValueChange={setGongEnabled}
+            trackColor={{ false: '#78716c', true: '#F59E0B' }}
+            thumbColor="#ffffff"
+            ios_backgroundColor="#78716c"
+          />
+        </View>
+      </Pressable>
 
-      {/* Preview Buttons - Completely Separate */}
-      <View className="flex-row gap-2">
-        <View className="flex-1" />
-        <GongPreviewButton
-          id="G1"
-          audioPath={require('../../../assets/audio/gongs/G1.mp3')}
-          isSelected={preferences.gongPreference === 'G1'}
-          isPlaying={playingGong === 'G1'}
-          isLoading={loadingGong === 'G1'}
-          onPress={handlePlayGong}
-        />
-        <GongPreviewButton
-          id="G2"
-          audioPath={require('../../../assets/audio/gongs/G2.mp3')}
-          isSelected={preferences.gongPreference === 'G2'}
-          isPlaying={playingGong === 'G2'}
-          isLoading={loadingGong === 'G2'}
-          onPress={handlePlayGong}
-        />
-      </View>
+      {/* Gong Selection - Only shown when enabled */}
+      {preferences.gongEnabled && (
+        <>
+          {/* Show/Hide Selector Button */}
+          <Pressable
+            onPress={() => setShowGongSelector(!showGongSelector)}
+            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+            className="mt-3 flex-row items-center justify-between rounded border-2 border-stone-800 bg-stone-100 px-4 py-2">
+            <Text className="text-sm font-black uppercase text-stone-800">
+              {GONG_OPTIONS.find((g) => g.id === preferences.gongPreference)?.name || 'Select Gong'}
+            </Text>
+            <Ionicons
+              name={showGongSelector ? 'chevron-up' : 'chevron-down'}
+              size={20}
+              color="#44403c"
+            />
+          </Pressable>
+
+          {/* Gong Selection Grid */}
+          {showGongSelector && (
+            <View className="mt-3 gap-2">
+              {GONG_OPTIONS.map((gong) => (
+                <View key={gong.id} className="flex-row gap-2">
+                  {/* Selection Button */}
+                  <Pressable
+                    onPress={() => setGongPreference(gong.id)}
+                    style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                    className={`flex-1 rounded border-2 px-3 py-3 ${
+                      preferences.gongPreference === gong.id
+                        ? 'border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
+                        : 'border-stone-800 bg-stone-100'
+                    }`}>
+                    <Text
+                      className={`text-center text-sm font-black uppercase ${
+                        preferences.gongPreference === gong.id ? 'text-amber-900' : 'text-stone-800'
+                      }`}>
+                      {gong.name}
+                    </Text>
+                  </Pressable>
+
+                  {/* Preview Button */}
+                  <Pressable
+                    onPress={() => handlePlayGong(gong.id, gong.audioPath)}
+                    disabled={playingGong === gong.id || loadingGong === gong.id}
+                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                    className={`items-center justify-center rounded border-2 px-4 py-3 ${
+                      preferences.gongPreference === gong.id
+                        ? 'border-amber-600 bg-amber-50'
+                        : 'border-stone-700 bg-stone-50'
+                    }`}>
+                    {loadingGong === gong.id ? (
+                      <ActivityIndicator size="small" color="#F59E0B" />
+                    ) : (
+                      <Ionicons
+                        name={playingGong === gong.id ? 'pause' : 'play'}
+                        size={20}
+                        color={preferences.gongPreference === gong.id ? '#D97706' : '#44403c'}
+                      />
+                    )}
+                  </Pressable>
+                </View>
+              ))}
+            </View>
+          )}
+        </>
+      )}
     </View>
   );
 }
-
-interface GongSelectionButtonProps {
-  id: GongPreference;
-  name: string;
-  isSelected: boolean;
-  onPress: () => void;
-}
-
-function GongSelectionButton({ name, isSelected, onPress }: GongSelectionButtonProps) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-      className={`flex-1 rounded border-2 px-3 py-3 ${
-        isSelected
-          ? 'border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
-          : 'border-stone-800 bg-stone-100'
-      }`}>
-      <Text
-        className={`text-center text-sm font-black uppercase ${
-          isSelected ? 'text-amber-900' : 'text-stone-800'
-        }`}>
-        {name}
-      </Text>
-    </Pressable>
-  );
-}
-
-interface GongPreviewButtonProps {
-  id: GongPreference;
-  audioPath: any;
-  isSelected: boolean;
-  isPlaying: boolean;
-  isLoading: boolean;
-  onPress: (gongId: GongPreference, audioPath?: string) => void;
-}
-
-function GongPreviewButton({
-  id,
-  audioPath,
-  isSelected,
-  isPlaying,
-  isLoading,
-  onPress,
-}: GongPreviewButtonProps) {
-  return (
-    <Pressable
-      onPress={() => onPress(id, audioPath)}
-      disabled={isPlaying || isLoading}
-      style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-      className={`flex-1 items-center justify-center rounded border-2 py-2 ${
-        isSelected ? 'border-amber-600 bg-amber-50' : 'border-stone-700 bg-stone-50'
-      }`}>
-      {isLoading ? (
-        <ActivityIndicator size="small" color="#F59E0B" />
-      ) : (
-        <View className="flex-row items-center gap-1">
-          <Ionicons
-            name={isPlaying ? 'pause' : 'play'}
-            size={16}
-            color={isSelected ? '#D97706' : '#44403c'}
-          />
-          <Text
-            className={`text-xs font-black uppercase ${
-              isSelected ? 'text-amber-700' : 'text-stone-700'
-            }`}>
-            {isPlaying ? 'Playing' : 'Preview'}
-          </Text>
-        </View>
-      )}
-    </Pressable>
-  );
-}
-

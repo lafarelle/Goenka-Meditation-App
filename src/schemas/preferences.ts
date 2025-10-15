@@ -6,12 +6,14 @@ export type PauseDuration = 0 | 1 | 2 | 3 | 5 | 10;
 
 export interface MeditationPreferences {
   timingPreference: TimingPreference;
+  gongEnabled: boolean; // Whether to play a gong at the beginning of the session
   gongPreference: GongPreference;
   pauseDuration: PauseDuration;
 }
 
 export const DEFAULT_PREFERENCES: MeditationPreferences = {
   timingPreference: 'total', // Default to total session time
-  gongPreference: 'none', // Default to no gong
+  gongEnabled: false, // Default to no gong at beginning
+  gongPreference: 'G1', // Default gong sound when enabled
   pauseDuration: 2, // Default to 2 seconds pause between audio segments
 };

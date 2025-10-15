@@ -12,6 +12,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 type PreferencesState = {
   preferences: MeditationPreferences;
   setTimingPreference: (preference: TimingPreference) => void;
+  setGongEnabled: (enabled: boolean) => void;
   setGongPreference: (preference: GongPreference) => void;
   setPauseDuration: (duration: PauseDuration) => void;
   resetPreferences: () => void;
@@ -27,6 +28,14 @@ export const usePreferencesStore = create<PreferencesState>()(
           preferences: {
             ...state.preferences,
             timingPreference: preference,
+          },
+        })),
+
+      setGongEnabled: (enabled) =>
+        set((state) => ({
+          preferences: {
+            ...state.preferences,
+            gongEnabled: enabled,
           },
         })),
 
