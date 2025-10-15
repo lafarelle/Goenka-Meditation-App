@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Text, View } from 'react-native';
 import { GongSelector } from './GongSelector';
+import { PauseDurationSelector } from './PauseDurationSelector';
 import { TimingPreference } from './TimingPreference';
 
 export function PreferencesSelector() {
@@ -21,6 +22,7 @@ export function PreferencesSelector() {
       <View className="p-5">
         <TimingPreference />
         <GongSelector />
+        <PauseDurationSelector />
       </View>
     </View>
   );

@@ -8,59 +8,46 @@ interface PauseOption {
 }
 
 const PAUSE_OPTIONS: PauseOption[] = [
-  { value: 0, label: 'None' },
   { value: 1, label: '1s' },
-  { value: 2, label: '2s' },
-  { value: 3, label: '3s' },
-  { value: 5, label: '5s' },
   { value: 10, label: '10s' },
+  { value: 30, label: '30s' },
 ];
 
 export function PauseDurationSelector() {
   const { preferences, setPauseDuration } = usePreferencesStore();
 
   return (
-    <View>
+    <View className="mb-4">
       <Text className="mb-2 text-xs font-black uppercase tracking-wider text-stone-800">
         Pause Between Segments
       </Text>
-      <View className="flex-row flex-wrap gap-2">
-        <PauseOption value={0} label="None" isSelected={preferences.pauseDuration === 0} onPress={() => setPauseDuration(0)} />
-        <PauseOption value={1} label="1s" isSelected={preferences.pauseDuration === 1} onPress={() => setPauseDuration(1)} />
-        <PauseOption value={2} label="2s" isSelected={preferences.pauseDuration === 2} onPress={() => setPauseDuration(2)} />
-        <PauseOption value={3} label="3s" isSelected={preferences.pauseDuration === 3} onPress={() => setPauseDuration(3)} />
-        <PauseOption value={5} label="5s" isSelected={preferences.pauseDuration === 5} onPress={() => setPauseDuration(5)} />
-        <PauseOption value={10} label="10s" isSelected={preferences.pauseDuration === 10} onPress={() => setPauseDuration(10)} />
+      <View className="flex-row gap-2">
+        {PAUSE_OPTIONS.map((option) => {
+          const isSelected = preferences.pauseDuration === option.value;
+
+          return (
+            <Pressable
+              key={option.value}
+              onPress={() => setPauseDuration(option.value)}
+              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+              className={`border-3 flex-1 rounded px-4 py-3 ${
+                isSelected
+                  ? 'border-amber-500 bg-amber-50 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
+                  : 'border-stone-800 bg-stone-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+              }`}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: isSelected }}
+              accessibilityLabel={`${option.label} pause duration`}>
+              <Text
+                className={`text-center text-sm font-black uppercase ${
+                  isSelected ? 'text-amber-900' : 'text-stone-800'
+                }`}>
+                {option.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
 }
-
-interface PauseOptionProps {
-  value: PauseDuration;
-  label: string;
-  isSelected: boolean;
-  onPress: () => void;
-}
-
-function PauseOption({ label, isSelected, onPress }: PauseOptionProps) {
-  const buttonClass = isSelected
-    ? 'rounded border-2 px-4 py-2.5 border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
-    : 'rounded border-2 px-4 py-2.5 border-stone-800 bg-stone-100';
-
-  const textClass = isSelected
-    ? 'text-sm font-black uppercase text-amber-900'
-    : 'text-sm font-black uppercase text-stone-800';
-
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-      className={buttonClass}>
-      <Text className={textClass}>
-        {label}
-      </Text>
-    </Pressable>
-  );
-}
-
