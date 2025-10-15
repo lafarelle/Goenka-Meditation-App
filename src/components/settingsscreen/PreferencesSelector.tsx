@@ -5,7 +5,7 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { GongPreference } from '@/store/types';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Pressable, Switch, Text, View } from 'react-native';
 
 interface GongOption {
   id: GongPreference;
@@ -120,9 +120,9 @@ export function PreferencesSelector() {
           <Text className="mb-2 text-xs font-black uppercase tracking-wider text-stone-800">
             Timing Mode
           </Text>
-          <TouchableOpacity
+          <Pressable
             onPress={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
-            activeOpacity={0.8}
+            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
             className="border-3 flex-row items-center justify-between rounded border-amber-500 bg-amber-100 px-4 py-3 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]">
             <Text className="flex-1 text-sm font-black uppercase text-amber-900">
               {isTotalTiming ? 'Total Session' : 'Silent Only'}
@@ -136,7 +136,7 @@ export function PreferencesSelector() {
                 ios_backgroundColor="#78716c"
               />
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Gong Selection */}
@@ -151,10 +151,10 @@ export function PreferencesSelector() {
               const isLoading = loadingGong === option.id;
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={option.id}
                   onPress={() => setGongPreference(option.id)}
-                  activeOpacity={0.8}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                   className={`flex-1 rounded border-2 px-3 py-2.5 ${
                     isSelected
                       ? 'border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
@@ -168,7 +168,7 @@ export function PreferencesSelector() {
                       {option.name}
                     </Text>
                     {option.audioPath && (
-                      <TouchableOpacity
+                      <Pressable
                         onPress={(e) => {
                           e.stopPropagation();
                           handlePlayGong(option.id, option.audioPath);
@@ -189,10 +189,10 @@ export function PreferencesSelector() {
                             />
                           </View>
                         )}
-                      </TouchableOpacity>
+                      </Pressable>
                     )}
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>
@@ -208,10 +208,10 @@ export function PreferencesSelector() {
               const isSelected = preferences.pauseDuration === option.value;
 
               return (
-                <TouchableOpacity
+                <Pressable
                   key={option.value}
                   onPress={() => setPauseDuration(option.value)}
-                  activeOpacity={0.8}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                   className={`rounded border-2 px-4 py-2.5 ${
                     isSelected
                       ? 'border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
@@ -223,7 +223,7 @@ export function PreferencesSelector() {
                     }`}>
                     {option.label}
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>

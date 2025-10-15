@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 import { useAudioSession } from '@/audio/useAudioSession';
 import { getSessionTotalDuration } from '@/utils/meditationTimer';
@@ -95,11 +95,12 @@ export default function Meditation() {
       />
 
       {/* Back arrow in top left */}
-      <TouchableOpacity
+      <Pressable
         onPress={handleBackPress}
+        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
         className="absolute left-4 top-12 z-10 rounded-full bg-white/10 p-3">
         <Ionicons name="arrow-back" size={24} color="white" />
-      </TouchableOpacity>
+      </Pressable>
 
       {/* Main timer display */}
       <View className="flex-1 items-center justify-center">
@@ -108,12 +109,12 @@ export default function Meditation() {
 
       {/* Single play/pause button - positioned at bottom center */}
       <View className="absolute bottom-12 left-0 right-0 items-center">
-        <TouchableOpacity
+        <Pressable
           onPress={sessionState.isPlaying ? pauseSession : resumeSession}
-          activeOpacity={0.8}
+          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           className="rounded-full bg-white/20 p-6">
           <Ionicons name={sessionState.isPlaying ? 'pause' : 'play'} size={32} color="white" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

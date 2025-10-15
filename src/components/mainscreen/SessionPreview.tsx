@@ -12,7 +12,7 @@ import {
 import { createSegmentsCopy, isValidSessionName } from '@/utils/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 interface SessionPreviewProps {
   onSaveSession?: () => void;
@@ -104,7 +104,7 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   };
 
   return (
-    <View className="mb-8 rounded-xl border-4 border-stone-800 bg-gradient-to-b from-amber-50 to-white p-6 ,0,0,1)]">
+    <View className=",0,0,1)] mb-8 rounded-xl border-4 border-stone-800 bg-gradient-to-b from-amber-50 to-white p-6">
       <View className="mb-5 flex-row items-center justify-between">
         <View className="flex-row items-center">
           <View className="border-3 mr-2 rounded-lg border-stone-800 bg-amber-200 p-2 ">
@@ -112,13 +112,13 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
           </View>
           <Text className="ml-2 text-lg font-black uppercase text-stone-800">Session Preview</Text>
         </View>
-        <TouchableOpacity
+        <Pressable
           onPress={handleSaveSession}
-          activeOpacity={0.8}
+          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           className="border-3 flex-row items-center rounded-lg border-stone-800 bg-amber-400 px-4 py-2.5 ">
           <Ionicons name="save-outline" size={18} color="#292524" />
           <Text className="ml-2 text-sm font-black uppercase text-stone-900">Save</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {isSilentOnlySession ? (

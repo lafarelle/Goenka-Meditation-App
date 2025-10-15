@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { AudioSelectionProvider } from './AudioSelectionProvider';
 import { DurationSelector } from './DurationSelector';
 import { HistorySessionDrawer } from './HistorySessionDrawer';
@@ -19,25 +19,25 @@ export function MainScreen() {
         {/* Header with Saved Sessions and Settings buttons */}
         <View className="flex-row items-center justify-between px-6 pb-6 pt-16">
           <View className="flex-row gap-3">
-            <TouchableOpacity
+            <Pressable
               onPress={() => setIsSavedSessionsDrawerVisible(true)}
-              activeOpacity={0.8}
+              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
               className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
               <Ionicons name="bookmark-outline" size={24} color="#F59E0B" />
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
               onPress={() => setIsHistoryDrawerVisible(true)}
-              activeOpacity={0.8}
+              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
               className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
               <Ionicons name="time-outline" size={24} color="#F59E0B" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
           <Link href="/settings" asChild>
-            <TouchableOpacity
-              activeOpacity={0.8}
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
               className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
               <Ionicons name="settings-outline" size={24} color="#F59E0B" />
-            </TouchableOpacity>
+            </Pressable>
           </Link>
         </View>
 
@@ -58,13 +58,13 @@ export function MainScreen() {
           <SessionPreview />
 
           <Link href="/meditation" asChild>
-            <TouchableOpacity
-              activeOpacity={0.8}
+            <Pressable
+              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
               className="rounded-xl border-4 border-stone-800 bg-amber-400 px-8 py-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
               <Text className="text-center text-xl font-black uppercase tracking-wide text-stone-900">
                 Start Meditation
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </Link>
         </ScrollView>
 

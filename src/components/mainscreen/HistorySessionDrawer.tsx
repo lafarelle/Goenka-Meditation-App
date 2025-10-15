@@ -16,7 +16,7 @@ import {
 import { createSegmentsCopy } from '@/utils/session';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 interface HistorySessionDrawerProps {
   isVisible: boolean;
@@ -120,12 +120,12 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                   Meditation History
                 </Text>
               </View>
-              <TouchableOpacity
+              <Pressable
                 onPress={onClose}
-                activeOpacity={0.8}
+                style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                 className="rounded border-2 border-stone-800 bg-stone-100 p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                 <Ionicons name="close" size={24} color="#292524" />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
 
@@ -336,21 +336,21 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
 
                         {/* Actions */}
                         <View className="flex-row gap-2">
-                          <TouchableOpacity
+                          <Pressable
                             onPress={() => loadSession(session.id)}
-                            activeOpacity={0.8}
+                            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                             className="flex-1 flex-row items-center justify-center rounded border-2 border-stone-800 bg-amber-400 px-4 py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                             <Ionicons name="play" size={18} color="#292524" />
                             <Text className="ml-2 text-sm font-black uppercase text-stone-900">
                               Repeat Session
                             </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
+                          </Pressable>
+                          <Pressable
                             onPress={() => handleSaveAsTemplate(session.id)}
-                            activeOpacity={0.8}
+                            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                             className="rounded border-2 border-amber-500 bg-amber-50 px-4 py-3 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]">
                             <Ionicons name="bookmark-outline" size={18} color="#F59E0B" />
-                          </TouchableOpacity>
+                          </Pressable>
                         </View>
                       </View>
                     </View>
@@ -397,17 +397,17 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
               />
 
               <View className="flex-row gap-3">
-                <TouchableOpacity
+                <Pressable
                   onPress={() => setShowSaveDialog(false)}
-                  activeOpacity={0.8}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                   className="flex-1 rounded border-2 border-stone-800 bg-stone-100 px-4 py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
                   <Text className="text-center text-base font-black uppercase text-stone-700">
                     Cancel
                   </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
+                </Pressable>
+                <Pressable
                   onPress={confirmSaveTemplate}
-                  activeOpacity={0.8}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                   className={`flex-1 rounded border-2 px-4 py-3 ${
                     sessionName.trim()
                       ? 'border-stone-800 bg-amber-400 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
@@ -417,7 +417,7 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                   <Text className="text-center text-base font-black uppercase text-stone-900">
                     Save
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
           </View>

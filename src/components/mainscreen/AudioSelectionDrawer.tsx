@@ -2,13 +2,9 @@ import { AudioItem } from '@/schemas/audio';
 import { SessionSegmentType } from '@/schemas/session';
 import { useSessionStore } from '@/store/sessionStore';
 import { Ionicons } from '@expo/vector-icons';
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetFlatList,
-  TouchableOpacity,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 interface AudioSelectionDrawerProps {
   segmentType: SessionSegmentType;
@@ -31,9 +27,9 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
   const isSelected = selectionOrder !== null;
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onToggle}
-      activeOpacity={0.8}
+      style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
       className={`border-3 mx-4 mb-3 overflow-hidden rounded-lg p-4 ${
         isSelected
           ? 'border-amber-500 bg-amber-50 shadow-[4px_4px_0px_0px_rgba(245,158,11,1)]'
@@ -94,7 +90,7 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
           )}
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 });
 
@@ -203,14 +199,15 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
                 </View>
               )}
             </View>
-            <TouchableOpacity
+            <Pressable
               onPress={handleDone}
+              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
               className="rounded border-2 border-stone-800 bg-stone-100 p-2.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               accessibilityRole="button"
               accessibilityLabel="Done">
               <Ionicons name="checkmark" size={24} color="#292524" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 

@@ -1,21 +1,21 @@
 import { forwardRef } from 'react';
-import { Text, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
+import { Pressable, PressableProps, Text, View } from 'react-native';
 
 type ButtonProps = {
   title: string;
   textClassName?: string;
-} & TouchableOpacityProps;
+} & PressableProps;
 
 export const Button = forwardRef<View, ButtonProps>(
-  ({ title, textClassName, ...touchableProps }, ref) => {
+  ({ title, textClassName, ...pressableProps }, ref) => {
     return (
-      <TouchableOpacity
+      <Pressable
         ref={ref}
-        activeOpacity={0.8}
-        {...touchableProps}
-        className={`${styles.button} ${touchableProps.className}`}>
+        {...pressableProps}
+        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+        className={`${styles.button} ${pressableProps.className}`}>
         <Text className={textClassName || styles.buttonText}>{title}</Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 );

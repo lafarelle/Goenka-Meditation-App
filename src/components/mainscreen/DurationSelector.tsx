@@ -1,6 +1,6 @@
 import { useSessionStore } from '@/store/sessionStore';
 import Slider from '@react-native-community/slider';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 export function DurationSelector() {
   const totalDurationMinutes = useSessionStore((state) => state.totalDurationMinutes);
@@ -42,13 +42,15 @@ export function DurationSelector() {
     <View className="border-3 w-full rounded-lg border-stone-800 bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <View className="mb-3 flex-row items-center justify-between">
         <Text className="text-xs font-black uppercase tracking-wider text-stone-600">Duration</Text>
-        <TouchableOpacity onPress={handleTimePress} activeOpacity={0.8}>
+        <Pressable
+          onPress={handleTimePress}
+          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}>
           <View className="border-3 rounded-lg border-amber-600 bg-amber-100 px-4 py-1.5 shadow-[2px_2px_0px_0px_rgba(217,119,6,1)]">
             <Text className="text-center text-2xl font-black text-amber-700">
               {totalDurationMinutes} min
             </Text>
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </View>
       <Slider
         style={{ width: '100%', height: 30 }}

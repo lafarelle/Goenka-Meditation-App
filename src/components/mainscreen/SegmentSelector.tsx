@@ -1,6 +1,6 @@
 import { useSessionStore } from '@/store/sessionStore';
 import React, { useContext } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { AudioSelectionContext } from './AudioSelectionProvider';
 
 interface SegmentButtonProps {
@@ -14,9 +14,9 @@ interface SegmentButtonProps {
 const SegmentButton = React.memo<SegmentButtonProps>(
   ({ title, number, isEnabled, selectedName, onPress }) => {
     return (
-      <TouchableOpacity
+      <Pressable
         onPress={onPress}
-        activeOpacity={0.8}
+        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
         className={`border-3 rounded-xl p-5 px-7 ${
           isEnabled
             ? 'border-amber-500 bg-amber-50 shadow-[5px_5px_0px_0px_rgba(245,158,11,1)]'
@@ -52,7 +52,7 @@ const SegmentButton = React.memo<SegmentButtonProps>(
             ›
           </Text>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 );
@@ -118,12 +118,12 @@ export function SegmentSelector() {
           <Text className="text-base font-black uppercase tracking-wider text-stone-800">
             Session Segments
           </Text>
-          <TouchableOpacity
+          <Pressable
             onPress={handleClear}
-            activeOpacity={0.8}
+            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
             className="border-3 rounded-lg border-stone-800 bg-amber-400 px-4 py-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
             <Text className="text-sm font-black uppercase text-stone-900">Clear</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {segmentConfigs.map((config) => (

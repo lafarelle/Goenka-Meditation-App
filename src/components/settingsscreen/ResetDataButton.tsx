@@ -4,7 +4,7 @@ import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { useStore } from '@/store/store';
 import { useState } from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 export function ResetDataButton() {
   const [isResetting, setIsResetting] = useState(false);
@@ -70,10 +70,10 @@ export function ResetDataButton() {
       </View>
 
       <View className="p-5">
-        <TouchableOpacity
+        <Pressable
           onPress={handleReset}
           disabled={isResetting}
-          activeOpacity={0.8}
+          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           className={`border-3 rounded border-red-600 bg-red-100 p-5 shadow-[4px_4px_0px_0px_rgba(220,38,38,1)] ${
             isResetting ? 'opacity-50' : ''
           }`}>
@@ -88,7 +88,7 @@ export function ResetDataButton() {
               Clear history, sessions, and preferences
             </Text>
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

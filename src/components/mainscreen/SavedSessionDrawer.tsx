@@ -8,7 +8,7 @@ import {
 } from '@/utils/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 interface SavedSessionDrawerProps {
   isVisible: boolean;
@@ -63,12 +63,12 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                 Saved Sessions
               </Text>
             </View>
-            <TouchableOpacity
+            <Pressable
               onPress={onClose}
-              activeOpacity={0.8}
+              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
               className="rounded border-2 border-stone-800 bg-stone-100 p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               <Ionicons name="close" size={24} color="#292524" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
@@ -89,10 +89,10 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
           ) : (
             <View className="space-y-4">
               {saved.map((session) => (
-                <TouchableOpacity
+                <Pressable
                   key={session.id}
                   onPress={() => loadSession(session.id)}
-                  activeOpacity={0.8}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                   className="overflow-hidden rounded-lg border-4 border-stone-800 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                   {/* Accent bar */}
                   <View className="h-2 border-b-4 border-stone-800 bg-amber-400" />
@@ -145,18 +145,18 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                         )}
                       </View>
 
-                      <TouchableOpacity
+                      <Pressable
                         onPress={(e) => {
                           e.stopPropagation();
                           deleteSession(session.id);
                         }}
-                        activeOpacity={0.8}
+                        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                         className="ml-3 rounded border-2 border-red-600 bg-red-50 p-3 shadow-[3px_3px_0px_0px_rgba(220,38,38,1)]">
                         <Ionicons name="trash-outline" size={20} color="#EF4444" />
-                      </TouchableOpacity>
+                      </Pressable>
                     </View>
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           )}
