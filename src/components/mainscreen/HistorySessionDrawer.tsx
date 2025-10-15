@@ -13,8 +13,8 @@ import {
 } from '@/utils/historyUtils';
 import { createSegmentsCopy } from '@/utils/session';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Alert, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 
 interface HistorySessionDrawerProps {
   isVisible: boolean;
@@ -31,10 +31,6 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
     setSegmentAudioIds,
     setSegmentTechniqueType,
   } = useSessionStore();
-
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [sessionToSave, setSessionToSave] = useState<string | null>(null);
-  const [sessionName, setSessionName] = useState('');
 
   const recentSessions = getRecentSessions(20);
   const stats = getStats();
@@ -62,19 +58,44 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
     const session = useHistoryStore.getState().getSessionById(sessionId);
     if (!session) return;
 
-    setSessionToSave(sessionId);
-    setSessionName(`Session ${formatHistoryDate(session.startedAt)}`);
-    setShowSaveDialog(true);
+    const defaultName = `Session ${formatHistoryDate(session.startedAt)}`;
+
+    // Use Alert.prompt on iOS, or a simple Alert on Android/Web
+    if (Platform.OS === 'ios') {
+      Alert.prompt(
+        'Save as Template',
+        'Enter a name for this session template:',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Save',
+            onPress: (name?: string) => {
+              const templateName = name?.trim() || defaultName;
+              saveTemplate(sessionId, templateName);
+            },
+          },
+        ],
+        'plain-text',
+        defaultName
+      );
+    } else {
+      // On Android/Web, use the default name directly
+      saveTemplate(sessionId, defaultName);
+    }
   };
 
-  const confirmSaveTemplate = () => {
-    if (!sessionToSave || !sessionName.trim()) return;
-
-    const session = useHistoryStore.getState().getSessionById(sessionToSave);
-    if (!session) return;
+  const saveTemplate = (sessionId: string, name: string) => {
+    const session = useHistoryStore.getState().getSessionById(sessionId);
+    if (!session) {
+      Alert.alert('Error', 'Session not found');
+      return;
+    }
 
     try {
-      // First load the history session into the current session store
+      // Load the history session into the current session store
       loadHistorySessionIntoStore(session, {
         setTotalDurationMinutes,
         setSegmentEnabled,
@@ -83,24 +104,18 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
         setSegmentTechniqueType,
       });
 
-      // Get the current segments from the store (now populated with history data)
+      // Get the current segments from the store
       const currentSegments = useSessionStore.getState().segments;
 
       // Convert to saved session format
       const savedSegments = createSegmentsCopy(currentSegments);
 
       // Save the session
-      saveSession(sessionName.trim(), session.totalDurationMinutes, savedSegments);
-
-      // Reset state
-      setShowSaveDialog(false);
-      setSessionToSave(null);
-      setSessionName('');
+      saveSession(name.trim(), session.totalDurationMinutes, savedSegments);
 
       Alert.alert('Success', 'Session saved as template!');
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save session template');
-      console.error('Error saving template:', error);
     }
   };
 
@@ -212,14 +227,14 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                   </Text>
                 </View>
               ) : (
-                <View className="space-y-4">
+                <View className="gap-4">
                   {recentSessions.map((session) => (
                     <View
                       key={session.id}
-                      className="overflow-hidden rounded-lg border-4 border-stone-800 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                      className="overflow-hidden rounded-xl border-4 border-stone-800 bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                       {/* Status bar */}
                       <View
-                        className={`h-2 border-b-4 border-stone-800 ${
+                        className={`h-3 border-b-4 border-stone-800 ${
                           session.completed
                             ? 'bg-green-400'
                             : session.completionPercentage >= 50
@@ -228,19 +243,19 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                         }`}
                       />
 
-                      <View className="p-5">
-                        <View className="mb-3 flex-row items-start justify-between">
+                      <View className="p-5 pb-4">
+                        <View className="mb-4 flex-row items-start justify-between">
                           <View className="flex-1">
-                            <View className="mb-2 flex-row items-center">
+                            <View className="mb-3 flex-row items-center gap-2">
                               <View
-                                className={`rounded border-2 px-2 py-1 ${
+                                className={`rounded-md border-2 px-2.5 py-1 ${
                                   session.completed
-                                    ? 'border-green-600 bg-green-50 shadow-[2px_2px_0px_0px_rgba(22,163,74,1)]'
+                                    ? 'border-green-600 bg-green-100 shadow-[2px_2px_0px_0px_rgba(22,163,74,1)]'
                                     : session.completionPercentage >= 50
-                                      ? 'border-amber-500 bg-amber-50 shadow-[2px_2px_0px_0px_rgba(245,158,11,1)]'
-                                      : 'border-red-600 bg-red-50 shadow-[2px_2px_0px_0px_rgba(220,38,38,1)]'
+                                      ? 'border-amber-600 bg-amber-100 shadow-[2px_2px_0px_0px_rgba(217,119,6,1)]'
+                                      : 'border-red-600 bg-red-100 shadow-[2px_2px_0px_0px_rgba(220,38,38,1)]'
                                 }`}>
-                                <View className="flex-row items-center gap-1">
+                                <View className="flex-row items-center gap-1.5">
                                   <Ionicons
                                     name={
                                       getCompletionIcon(session) as
@@ -250,32 +265,30 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                                     size={16}
                                     color={
                                       session.completed
-                                        ? '#10B981'
+                                        ? '#16A34A'
                                         : session.completionPercentage >= 50
-                                          ? '#F59E0B'
-                                          : '#EF4444'
+                                          ? '#D97706'
+                                          : '#DC2626'
                                     }
                                   />
                                   <Text
-                                    className={`text-xs font-black ${getCompletionColor(session)}`}>
+                                    className={`text-xs font-black uppercase ${getCompletionColor(session)}`}>
                                     {getCompletionText(session)}
                                   </Text>
                                 </View>
                               </View>
-                            </View>
 
-                            <View className="mb-2 flex-row items-center">
-                              <View className="flex-row items-center rounded border-2 border-amber-500 bg-amber-50 px-3 py-1.5 shadow-[2px_2px_0px_0px_rgba(245,158,11,1)]">
-                                <Ionicons name="time-outline" size={14} color="#F59E0B" />
-                                <Text className="ml-1 text-sm font-black text-amber-700">
+                              <View className="flex-row items-center gap-1.5 rounded-md border-2 border-stone-800 bg-stone-100 px-2.5 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                                <Ionicons name="time-outline" size={16} color="#57534e" />
+                                <Text className="text-sm font-black text-stone-700">
                                   {formatHistoryDuration(session.totalDurationMinutes)}
                                 </Text>
                               </View>
                             </View>
 
-                            <View className="flex-row items-center">
-                              <Ionicons name="calendar-outline" size={12} color="#78716c" />
-                              <Text className="ml-1 text-xs font-bold text-stone-600">
+                            <View className="flex-row items-center gap-1.5">
+                              <Ionicons name="calendar-outline" size={14} color="#78716c" />
+                              <Text className="text-sm font-bold text-stone-600">
                                 {formatHistoryDate(session.startedAt)} at{' '}
                                 {formatHistoryTime(session.startedAt)}
                               </Text>
@@ -284,21 +297,21 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                         </View>
 
                         {/* Actions */}
-                        <View className="flex-row gap-2">
+                        <View className="flex-row gap-3">
                           <Pressable
                             onPress={() => loadSession(session.id)}
-                            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                            className="flex-1 flex-row items-center justify-center rounded border-2 border-stone-800 bg-amber-400 px-4 py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                            className="border-3 flex-1 flex-row items-center justify-center gap-2 rounded-lg border-stone-800 bg-amber-400 px-4 py-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                             <Ionicons name="play" size={18} color="#292524" />
-                            <Text className="ml-2 text-sm font-black uppercase text-stone-900">
-                              Repeat Session
+                            <Text className="text-sm font-black uppercase tracking-wide text-stone-900">
+                              Repeat
                             </Text>
                           </Pressable>
                           <Pressable
                             onPress={() => handleSaveAsTemplate(session.id)}
-                            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                            className="rounded border-2 border-amber-500 bg-amber-50 px-4 py-3 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]">
-                            <Ionicons name="bookmark-outline" size={18} color="#F59E0B" />
+                            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                            className="border-3 min-w-[60px] items-center justify-center rounded-lg border-stone-800 bg-green-400 px-4 py-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                            <Ionicons name="bookmark" size={22} color="#292524" />
                           </Pressable>
                         </View>
                       </View>
@@ -308,68 +321,6 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
               )}
             </View>
           </ScrollView>
-        </View>
-      </Modal>
-
-      {/* Save Template Dialog */}
-      <Modal
-        visible={showSaveDialog}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowSaveDialog(false)}>
-        <View className="flex-1 items-center justify-center bg-black/50 px-6">
-          <View className="w-full max-w-sm overflow-hidden rounded-lg border-4 border-stone-800 bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
-            {/* Header */}
-            <View className="border-b-4 border-stone-800 bg-amber-400 px-6 py-5">
-              <View className="flex-row items-center gap-3">
-                <View className="h-10 w-10 items-center justify-center rounded border-2 border-stone-800 bg-amber-300">
-                  <Ionicons name="bookmark" size={20} color="#292524" />
-                </View>
-                <Text className="text-xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
-                  Save as Template
-                </Text>
-              </View>
-            </View>
-
-            {/* Content */}
-            <View className="p-6">
-              <Text className="mb-2 text-sm font-black uppercase text-stone-700">
-                Template Name
-              </Text>
-              <TextInput
-                value={sessionName}
-                onChangeText={setSessionName}
-                placeholder="Enter template name"
-                className="mb-6 rounded border-2 border-stone-800 bg-amber-50 px-4 py-3 text-base font-bold text-stone-800"
-                placeholderTextColor="#78716c"
-                autoFocus
-              />
-
-              <View className="flex-row gap-3">
-                <Pressable
-                  onPress={() => setShowSaveDialog(false)}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                  className="flex-1 rounded border-2 border-stone-800 bg-stone-100 px-4 py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-                  <Text className="text-center text-base font-black uppercase text-stone-700">
-                    Cancel
-                  </Text>
-                </Pressable>
-                <Pressable
-                  onPress={confirmSaveTemplate}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                  className={`flex-1 rounded border-2 px-4 py-3 ${
-                    sessionName.trim()
-                      ? 'border-stone-800 bg-amber-400 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
-                      : 'border-stone-600 bg-stone-300'
-                  }`}
-                  disabled={!sessionName.trim()}>
-                  <Text className="text-center text-base font-black uppercase text-stone-900">
-                    Save
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
         </View>
       </Modal>
     </>
