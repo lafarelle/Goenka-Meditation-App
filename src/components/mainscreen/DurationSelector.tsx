@@ -40,8 +40,7 @@ export function DurationSelector() {
 
   return (
     <View className="border-3 w-full rounded-lg border-stone-800 bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-      <View className="mb-3 flex-row items-center justify-between">
-        <Text className="text-xs font-black uppercase tracking-wider text-stone-600">Duration</Text>
+      <View className="mb-3 flex-row items-center justify-center">
         <Pressable
           onPress={handleTimePress}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}>

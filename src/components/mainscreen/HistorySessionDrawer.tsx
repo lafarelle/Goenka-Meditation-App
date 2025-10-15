@@ -2,7 +2,6 @@ import { useHistoryStore } from '@/store/historyStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
 import {
-  formatCompletionRate,
   formatHistoryDate,
   formatHistoryDuration,
   formatHistoryTime,
@@ -10,7 +9,6 @@ import {
   getCompletionColor,
   getCompletionIcon,
   getCompletionText,
-  getEnabledSegments,
   loadHistorySessionIntoStore,
 } from '@/utils/historyUtils';
 import { createSegmentsCopy } from '@/utils/session';
@@ -75,30 +73,35 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
     const session = useHistoryStore.getState().getSessionById(sessionToSave);
     if (!session) return;
 
-    // First load the history session into the current session store
-    loadHistorySessionIntoStore(session, {
-      setTotalDurationMinutes,
-      setSegmentEnabled,
-      setSegmentDuration,
-      setSegmentAudioIds,
-      setSegmentTechniqueType,
-    });
+    try {
+      // First load the history session into the current session store
+      loadHistorySessionIntoStore(session, {
+        setTotalDurationMinutes,
+        setSegmentEnabled,
+        setSegmentDuration,
+        setSegmentAudioIds,
+        setSegmentTechniqueType,
+      });
 
-    // Get the current segments from the store (now populated with history data)
-    const currentSegments = useSessionStore.getState().segments;
+      // Get the current segments from the store (now populated with history data)
+      const currentSegments = useSessionStore.getState().segments;
 
-    // Convert to saved session format
-    const savedSegments = createSegmentsCopy(currentSegments);
+      // Convert to saved session format
+      const savedSegments = createSegmentsCopy(currentSegments);
 
-    // Save the session
-    saveSession(sessionName.trim(), session.totalDurationMinutes, savedSegments);
+      // Save the session
+      saveSession(sessionName.trim(), session.totalDurationMinutes, savedSegments);
 
-    // Reset state
-    setShowSaveDialog(false);
-    setSessionToSave(null);
-    setSessionName('');
+      // Reset state
+      setShowSaveDialog(false);
+      setSessionToSave(null);
+      setSessionName('');
 
-    Alert.alert('Success', 'Session saved as template!');
+      Alert.alert('Success', 'Session saved as template!');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save session template');
+      console.error('Error saving template:', error);
+    }
   };
 
   return (
@@ -137,18 +140,18 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                 <View className="h-8 w-8 items-center justify-center rounded border-2 border-stone-800 bg-amber-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                   <Ionicons name="stats-chart" size={18} color="#F59E0B" />
                 </View>
-                <Text className="text-xl font-black uppercase text-stone-800">Your Progress</Text>
+                <Text className="text-xl font-black uppercase text-stone-800">
+                  Your Meditations
+                </Text>
               </View>
 
               <View className="flex-row flex-wrap gap-3">
                 {/* Current Streak */}
                 <View className="min-w-[45%] flex-1 overflow-hidden rounded-lg border-4 border-stone-800 bg-orange-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <View className="mb-3 flex-row items-center">
-                    <View className="rounded border-2 border-stone-800 bg-orange-200 p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                      <Ionicons name="flame" size={18} color="#EA580C" />
-                    </View>
-                    <Text className="ml-2 text-xs font-black uppercase tracking-wide text-orange-700">
-                      Current Streak
+                  <View className="mb-2 flex-row items-center gap-2">
+                    <Ionicons name="flame" size={20} color="#EA580C" />
+                    <Text className="text-xs font-black uppercase tracking-wide text-orange-700">
+                      Streak
                     </Text>
                   </View>
                   <Text className="text-3xl font-black text-orange-900">{currentStreak}</Text>
@@ -159,11 +162,9 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
 
                 {/* Longest Streak */}
                 <View className="min-w-[45%] flex-1 overflow-hidden rounded-lg border-4 border-stone-800 bg-amber-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <View className="mb-3 flex-row items-center">
-                    <View className="rounded border-2 border-stone-800 bg-amber-200 p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                      <Ionicons name="trophy" size={18} color="#D97706" />
-                    </View>
-                    <Text className="ml-2 text-xs font-black uppercase tracking-wide text-amber-700">
+                  <View className="mb-2 flex-row items-center gap-2">
+                    <Ionicons name="trophy" size={20} color="#D97706" />
+                    <Text className="text-xs font-black uppercase tracking-wide text-amber-700">
                       Best Streak
                     </Text>
                   </View>
@@ -173,29 +174,11 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                   </Text>
                 </View>
 
-                {/* Total Sessions */}
-                <View className="min-w-[45%] flex-1 overflow-hidden rounded-lg border-4 border-stone-800 bg-yellow-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <View className="mb-3 flex-row items-center">
-                    <View className="rounded border-2 border-stone-800 bg-yellow-200 p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                      <Ionicons name="calendar" size={18} color="#CA8A04" />
-                    </View>
-                    <Text className="ml-2 text-xs font-black uppercase tracking-wide text-yellow-700">
-                      Total Sessions
-                    </Text>
-                  </View>
-                  <Text className="text-3xl font-black text-yellow-900">{stats.totalSessions}</Text>
-                  <Text className="text-xs font-black text-yellow-700">
-                    {stats.completedSessions} completed
-                  </Text>
-                </View>
-
                 {/* Total Time */}
-                <View className="min-w-[45%] flex-1 overflow-hidden rounded-lg border-4 border-stone-800 bg-lime-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <View className="mb-3 flex-row items-center">
-                    <View className="rounded border-2 border-stone-800 bg-lime-200 p-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                      <Ionicons name="time" size={18} color="#65A30D" />
-                    </View>
-                    <Text className="ml-2 text-xs font-black uppercase tracking-wide text-lime-700">
+                <View className="flex-1 overflow-hidden rounded-lg border-4 border-stone-800 bg-lime-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                  <View className="mb-2 flex-row items-center gap-2">
+                    <Ionicons name="time" size={20} color="#65A30D" />
+                    <Text className="text-xs font-black uppercase tracking-wide text-lime-700">
                       Total Time
                     </Text>
                   </View>
@@ -205,29 +188,6 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                   <Text className="text-xs font-black text-lime-700">meditated</Text>
                 </View>
               </View>
-
-              {/* Completion Rate */}
-              {stats.totalSessions > 0 && (
-                <View className="mt-4 overflow-hidden rounded-lg border-4 border-stone-800 bg-amber-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <View className="mb-3 flex-row items-center justify-between">
-                    <View className="flex-row items-center gap-2">
-                      <Ionicons name="checkmark-circle" size={18} color="#F59E0B" />
-                      <Text className="text-sm font-black uppercase text-stone-800">
-                        Completion Rate
-                      </Text>
-                    </View>
-                    <Text className="text-lg font-black text-amber-600">
-                      {formatCompletionRate(stats.completionRate)}
-                    </Text>
-                  </View>
-                  <View className="h-3 overflow-hidden rounded border-2 border-stone-800 bg-stone-200">
-                    <View
-                      className="h-full bg-amber-400"
-                      style={{ width: `${stats.completionRate * 100}%` }}
-                    />
-                  </View>
-                </View>
-              )}
             </View>
 
             {/* Recent Sessions */}
@@ -321,17 +281,6 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                               </Text>
                             </View>
                           </View>
-                        </View>
-
-                        {/* Segments */}
-                        <View className="mb-4 flex-row flex-wrap gap-2">
-                          {getEnabledSegments(session).map((segment, index) => (
-                            <View
-                              key={index}
-                              className="rounded border-2 border-amber-500 bg-amber-50 px-3 py-1.5 shadow-[2px_2px_0px_0px_rgba(245,158,11,1)]">
-                              <Text className="text-xs font-black text-amber-700">{segment}</Text>
-                            </View>
-                          ))}
                         </View>
 
                         {/* Actions */}
