@@ -128,47 +128,69 @@ export function GongSelector() {
           {/* Gong Selection Grid */}
           {showGongSelector && (
             <View className="mt-3 gap-2">
-              {GONG_OPTIONS.map((gong) => (
-                <View key={gong.id} className="flex-row gap-2">
-                  {/* Selection Button */}
-                  <Pressable
-                    onPress={() => setGongPreference(gong.id)}
-                    style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                    className={`flex-1 rounded border-2 px-3 py-3 ${
-                      preferences.gongPreference === gong.id
-                        ? 'border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
-                        : 'border-stone-800 bg-stone-100'
-                    }`}>
-                    <Text
-                      className={`text-center text-sm font-black uppercase ${
-                        preferences.gongPreference === gong.id ? 'text-amber-900' : 'text-stone-800'
-                      }`}>
-                      {gong.name}
-                    </Text>
-                  </Pressable>
+              {GONG_OPTIONS.map((gong) => {
+                const isSelected = preferences.gongPreference === gong.id;
 
-                  {/* Preview Button */}
-                  <Pressable
-                    onPress={() => handlePlayGong(gong.id, gong.audioPath)}
-                    disabled={playingGong === gong.id || loadingGong === gong.id}
-                    style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                    className={`items-center justify-center rounded border-2 px-4 py-3 ${
-                      preferences.gongPreference === gong.id
-                        ? 'border-amber-600 bg-amber-50'
-                        : 'border-stone-700 bg-stone-50'
-                    }`}>
-                    {loadingGong === gong.id ? (
-                      <ActivityIndicator size="small" color="#F59E0B" />
-                    ) : (
-                      <Ionicons
-                        name={playingGong === gong.id ? 'pause' : 'play'}
-                        size={20}
-                        color={preferences.gongPreference === gong.id ? '#D97706' : '#44403c'}
-                      />
-                    )}
-                  </Pressable>
-                </View>
-              ))}
+                return (
+                  <View key={gong.id} className="flex-row gap-2">
+                    {/* Selection Button */}
+                    <Pressable
+                      onPress={() => setGongPreference(gong.id)}
+                      style={({ pressed }) => [
+                        { opacity: pressed ? 0.8 : 1 },
+                        isSelected
+                          ? {
+                              borderColor: '#f59e0b',
+                              backgroundColor: '#fef3c7',
+                              shadowColor: '#f59e0b',
+                              shadowOffset: { width: 3, height: 3 },
+                              shadowOpacity: 1,
+                              shadowRadius: 0,
+                            }
+                          : {
+                              borderColor: '#1c1917',
+                              backgroundColor: '#f5f5f4',
+                            },
+                      ]}
+                      className="flex-1 rounded border-2 px-3 py-3">
+                      <Text
+                        className={`text-center text-sm font-black uppercase ${
+                          isSelected ? 'text-amber-900' : 'text-stone-800'
+                        }`}>
+                        {gong.name}
+                      </Text>
+                    </Pressable>
+
+                    {/* Preview Button */}
+                    <Pressable
+                      onPress={() => handlePlayGong(gong.id, gong.audioPath)}
+                      disabled={playingGong === gong.id || loadingGong === gong.id}
+                      style={({ pressed }) => [
+                        { opacity: pressed ? 0.7 : 1 },
+                        isSelected
+                          ? {
+                              borderColor: '#d97706',
+                              backgroundColor: '#fffbeb',
+                            }
+                          : {
+                              borderColor: '#44403c',
+                              backgroundColor: '#fafaf9',
+                            },
+                      ]}
+                      className="items-center justify-center rounded border-2 px-4 py-3">
+                      {loadingGong === gong.id ? (
+                        <ActivityIndicator size="small" color="#F59E0B" />
+                      ) : (
+                        <Ionicons
+                          name={playingGong === gong.id ? 'pause' : 'play'}
+                          size={20}
+                          color={isSelected ? '#D97706' : '#44403c'}
+                        />
+                      )}
+                    </Pressable>
+                  </View>
+                );
+              })}
             </View>
           )}
         </>
