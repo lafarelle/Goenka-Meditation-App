@@ -39,14 +39,19 @@ export function DurationSelector() {
   };
 
   return (
-    <View className="w-full">
-      <TouchableOpacity onPress={handleTimePress} activeOpacity={0.8} className="mb-2">
-        <Text className="text-center text-4xl font-bold text-amber-600">
-          {totalDurationMinutes} min
-        </Text>
-      </TouchableOpacity>
+    <View className="border-3 w-full rounded-lg border-stone-800 bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <View className="mb-3 flex-row items-center justify-between">
+        <Text className="text-xs font-black uppercase tracking-wider text-stone-600">Duration</Text>
+        <TouchableOpacity onPress={handleTimePress} activeOpacity={0.8}>
+          <View className="border-3 rounded-lg border-amber-600 bg-amber-100 px-4 py-1.5 shadow-[2px_2px_0px_0px_rgba(217,119,6,1)]">
+            <Text className="text-center text-2xl font-black text-amber-700">
+              {totalDurationMinutes} min
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
       <Slider
-        style={{ width: '100%', height: 40 }}
+        style={{ width: '100%', height: 30 }}
         minimumValue={5}
         maximumValue={60}
         step={5}
@@ -56,9 +61,9 @@ export function DurationSelector() {
         maximumTrackTintColor="#E5E7EB"
         thumbTintColor="#F59E0B"
       />
-      <View className="mt-2 flex-row justify-between">
-        <Text className="text-sm text-stone-600">5 min</Text>
-        <Text className="text-sm text-stone-600">60 min</Text>
+      <View className="mt-1 flex-row justify-between px-1">
+        <Text className="text-xs font-bold text-stone-500">5</Text>
+        <Text className="text-xs font-bold text-stone-500">60</Text>
       </View>
     </View>
   );

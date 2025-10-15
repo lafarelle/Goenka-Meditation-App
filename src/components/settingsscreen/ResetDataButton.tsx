@@ -54,15 +54,17 @@ export function ResetDataButton() {
   };
 
   return (
-    <View className="overflow-hidden rounded-2xl bg-white shadow-md">
-      <View className="border-b border-red-100 bg-gradient-to-r from-red-50 to-orange-50 px-5 py-4">
-        <View className="flex-row items-center gap-2">
-          <View className="h-8 w-8 items-center justify-center rounded-lg bg-red-100">
-            <Text className="text-lg">🛠️</Text>
+    <View className="rounded-lg border-4 border-stone-800 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      <View className="border-b-4 border-stone-800 bg-red-400 px-5 py-4">
+        <View className="flex-row items-center gap-3">
+          <View className="h-10 w-10 items-center justify-center rounded border-2 border-stone-800 bg-red-300">
+            <Text className="text-xl">🛠️</Text>
           </View>
           <View className="flex-1">
-            <Text className="text-lg font-bold text-stone-800">Developer Tools</Text>
-            <Text className="text-xs text-stone-600">For testing purposes only</Text>
+            <Text className="text-xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
+              Developer Tools
+            </Text>
+            <Text className="text-xs font-bold text-stone-800">For testing purposes only</Text>
           </View>
         </View>
       </View>
@@ -72,17 +74,17 @@ export function ResetDataButton() {
           onPress={handleReset}
           disabled={isResetting}
           activeOpacity={0.8}
-          className={`overflow-hidden rounded-xl border-2 border-red-300 bg-gradient-to-r from-red-50 to-orange-50 p-5 shadow-sm ${
+          className={`border-3 rounded border-red-600 bg-red-100 p-5 shadow-[4px_4px_0px_0px_rgba(220,38,38,1)] ${
             isResetting ? 'opacity-50' : ''
           }`}>
           <View className="items-center">
-            <View className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-red-100">
-              <Text className="text-2xl">⚠️</Text>
+            <View className="mb-2 h-14 w-14 items-center justify-center rounded border-2 border-stone-800 bg-red-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <Text className="text-3xl">⚠️</Text>
             </View>
-            <Text className="text-base font-bold text-red-700">
+            <Text className="text-base font-black uppercase text-red-800">
               {isResetting ? 'Resetting...' : 'Reset All Data'}
             </Text>
-            <Text className="mt-1 text-center text-xs text-red-600">
+            <Text className="mt-1 text-center text-xs font-bold text-red-700">
               Clear history, sessions, and preferences
             </Text>
           </View>

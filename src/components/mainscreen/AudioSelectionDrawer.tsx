@@ -34,10 +34,10 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
     <TouchableOpacity
       onPress={onToggle}
       activeOpacity={0.8}
-      className={`mx-4 mb-3 overflow-hidden rounded-2xl p-4 shadow-sm ${
+      className={`border-3 mx-4 mb-3 overflow-hidden rounded-lg p-4 ${
         isSelected
-          ? 'border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-yellow-50'
-          : 'border border-stone-200 bg-white'
+          ? 'border-amber-500 bg-amber-50 shadow-[4px_4px_0px_0px_rgba(245,158,11,1)]'
+          : 'border-stone-800 bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
       }`}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: isSelected }}
@@ -45,7 +45,7 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <Text
-            className={`text-base font-semibold ${isSelected ? 'text-amber-800' : 'text-stone-900'}`}>
+            className={`text-base font-black ${isSelected ? 'text-amber-800' : 'text-stone-900'}`}>
             {option.name}
           </Text>
 
@@ -54,8 +54,10 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
             <View className="mt-2 flex-row flex-wrap items-center gap-2">
               {option.duration && option.duration !== '0:00' && (
                 <View
-                  className={`flex-row items-center gap-1 rounded-full px-2 py-1 ${
-                    isSelected ? 'bg-amber-100' : 'bg-stone-100'
+                  className={`flex-row items-center gap-1 rounded border-2 px-2 py-1 ${
+                    isSelected
+                      ? 'border-amber-500 bg-amber-100 shadow-[2px_2px_0px_0px_rgba(245,158,11,1)]'
+                      : 'border-stone-700 bg-stone-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                   }`}>
                   <Ionicons
                     name="time-outline"
@@ -63,7 +65,7 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
                     color={isSelected ? '#F59E0B' : '#78716c'}
                   />
                   <Text
-                    className={`text-xs font-medium ${isSelected ? 'text-amber-700' : 'text-stone-600'}`}>
+                    className={`text-xs font-black ${isSelected ? 'text-amber-700' : 'text-stone-600'}`}>
                     {option.duration}
                   </Text>
                 </View>
@@ -73,7 +75,8 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
 
           {/* Description for items without duration metadata */}
           {option.description && option.duration === '0:00' && (
-            <Text className={`mt-1 text-xs ${isSelected ? 'text-amber-600' : 'text-stone-600'}`}>
+            <Text
+              className={`mt-1 text-xs font-bold ${isSelected ? 'text-amber-600' : 'text-stone-600'}`}>
               {option.description}
             </Text>
           )}
@@ -82,12 +85,12 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
         {/* Selection indicator with order */}
         <View className="ml-3 flex-col items-center justify-center">
           {isSelected && selectionOrder !== null && (
-            <View className="h-9 w-9 flex-row items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-yellow-500 shadow-md">
-              <Text className="text-base font-bold text-white">{selectionOrder}</Text>
+            <View className="h-9 w-9 flex-row items-center justify-center rounded border-2 border-stone-800 bg-amber-500 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <Text className="text-base font-black text-white">{selectionOrder}</Text>
             </View>
           )}
           {!isSelected && (
-            <View className="h-9 w-9 rounded-full border-2 border-stone-300 bg-stone-50" />
+            <View className="h-9 w-9 rounded border-2 border-stone-800 bg-stone-50" />
           )}
         </View>
       </View>
@@ -179,19 +182,21 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         keyboardBlurBehavior="restore"
         style={{ zIndex: 9999 }}>
         {/* Header */}
-        <View className="border-b border-amber-200 bg-gradient-to-r from-amber-500 to-yellow-500 px-6 pb-5 pt-4 shadow-md">
+        <View className="border-b-4 border-stone-800 bg-amber-400 px-6 pb-5 pt-4">
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
               <View className="flex-row items-center gap-2">
-                <View className="h-8 w-8 items-center justify-center rounded-lg bg-white/20">
-                  <Ionicons name="musical-notes" size={18} color="#FFFFFF" />
+                <View className="h-8 w-8 items-center justify-center rounded border-2 border-stone-800 bg-amber-300">
+                  <Ionicons name="musical-notes" size={18} color="#292524" />
                 </View>
-                <Text className="text-xl font-bold text-white">{title}</Text>
+                <Text className="text-xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
+                  {title}
+                </Text>
               </View>
               {selectedAudioIds.length > 0 && (
                 <View className="ml-10 mt-2 flex-row items-center gap-1">
-                  <View className="rounded-full bg-white/20 px-2 py-1">
-                    <Text className="text-xs font-bold text-white">
+                  <View className="rounded border-2 border-stone-800 bg-amber-200 px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <Text className="text-xs font-black uppercase text-stone-900">
                       {selectedAudioIds.length} selected
                     </Text>
                   </View>
@@ -200,11 +205,11 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
             </View>
             <TouchableOpacity
               onPress={handleDone}
-              className="rounded-full bg-white/20 p-2.5"
+              className="rounded border-2 border-stone-800 bg-stone-100 p-2.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               accessibilityRole="button"
               accessibilityLabel="Done">
-              <Ionicons name="checkmark" size={24} color="#FFFFFF" />
+              <Ionicons name="checkmark" size={24} color="#292524" />
             </TouchableOpacity>
           </View>
         </View>

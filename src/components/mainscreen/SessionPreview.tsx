@@ -104,34 +104,36 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   };
 
   return (
-    <View className="mb-8 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-      <View className="mb-4 flex-row items-center justify-between">
+    <View className="mb-8 rounded-xl border-4 border-stone-800 bg-gradient-to-b from-amber-50 to-white p-6 ,0,0,1)]">
+      <View className="mb-5 flex-row items-center justify-between">
         <View className="flex-row items-center">
-          <Ionicons name="time-outline" size={20} color="#F59E0B" className="mr-2" />
-          <Text className="ml-2 text-lg font-semibold text-stone-800">Session Preview</Text>
+          <View className="border-3 mr-2 rounded-lg border-stone-800 bg-amber-200 p-2 ">
+            <Ionicons name="time-outline" size={22} color="#F59E0B" />
+          </View>
+          <Text className="ml-2 text-lg font-black uppercase text-stone-800">Session Preview</Text>
         </View>
         <TouchableOpacity
           onPress={handleSaveSession}
           activeOpacity={0.8}
-          className="flex-row items-center rounded-lg bg-amber-500 px-4 py-2">
-          <Ionicons name="save-outline" size={16} color="#1F2937" />
-          <Text className="ml-2 font-medium text-stone-800">Save Session</Text>
+          className="border-3 flex-row items-center rounded-lg border-stone-800 bg-amber-400 px-4 py-2.5 ">
+          <Ionicons name="save-outline" size={18} color="#292524" />
+          <Text className="ml-2 text-sm font-black uppercase text-stone-900">Save</Text>
         </TouchableOpacity>
       </View>
 
       {isSilentOnlySession ? (
         // Silent-only session display
-        <View className="items-center py-8">
-          <View className="mb-4 h-16 w-16 items-center justify-center rounded-full bg-stone-100">
-            <Ionicons name="leaf-outline" size={32} color="#F59E0B" />
+        <View className="items-center py-6">
+          <View className="border-3 mb-3 h-14 w-14 items-center justify-center rounded-lg border-stone-800 bg-amber-100">
+            <Ionicons name="leaf-outline" size={28} color="#F59E0B" />
           </View>
-          <Text className="mb-2 text-xl font-semibold text-stone-800">Silent Meditation</Text>
-          <Text className="text-center text-stone-600">Pure silent meditation session</Text>
+          <Text className="text-base font-black uppercase text-stone-800">Silent Meditation</Text>
+          <Text className="mt-1 text-sm font-bold text-stone-600">Pure silent session</Text>
         </View>
       ) : (
         <View className="mb-8">
           {/* Timeline Bar */}
-          <View className="mb-4 h-3 flex-row overflow-hidden rounded-full bg-stone-200">
+          <View className="mb-4 h-3 flex-row overflow-hidden rounded border-2 border-stone-800 bg-stone-200">
             {enabledSegments.map((type) => {
               const segment = segments[type];
               if (!segment) return null;
@@ -171,17 +173,17 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               return (
                 <View key={type} className="mb-4 flex-row items-center justify-between">
                   <View className="flex-1 flex-row items-center">
-                    <View className={`h-3 w-3 ${color} mr-3 rounded-full`} />
+                    <View className={`h-3 w-3 ${color} mr-3 rounded border border-stone-800`} />
                     <View className="flex-1">
-                      <Text className="font-medium text-stone-800">{segment.label}</Text>
+                      <Text className="font-black text-stone-800">{segment.label}</Text>
                       {selectedAudioNames.length > 0 && selectedAudioNames[0] !== 'None' && (
-                        <Text className="text-xs text-stone-600">
+                        <Text className="text-xs font-bold text-stone-600">
                           {selectedAudioNames.join(', ')}
                         </Text>
                       )}
                     </View>
                   </View>
-                  <Text className="font-medium text-stone-600">
+                  <Text className="font-black text-stone-600">
                     {displayDurationMin > 0 ? `${displayDurationMin} min` : ''}
                     {displayDurationMin > 0 && displayRemainderSec > 0 ? ' ' : ''}
                     {displayRemainderSec > 0 ? `${displayRemainderSec} sec` : ''}
@@ -195,7 +197,7 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
       )}
 
       {/* Total Duration */}
-      <View className="mt-4 border-t border-stone-200 pt-4">
+      <View className="mt-4 border-t-4 border-stone-800 pt-4">
         {(() => {
           const effectiveDuration = getEffectiveDuration(
             totalDurationMinutes,
@@ -229,8 +231,8 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
             <View className="space-y-2">
               {/* Warning message */}
               {showWarning && (
-                <View className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
-                  <Text className="text-sm font-medium text-red-800">
+                <View className="border-3 mb-4 rounded border-red-600 bg-red-50 p-3 shadow-[4px_4px_0px_0px_rgba(220,38,38,1)]">
+                  <Text className="text-sm font-black text-red-800">
                     ⚠️ Warning: Audio content, gong, and pauses (
                     {formatDurationWithSeconds(nonSilentDurationSec)}) exceed or equal the selected
                     duration ({formatDuration(totalDurationMinutes)}). There will be no silent
@@ -240,10 +242,10 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               )}
 
               <View className="flex-row items-center justify-between">
-                <Text className="text-lg font-semibold text-stone-800">
+                <Text className="text-lg font-black uppercase text-stone-800">
                   {preferences.timingPreference === 'total' ? 'Total Session' : 'Silent Meditation'}
                 </Text>
-                <Text className="text-lg font-semibold text-amber-600">
+                <Text className="text-lg font-black text-amber-600">
                   {preferences.timingPreference === 'total'
                     ? formatDuration(totalDurationMinutes)
                     : formatDuration(effectiveDuration.silentMinutes)}
@@ -252,8 +254,8 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
 
               {effectiveDuration.audioMinutes > 0 && (
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-sm text-stone-600">+ Audio Content</Text>
-                  <Text className="text-sm text-stone-600">
+                  <Text className="text-sm font-bold text-stone-600">+ Audio Content</Text>
+                  <Text className="text-sm font-bold text-stone-600">
                     {formatDurationWithSeconds(audioDurationSec)}
                   </Text>
                 </View>
@@ -261,8 +263,8 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
 
               {gongDurationSec > 0 && (
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-sm text-stone-600">+ Gong</Text>
-                  <Text className="text-sm text-stone-600">
+                  <Text className="text-sm font-bold text-stone-600">+ Gong</Text>
+                  <Text className="text-sm font-bold text-stone-600">
                     {formatDurationWithSeconds(gongDurationSec)}
                   </Text>
                 </View>
@@ -270,8 +272,8 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
 
               {preferences.pauseDuration > 0 && pauseDurationSec > 0 && (
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-sm text-stone-600">+ Pause Duration</Text>
-                  <Text className="text-sm text-stone-600">
+                  <Text className="text-sm font-bold text-stone-600">+ Pause Duration</Text>
+                  <Text className="text-sm font-bold text-stone-600">
                     {formatDurationWithSeconds(pauseDurationSec)}
                   </Text>
                 </View>
@@ -280,11 +282,11 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               {(effectiveDuration.audioMinutes > 0 ||
                 gongDurationSec > 0 ||
                 (preferences.pauseDuration > 0 && pauseDurationSec > 0)) && (
-                <View className="mt-4 flex-row items-center justify-between border-t border-stone-200 pt-2">
-                  <Text className="mt-1 text-lg font-semibold text-stone-800">
+                <View className="mt-4 flex-row items-center justify-between border-t-4 border-stone-800 pt-2">
+                  <Text className="mt-1 text-lg font-black uppercase text-stone-800">
                     {preferences.timingPreference === 'total' ? 'Actual Duration' : 'Total Session'}
                   </Text>
-                  <Text className="mt-1 text-lg font-semibold text-amber-600">
+                  <Text className="mt-1 text-lg font-black text-amber-600">
                     {formatDurationWithSeconds(totalDurationSec)}
                   </Text>
                 </View>

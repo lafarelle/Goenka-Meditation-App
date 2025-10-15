@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
@@ -18,39 +17,54 @@ export function MainScreen() {
     <AudioSelectionProvider>
       <View className="flex-1 bg-stone-50">
         {/* Header with Saved Sessions and Settings buttons */}
-        <View className="flex-row items-center px-6 pb-4 pt-16">
-          <TouchableOpacity
-            onPress={() => setIsSavedSessionsDrawerVisible(true)}
-            activeOpacity={0.8}
-            className="items-center p-2">
-            <Ionicons name="bookmark-outline" size={24} color="#57534e" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setIsHistoryDrawerVisible(true)}
-            activeOpacity={0.8}
-            className="items-center p-2">
-            <Ionicons name="time-outline" size={24} color="#57534e" />
-          </TouchableOpacity>
-          <View className="flex-1" />
+        <View className="flex-row items-center justify-between px-6 pb-6 pt-16">
+          <View className="flex-row gap-3">
+            <TouchableOpacity
+              onPress={() => setIsSavedSessionsDrawerVisible(true)}
+              activeOpacity={0.8}
+              className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <Ionicons name="bookmark-outline" size={24} color="#F59E0B" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setIsHistoryDrawerVisible(true)}
+              activeOpacity={0.8}
+              className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <Ionicons name="time-outline" size={24} color="#F59E0B" />
+            </TouchableOpacity>
+          </View>
           <Link href="/settings" asChild>
-            <TouchableOpacity activeOpacity={0.8} className="items-center p-2">
-              <Ionicons name="settings-outline" size={24} color="#57534e" />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+              <Ionicons name="settings-outline" size={24} color="#F59E0B" />
             </TouchableOpacity>
           </Link>
         </View>
 
         <ScrollView
           className="flex-1"
-          contentContainerClassName="gap-6 px-6 py-6"
+          contentContainerClassName="gap-5 px-6 py-6"
           showsVerticalScrollIndicator={false}>
-          <Text className="-mt-4 mb-4 text-center text-4xl font-bold text-stone-800">GOENKA</Text>
+          {/* Title with neobrutalism styling */}
+          <View className="-mt-4 mb-1 items-center">
+            <View className="rounded-xl border-4 border-stone-800 bg-gradient-to-r from-amber-300 to-amber-400 px-8 py-3">
+              <Text className="text-center text-4xl font-black text-stone-900">GOENKA</Text>
+            </View>
+          </View>
+
           <DurationSelector />
           <SegmentSelector />
 
           <SessionPreview />
 
           <Link href="/meditation" asChild>
-            <Button title="Start Meditation" className="py-4" />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              className="rounded-xl border-4 border-stone-800 bg-amber-400 px-8 py-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <Text className="text-center text-xl font-black uppercase tracking-wide text-stone-900">
+                Start Meditation
+              </Text>
+            </TouchableOpacity>
           </Link>
         </ScrollView>
 

@@ -101,43 +101,47 @@ export function PreferencesSelector() {
   );
 
   return (
-    <View className="overflow-hidden rounded-2xl bg-white shadow-md">
+    <View className="rounded-lg border-4 border-stone-800 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
       {/* Header */}
-      <View className="border-b border-amber-100 bg-gradient-to-r from-amber-50 to-yellow-50 px-5 py-4">
-        <View className="flex-row items-center gap-2">
-          <View className="h-8 w-8 items-center justify-center rounded-lg bg-amber-100">
-            <Ionicons name="options" size={18} color="#F59E0B" />
+      <View className="border-b-4 border-stone-800 bg-amber-400 px-5 py-4">
+        <View className="flex-row items-center gap-3">
+          <View className="h-10 w-10 items-center justify-center rounded border-2 border-stone-800 bg-amber-300">
+            <Ionicons name="options" size={20} color="#292524" />
           </View>
-          <Text className="text-lg font-bold text-stone-800">Preferences</Text>
+          <Text className="text-xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
+            Preferences
+          </Text>
         </View>
       </View>
 
       <View className="p-5">
         {/* Timing Preference */}
         <View className="mb-4">
-          <Text className="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500">
+          <Text className="mb-2 text-xs font-black uppercase tracking-wider text-stone-800">
             Timing Mode
           </Text>
           <TouchableOpacity
             onPress={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
             activeOpacity={0.8}
-            className="flex-row items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-            <Text className="flex-1 text-sm font-semibold text-amber-800">
+            className="border-3 flex-row items-center justify-between rounded border-amber-500 bg-amber-100 px-4 py-3 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]">
+            <Text className="flex-1 text-sm font-black uppercase text-amber-900">
               {isTotalTiming ? 'Total Session' : 'Silent Only'}
             </Text>
-            <Switch
-              value={isTotalTiming}
-              onValueChange={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
-              trackColor={{ false: '#d6d3d1', true: '#F59E0B' }}
-              thumbColor="#ffffff"
-              ios_backgroundColor="#d6d3d1"
-            />
+            <View className="rounded border-2 border-stone-800 bg-amber-300 p-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <Switch
+                value={isTotalTiming}
+                onValueChange={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
+                trackColor={{ false: '#78716c', true: '#F59E0B' }}
+                thumbColor="#ffffff"
+                ios_backgroundColor="#78716c"
+              />
+            </View>
           </TouchableOpacity>
         </View>
 
         {/* Gong Selection */}
         <View className="mb-4">
-          <Text className="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500">
+          <Text className="mb-2 text-xs font-black uppercase tracking-wider text-stone-800">
             Gong Sound
           </Text>
           <View className="flex-row gap-2">
@@ -151,15 +155,15 @@ export function PreferencesSelector() {
                   key={option.id}
                   onPress={() => setGongPreference(option.id)}
                   activeOpacity={0.8}
-                  className={`flex-1 rounded-xl border px-3 py-2.5 ${
+                  className={`flex-1 rounded border-2 px-3 py-2.5 ${
                     isSelected
-                      ? 'border-amber-400 bg-amber-50'
-                      : 'border-stone-200 bg-stone-50'
+                      ? 'border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
+                      : 'border-stone-800 bg-stone-100'
                   }`}>
                   <View className="items-center">
                     <Text
-                      className={`text-sm font-bold ${
-                        isSelected ? 'text-amber-800' : 'text-stone-700'
+                      className={`text-sm font-black uppercase ${
+                        isSelected ? 'text-amber-900' : 'text-stone-800'
                       }`}>
                       {option.name}
                     </Text>
@@ -174,11 +178,16 @@ export function PreferencesSelector() {
                         {isLoading ? (
                           <ActivityIndicator size="small" color="#F59E0B" />
                         ) : (
-                          <Ionicons
-                            name={isPlaying ? 'pause-circle' : 'play-circle'}
-                            size={20}
-                            color={isSelected ? '#F59E0B' : '#78716c'}
-                          />
+                          <View
+                            className={`rounded-full border-2 ${
+                              isSelected ? 'border-amber-600' : 'border-stone-700'
+                            }`}>
+                            <Ionicons
+                              name={isPlaying ? 'pause-circle' : 'play-circle'}
+                              size={20}
+                              color={isSelected ? '#D97706' : '#44403c'}
+                            />
+                          </View>
                         )}
                       </TouchableOpacity>
                     )}
@@ -191,7 +200,7 @@ export function PreferencesSelector() {
 
         {/* Pause Duration */}
         <View>
-          <Text className="mb-2 text-xs font-bold uppercase tracking-wide text-stone-500">
+          <Text className="mb-2 text-xs font-black uppercase tracking-wider text-stone-800">
             Pause Between Segments
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -203,14 +212,14 @@ export function PreferencesSelector() {
                   key={option.value}
                   onPress={() => setPauseDuration(option.value)}
                   activeOpacity={0.8}
-                  className={`rounded-xl border px-4 py-2.5 ${
+                  className={`rounded border-2 px-4 py-2.5 ${
                     isSelected
-                      ? 'border-amber-400 bg-amber-50'
-                      : 'border-stone-200 bg-stone-50'
+                      ? 'border-amber-500 bg-amber-100 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
+                      : 'border-stone-800 bg-stone-100'
                   }`}>
                   <Text
-                    className={`text-sm font-bold ${
-                      isSelected ? 'text-amber-800' : 'text-stone-700'
+                    className={`text-sm font-black uppercase ${
+                      isSelected ? 'text-amber-900' : 'text-stone-800'
                     }`}>
                     {option.label}
                   </Text>
@@ -223,4 +232,3 @@ export function PreferencesSelector() {
     </View>
   );
 }
-

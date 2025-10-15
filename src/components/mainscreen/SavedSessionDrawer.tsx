@@ -51,21 +51,23 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
       animationType="slide"
       presentationStyle="pageSheet"
       onRequestClose={onClose}>
-      <View className="flex-1 bg-gradient-to-b from-amber-50 to-stone-50">
+      <View className="flex-1 bg-amber-50">
         {/* Header */}
-        <View className="border-b border-amber-200 bg-gradient-to-r from-amber-500 to-yellow-500 px-6 py-4 pt-16 shadow-md">
+        <View className="border-b-4 border-stone-800 bg-amber-400 px-6 py-4 pt-16">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
-              <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                <Ionicons name="bookmark" size={22} color="#000000" />
+              <View className="h-10 w-10 items-center justify-center rounded border-2 border-stone-800 bg-amber-300">
+                <Ionicons name="bookmark" size={22} color="#292524" />
               </View>
-              <Text className="text-2xl font-bold text-black">Saved Sessions</Text>
+              <Text className="text-2xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
+                Saved Sessions
+              </Text>
             </View>
             <TouchableOpacity
               onPress={onClose}
               activeOpacity={0.8}
-              className="rounded-full bg-white/20 p-2">
-              <Ionicons name="close" size={24} color="#000000" />
+              className="rounded border-2 border-stone-800 bg-stone-100 p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <Ionicons name="close" size={24} color="#292524" />
             </TouchableOpacity>
           </View>
         </View>
@@ -74,11 +76,13 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
         <ScrollView className="flex-1 px-6 py-6">
           {saved.length === 0 ? (
             <View className="items-center py-16">
-              <View className="mb-6 h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-yellow-100 shadow-lg">
+              <View className="mb-6 h-24 w-24 items-center justify-center rounded border-4 border-stone-800 bg-amber-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                 <Ionicons name="bookmark-outline" size={48} color="#F59E0B" />
               </View>
-              <Text className="mb-3 text-xl font-bold text-stone-800">No Saved Sessions</Text>
-              <Text className="text-center text-base text-stone-600">
+              <Text className="mb-3 text-xl font-black uppercase text-stone-800">
+                No Saved Sessions
+              </Text>
+              <Text className="text-center text-base font-bold text-stone-600">
                 Save your meditation configurations{'\n'}to access them quickly
               </Text>
             </View>
@@ -89,35 +93,35 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                   key={session.id}
                   onPress={() => loadSession(session.id)}
                   activeOpacity={0.8}
-                  className="overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-md">
+                  className="overflow-hidden rounded-lg border-4 border-stone-800 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                   {/* Accent bar */}
-                  <View className="h-1.5 bg-gradient-to-r from-amber-500 to-yellow-500" />
+                  <View className="h-2 border-b-4 border-stone-800 bg-amber-400" />
 
                   <View className="p-5">
                     <View className="flex-row items-start justify-between">
                       <View className="flex-1">
                         <View className="mb-3 flex-row items-center gap-2">
-                          <View className="rounded-lg bg-amber-100 px-2 py-1">
+                          <View className="rounded border-2 border-stone-800 bg-amber-100 px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                             <Ionicons name="bookmark" size={14} color="#F59E0B" />
                           </View>
-                          <Text className="flex-1 text-lg font-bold text-stone-800">
+                          <Text className="flex-1 text-lg font-black text-stone-800">
                             {session.name}
                           </Text>
                         </View>
 
                         <View className="mb-3 flex-row items-center">
-                          <View className="flex-row items-center rounded-full bg-amber-50 px-3 py-1.5">
+                          <View className="flex-row items-center rounded border-2 border-amber-500 bg-amber-50 px-3 py-1.5 shadow-[2px_2px_0px_0px_rgba(245,158,11,1)]">
                             <Ionicons name="time-outline" size={16} color="#F59E0B" />
-                            <Text className="ml-1.5 text-sm font-semibold text-amber-700">
+                            <Text className="ml-1.5 text-sm font-black text-amber-700">
                               {formatSessionDuration(session.totalDuration)}
                             </Text>
                           </View>
                           {session.useCount > 0 && (
                             <>
-                              <Text className="mx-2 text-stone-400">•</Text>
-                              <View className="flex-row items-center rounded-full bg-stone-100 px-3 py-1.5">
+                              <Text className="mx-2 font-black text-stone-400">•</Text>
+                              <View className="flex-row items-center rounded border-2 border-stone-700 bg-stone-100 px-3 py-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                                 <Ionicons name="repeat" size={14} color="#78716c" />
-                                <Text className="ml-1 text-sm font-medium text-stone-700">
+                                <Text className="ml-1 text-sm font-black text-stone-700">
                                   {getSessionUsageText(session.useCount)}
                                 </Text>
                               </View>
@@ -126,16 +130,16 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                         </View>
 
                         <View className="flex-row items-center">
-                          <Ionicons name="calendar-outline" size={12} color="#a8a29e" />
-                          <Text className="ml-1 text-xs text-stone-500">
+                          <Ionicons name="calendar-outline" size={12} color="#78716c" />
+                          <Text className="ml-1 text-xs font-bold text-stone-600">
                             Created {formatSessionDate(session.createdAt)}
                           </Text>
                         </View>
-                        {session.lastUsed && (
+                        {session.lastUsedAt && (
                           <View className="mt-1 flex-row items-center">
-                            <Ionicons name="time-outline" size={12} color="#a8a29e" />
-                            <Text className="ml-1 text-xs text-stone-500">
-                              Last used {formatSessionDate(session.lastUsed)}
+                            <Ionicons name="time-outline" size={12} color="#78716c" />
+                            <Text className="ml-1 text-xs font-bold text-stone-600">
+                              Last used {formatSessionDate(session.lastUsedAt)}
                             </Text>
                           </View>
                         )}
@@ -147,7 +151,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                           deleteSession(session.id);
                         }}
                         activeOpacity={0.8}
-                        className="ml-3 rounded-xl bg-red-50 p-3">
+                        className="ml-3 rounded border-2 border-red-600 bg-red-50 p-3 shadow-[3px_3px_0px_0px_rgba(220,38,38,1)]">
                         <Ionicons name="trash-outline" size={20} color="#EF4444" />
                       </TouchableOpacity>
                     </View>
