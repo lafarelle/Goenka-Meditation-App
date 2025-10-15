@@ -136,23 +136,15 @@ export function GongSelector() {
                     {/* Selection Button */}
                     <Pressable
                       onPress={() => setGongPreference(gong.id)}
-                      style={({ pressed }) => [
-                        { opacity: pressed ? 0.8 : 1 },
+                      style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                      className={`border-3 flex-1 rounded px-3 py-3 ${
                         isSelected
-                          ? {
-                              borderColor: '#f59e0b',
-                              backgroundColor: '#fef3c7',
-                              shadowColor: '#f59e0b',
-                              shadowOffset: { width: 3, height: 3 },
-                              shadowOpacity: 1,
-                              shadowRadius: 0,
-                            }
-                          : {
-                              borderColor: '#1c1917',
-                              backgroundColor: '#f5f5f4',
-                            },
-                      ]}
-                      className="flex-1 rounded border-2 px-3 py-3">
+                          ? 'border-amber-500 bg-amber-50 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
+                          : 'border-stone-800 bg-stone-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                      }`}
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: isSelected }}
+                      accessibilityLabel={gong.name}>
                       <Text
                         className={`text-center text-sm font-black uppercase ${
                           isSelected ? 'text-amber-900' : 'text-stone-800'
@@ -165,19 +157,12 @@ export function GongSelector() {
                     <Pressable
                       onPress={() => handlePlayGong(gong.id, gong.audioPath)}
                       disabled={playingGong === gong.id || loadingGong === gong.id}
-                      style={({ pressed }) => [
-                        { opacity: pressed ? 0.7 : 1 },
-                        isSelected
-                          ? {
-                              borderColor: '#d97706',
-                              backgroundColor: '#fffbeb',
-                            }
-                          : {
-                              borderColor: '#44403c',
-                              backgroundColor: '#fafaf9',
-                            },
-                      ]}
-                      className="items-center justify-center rounded border-2 px-4 py-3">
+                      style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
+                      className={`items-center justify-center rounded border-2 px-4 py-3 ${
+                        isSelected ? 'border-amber-600 bg-amber-50' : 'border-stone-700 bg-stone-50'
+                      }`}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Preview ${gong.name}`}>
                       {loadingGong === gong.id ? (
                         <ActivityIndicator size="small" color="#F59E0B" />
                       ) : (
