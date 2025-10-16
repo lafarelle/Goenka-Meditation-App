@@ -29,39 +29,46 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
   return (
     <Pressable
       onPress={onToggle}
-      style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-      className={`border-3 mx-4 mb-3 overflow-hidden rounded-lg p-4 ${
-        isSelected
-          ? 'border-amber-500 bg-amber-50 shadow-[4px_4px_0px_0px_rgba(245,158,11,1)]'
-          : 'border-stone-800 bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
-      }`}
+      style={({ pressed }) => [
+        {
+          opacity: pressed ? 0.7 : 1,
+          backgroundColor: isSelected ? '#FFF9E6' : '#FFFFFF',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: isSelected ? 0.1 : 0.06,
+          shadowRadius: 8,
+          elevation: isSelected ? 3 : 2,
+        },
+      ]}
+      className="mx-4 mb-4 overflow-hidden rounded-2xl p-5"
       accessibilityRole="checkbox"
       accessibilityState={{ checked: isSelected }}
       accessibilityLabel={option.name}>
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <Text
-            className={`text-base font-black ${isSelected ? 'text-amber-800' : 'text-stone-900'}`}>
+            className="text-base font-medium"
+            style={{ color: isSelected ? '#333333' : '#666666' }}>
             {option.name}
           </Text>
 
           {/* Metadata row */}
           {option.duration !== '0:00' && (
-            <View className="mt-2 flex-row flex-wrap items-center gap-2">
+            <View className="mt-3 flex-row flex-wrap items-center gap-2">
               {option.duration && option.duration !== '0:00' && (
                 <View
-                  className={`flex-row items-center gap-1 rounded border-2 px-2 py-1 ${
-                    isSelected
-                      ? 'border-amber-500 bg-amber-100 shadow-[2px_2px_0px_0px_rgba(245,158,11,1)]'
-                      : 'border-stone-700 bg-stone-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-                  }`}>
+                  className="flex-row items-center gap-1.5 rounded-lg px-2.5 py-1.5"
+                  style={{
+                    backgroundColor: isSelected ? '#FFF3D6' : '#F5F5F5',
+                  }}>
                   <Ionicons
                     name="time-outline"
                     size={12}
-                    color={isSelected ? '#F59E0B' : '#78716c'}
+                    color={isSelected ? '#E8B84B' : '#999999'}
                   />
                   <Text
-                    className={`text-xs font-black ${isSelected ? 'text-amber-700' : 'text-stone-600'}`}>
+                    className="text-xs font-medium"
+                    style={{ color: isSelected ? '#E8B84B' : '#999999' }}>
                     {option.duration}
                   </Text>
                 </View>
@@ -71,22 +78,33 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
 
           {/* Description for items without duration metadata */}
           {option.description && option.duration === '0:00' && (
-            <Text
-              className={`mt-1 text-xs font-bold ${isSelected ? 'text-amber-600' : 'text-stone-600'}`}>
+            <Text className="mt-2 text-xs font-normal" style={{ color: '#999999' }}>
               {option.description}
             </Text>
           )}
         </View>
 
         {/* Selection indicator with order */}
-        <View className="ml-3 flex-col items-center justify-center">
+        <View className="ml-4 flex-col items-center justify-center">
           {isSelected && selectionOrder !== null && (
-            <View className="h-9 w-9 flex-row items-center justify-center rounded border-2 border-stone-800 bg-amber-500 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-              <Text className="text-base font-black text-white">{selectionOrder}</Text>
+            <View
+              className="h-9 w-9 flex-row items-center justify-center rounded-xl"
+              style={{
+                backgroundColor: '#E8B84B',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 2,
+              }}>
+              <Text className="text-base font-medium text-white">{selectionOrder}</Text>
             </View>
           )}
           {!isSelected && (
-            <View className="h-9 w-9 rounded border-2 border-stone-800 bg-stone-50" />
+            <View
+              className="h-9 w-9 rounded-xl"
+              style={{ backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#E5E5E5' }}
+            />
           )}
         </View>
       </View>
@@ -167,32 +185,38 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         enablePanDownToClose
         backdropComponent={renderBackdrop}
         backgroundStyle={{
-          backgroundColor: '#FFFBEB',
+          backgroundColor: '#F5F5EC',
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
         }}
         handleIndicatorStyle={{
-          backgroundColor: '#F59E0B',
+          backgroundColor: '#E8B84B',
           width: 48,
-          height: 5,
+          height: 4,
         }}
         keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
         style={{ zIndex: 9999 }}>
         {/* Header */}
-        <View className="border-b-4 border-stone-800 bg-amber-400 px-6 pb-5 pt-4">
+        <View
+          className="px-8 pb-6 pt-5"
+          style={{ borderBottomWidth: 1, borderBottomColor: '#E5E5E5' }}>
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <View className="flex-row items-center gap-2">
-                <View className="h-8 w-8 items-center justify-center rounded border-2 border-stone-800 bg-amber-300">
-                  <Ionicons name="musical-notes" size={18} color="#292524" />
+              <View className="flex-row items-center gap-3">
+                <View
+                  className="h-10 w-10 items-center justify-center rounded-xl"
+                  style={{ backgroundColor: '#E8B84B' }}>
+                  <Ionicons name="musical-notes" size={20} color="#FFFFFF" />
                 </View>
-                <Text className="text-xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
+                <Text className="text-xl font-medium tracking-wide" style={{ color: '#333333' }}>
                   {title}
                 </Text>
               </View>
               {selectedAudioIds.length > 0 && (
-                <View className="ml-10 mt-2 flex-row items-center gap-1">
-                  <View className="rounded border-2 border-stone-800 bg-amber-200 px-2 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    <Text className="text-xs font-black uppercase text-stone-900">
+                <View className="ml-13 mt-3 flex-row items-center gap-1">
+                  <View className="rounded-lg px-3 py-1.5" style={{ backgroundColor: '#FFF3D6' }}>
+                    <Text className="text-xs font-medium" style={{ color: '#E8B84B' }}>
                       {selectedAudioIds.length} selected
                     </Text>
                   </View>
@@ -201,12 +225,22 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
             </View>
             <Pressable
               onPress={handleDone}
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className="rounded border-2 border-stone-800 bg-stone-100 p-2.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.06,
+                  shadowRadius: 4,
+                  elevation: 2,
+                },
+              ]}
+              className="rounded-xl p-2.5"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               accessibilityRole="button"
               accessibilityLabel="Done">
-              <Ionicons name="checkmark" size={24} color="#292524" />
+              <Ionicons name="checkmark" size={24} color="#333333" />
             </Pressable>
           </View>
         </View>
@@ -216,7 +250,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
           data={audioOptions}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          contentContainerStyle={{ paddingVertical: 16 }}
+          contentContainerStyle={{ paddingVertical: 20 }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         />

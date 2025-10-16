@@ -39,16 +39,32 @@ export function DurationSelector() {
   };
 
   return (
-    <View className="border-3 w-full rounded-lg border-stone-800 bg-white p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-      <View className="mb-3 flex-row items-center justify-center">
+    <View
+      className="w-full rounded-2xl bg-white p-6"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 3,
+      }}>
+      <View className="mb-5 flex-row items-center justify-center">
         <Pressable
           onPress={handleTimePress}
-          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}>
-          <View className="border-3 rounded-lg border-amber-600 bg-amber-100 px-4 py-1.5 shadow-[2px_2px_0px_0px_rgba(217,119,6,1)]">
-            <Text className="text-center text-2xl font-black text-amber-700">
-              {totalDurationMinutes} min
-            </Text>
-          </View>
+          style={({ pressed }) => [
+            {
+              opacity: pressed ? 0.7 : 1,
+              backgroundColor: pressed ? '#E8B84B' : 'transparent',
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              borderRadius: 12,
+            },
+          ]}>
+          <Text
+            className="text-center text-3xl font-light tracking-wide"
+            style={{ color: '#333333' }}>
+            {totalDurationMinutes} min
+          </Text>
         </Pressable>
       </View>
       <Slider
@@ -58,13 +74,17 @@ export function DurationSelector() {
         step={5}
         value={totalDurationMinutes}
         onValueChange={handleValueChange}
-        minimumTrackTintColor="#F59E0B"
+        minimumTrackTintColor="#E8B84B"
         maximumTrackTintColor="#E5E7EB"
-        thumbTintColor="#F59E0B"
+        thumbTintColor="#E8B84B"
       />
-      <View className="mt-1 flex-row justify-between px-1">
-        <Text className="text-xs font-bold text-stone-500">5</Text>
-        <Text className="text-xs font-bold text-stone-500">60</Text>
+      <View className="mt-2 flex-row justify-between px-1">
+        <Text className="text-xs font-medium" style={{ color: '#999999' }}>
+          5
+        </Text>
+        <Text className="text-xs font-medium" style={{ color: '#999999' }}>
+          60
+        </Text>
       </View>
     </View>
   );

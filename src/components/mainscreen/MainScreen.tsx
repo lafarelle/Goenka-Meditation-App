@@ -15,41 +15,73 @@ export function MainScreen() {
 
   return (
     <AudioSelectionProvider>
-      <View className="flex-1 bg-stone-50">
+      <View className="flex-1" style={{ backgroundColor: '#F5F5EC' }}>
         {/* Header with Saved Sessions and Settings buttons */}
-        <View className="flex-row items-center justify-between px-6 pb-6 pt-16">
-          <View className="flex-row gap-3">
+        <View className="flex-row items-center justify-between px-8 pb-8 pt-16">
+          <View className="flex-row gap-4">
             <Pressable
               onPress={() => setIsSavedSessionsDrawerVisible(true)}
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-              <Ionicons name="bookmark-outline" size={24} color="#F59E0B" />
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: pressed ? '#E8B84B' : '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 8,
+                  elevation: 3,
+                },
+              ]}
+              className="rounded-2xl p-3">
+              <Ionicons name="bookmark-outline" size={24} color="#333333" />
             </Pressable>
             <Pressable
               onPress={() => setIsHistoryDrawerVisible(true)}
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-              <Ionicons name="time-outline" size={24} color="#F59E0B" />
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: pressed ? '#E8B84B' : '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 8,
+                  elevation: 3,
+                },
+              ]}
+              className="rounded-2xl p-3">
+              <Ionicons name="time-outline" size={24} color="#333333" />
             </Pressable>
           </View>
           <Link href="/settings" asChild>
             <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className="border-3 rounded-lg border-stone-800 bg-amber-100 p-2.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-              <Ionicons name="settings-outline" size={24} color="#F59E0B" />
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: pressed ? '#E8B84B' : '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.08,
+                  shadowRadius: 8,
+                  elevation: 3,
+                },
+              ]}
+              className="rounded-2xl p-3">
+              <Ionicons name="settings-outline" size={24} color="#333333" />
             </Pressable>
           </Link>
         </View>
 
         <ScrollView
           className="flex-1"
-          contentContainerClassName="gap-5 px-6 py-6"
+          contentContainerClassName="gap-8 px-8 py-6"
           showsVerticalScrollIndicator={false}>
-          {/* Title with neobrutalism styling */}
-          <View className="-mt-4 mb-1 items-center">
-            <View className="rounded-xl border-4 border-stone-800 bg-gradient-to-r from-amber-300 to-amber-400 px-8 py-3">
-              <Text className="text-center text-4xl font-black text-stone-900">GOENKA</Text>
-            </View>
+          {/* Title with serene styling */}
+          <View className="mb-4 items-center">
+            <Text
+              className="text-center text-5xl font-light tracking-wide"
+              style={{ color: '#333333' }}>
+              Goenka
+            </Text>
           </View>
 
           <DurationSelector />
@@ -59,9 +91,21 @@ export function MainScreen() {
 
           <Link href="/meditation" asChild>
             <Pressable
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className="rounded-xl border-4 border-stone-800 bg-amber-400 px-8 py-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <Text className="text-center text-xl font-black uppercase tracking-wide text-stone-900">
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.85 : 1,
+                  backgroundColor: '#E8B84B',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.12,
+                  shadowRadius: 12,
+                  elevation: 4,
+                },
+              ]}
+              className="rounded-2xl px-8 py-6">
+              <Text
+                className="text-center text-lg font-medium tracking-wide"
+                style={{ color: '#333333' }}>
                 Start Meditation
               </Text>
             </Pressable>

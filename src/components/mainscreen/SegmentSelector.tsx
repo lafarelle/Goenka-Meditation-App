@@ -16,39 +16,49 @@ const SegmentButton = React.memo<SegmentButtonProps>(
     return (
       <Pressable
         onPress={onPress}
-        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-        className={`border-3 rounded-xl p-5 px-7 ${
-          isEnabled
-            ? 'border-amber-500 bg-amber-50 shadow-[5px_5px_0px_0px_rgba(245,158,11,1)]'
-            : 'border-stone-800 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
-        }`}
+        style={({ pressed }) => [
+          {
+            opacity: pressed ? 0.7 : 1,
+            backgroundColor: isEnabled ? '#FFF9E6' : '#FFFFFF',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: isEnabled ? 0.1 : 0.06,
+            shadowRadius: isEnabled ? 10 : 8,
+            elevation: isEnabled ? 4 : 2,
+          },
+        ]}
+        className="rounded-2xl p-6"
         accessibilityRole="button"
         accessibilityLabel={`${title}: ${selectedName || 'None selected'}`}>
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-4">
             <View
-              className={`border-3 rounded-lg p-2.5 ${
-                isEnabled
-                  ? 'border-amber-600 bg-amber-200 shadow-[3px_3px_0px_0px_rgba(217,119,6,1)]'
-                  : 'border-stone-700 bg-stone-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-              }`}>
+              className="h-10 w-10 items-center justify-center rounded-xl"
+              style={{
+                backgroundColor: isEnabled ? '#E8B84B' : '#F5F5F5',
+              }}>
               <Text
-                className={`text-sm font-black ${isEnabled ? 'text-amber-700' : 'text-stone-500'}`}>
+                className="text-sm font-medium"
+                style={{ color: isEnabled ? '#FFFFFF' : '#999999' }}>
                 {number}
               </Text>
             </View>
             <View className="flex-1">
               <Text
-                className={`text-base font-black ${isEnabled ? 'text-amber-700' : 'text-stone-800'}`}>
+                className="text-base font-medium"
+                style={{ color: isEnabled ? '#333333' : '#666666' }}>
                 {title}
               </Text>
               {selectedName && (
-                <Text className="mt-1 text-sm font-bold text-stone-600">{selectedName}</Text>
+                <Text className="mt-1 text-xs font-normal" style={{ color: '#999999' }}>
+                  {selectedName}
+                </Text>
               )}
             </View>
           </View>
           <Text
-            className={`text-2xl font-black ${isEnabled ? 'text-amber-600' : 'text-stone-400'}`}>
+            className="text-2xl font-light"
+            style={{ color: isEnabled ? '#E8B84B' : '#CCCCCC' }}>
             ›
           </Text>
         </View>
@@ -113,16 +123,28 @@ export function SegmentSelector() {
 
   return (
     <>
-      <View className="w-full gap-4">
+      <View className="w-full gap-5">
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-black uppercase tracking-wider text-stone-800">
+          <Text className="text-base font-medium tracking-wide" style={{ color: '#666666' }}>
             Session Segments
           </Text>
           <Pressable
             onPress={handleClear}
-            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-            className="border-3 rounded-lg border-stone-800 bg-amber-400 px-4 py-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-            <Text className="text-sm font-black uppercase text-stone-900">Clear</Text>
+            style={({ pressed }) => [
+              {
+                opacity: pressed ? 0.7 : 1,
+                backgroundColor: '#FFFFFF',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.06,
+                shadowRadius: 4,
+                elevation: 2,
+              },
+            ]}
+            className="rounded-xl px-4 py-2">
+            <Text className="text-sm font-medium" style={{ color: '#666666' }}>
+              Clear
+            </Text>
           </Pressable>
         </View>
 
