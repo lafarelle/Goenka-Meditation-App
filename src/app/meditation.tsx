@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { useAudioSession } from '@/audio/useAudioSession';
+import { MeditationPulse } from '@/components/meditation';
 import { heavyHaptic, mediumHaptic } from '@/utils/haptics';
 import { getSessionTotalDuration } from '@/utils/meditationTimer';
 import { formatTime } from '@/utils/timing';
@@ -97,21 +98,29 @@ export default function Meditation() {
         }}
       />
 
-      {/* Back arrow in top left */}
+      {/* Back button - top left with elegant styling */}
       <Pressable
         onPress={handleBackPress}
-        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-        className="absolute left-4 top-12 z-10 rounded-full bg-white/10 p-3">
-        <Ionicons name="arrow-back" size={24} color="white" />
+        style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
+        className="absolute left-6 top-14 z-10 h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5">
+        <Ionicons name="close" size={28} color="rgba(255, 255, 255, 0.9)" />
       </Pressable>
 
-      {/* Main timer display */}
+      {/* Main content - centered pulse animation and timer */}
       <View className="flex-1 items-center justify-center">
-        <Text className="text-8xl font-light text-white">{formatTime(remainingTime)}</Text>
+        {/* Beautiful meditation pulse animation */}
+        <MeditationPulse isPlaying={sessionState.isPlaying} />
+
+        {/* Timer display - smaller and positioned below pulse */}
+        <View className="mt-24">
+          <Text className="text-5xl font-extralight tracking-widest text-white/90">
+            {formatTime(remainingTime)}
+          </Text>
+        </View>
       </View>
 
-      {/* Single play/pause button - positioned at bottom center */}
-      <View className="absolute bottom-12 left-0 right-0 items-center">
+      {/* Play/Pause button - elegant bottom center */}
+      <View className="absolute bottom-16 left-0 right-0 items-center">
         <Pressable
           onPress={() => {
             mediumHaptic();
@@ -121,9 +130,19 @@ export default function Meditation() {
               resumeSession();
             }
           }}
-          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="rounded-full bg-white/20 p-6">
-          <Ionicons name={sessionState.isPlaying ? 'pause' : 'play'} size={32} color="white" />
+          style={({ pressed }) => [
+            {
+              opacity: pressed ? 0.6 : 1,
+              transform: [{ scale: pressed ? 0.95 : 1 }],
+            },
+          ]}
+          className="h-20 w-20 items-center justify-center rounded-full border-2 border-white/30 bg-white/10">
+          <Ionicons
+            name={sessionState.isPlaying ? 'pause' : 'play'}
+            size={36}
+            color="rgba(255, 255, 255, 0.95)"
+            style={{ marginLeft: sessionState.isPlaying ? 0 : 3 }}
+          />
         </Pressable>
       </View>
     </View>
