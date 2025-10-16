@@ -3,6 +3,7 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { useStore } from '@/store/store';
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
@@ -54,37 +55,57 @@ export function ResetDataButton() {
   };
 
   return (
-    <View className="rounded-lg border-4 border-stone-800 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-      <View className="border-b-4 border-stone-800 bg-red-400 px-5 py-4">
-        <View className="flex-row items-center gap-3">
-          <View className="h-10 w-10 items-center justify-center rounded border-2 border-stone-800 bg-red-300">
-            <Text className="text-xl">🛠️</Text>
+    <View
+      className="rounded-2xl bg-white"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        elevation: 3,
+      }}>
+      <View className="px-8 py-6">
+        <View className="mb-6 flex-row items-center gap-4">
+          <View
+            className="h-12 w-12 items-center justify-center rounded-xl"
+            style={{ backgroundColor: '#FEF2F2' }}>
+            <Ionicons name="build-outline" size={24} color="#DC2626" />
           </View>
           <View className="flex-1">
-            <Text className="text-xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
+            <Text className="text-xl font-light tracking-wide" style={{ color: '#333333' }}>
               Developer Tools
             </Text>
-            <Text className="text-xs font-bold text-stone-800">For testing purposes only</Text>
+            <Text className="mt-1 text-sm font-normal" style={{ color: '#666666' }}>
+              For testing purposes only
+            </Text>
           </View>
         </View>
-      </View>
 
-      <View className="p-5">
         <Pressable
           onPress={handleReset}
           disabled={isResetting}
-          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className={`border-3 rounded border-red-600 bg-red-100 p-5 shadow-[4px_4px_0px_0px_rgba(220,38,38,1)] ${
-            isResetting ? 'opacity-50' : ''
-          }`}>
+          style={({ pressed }) => [
+            {
+              opacity: pressed ? 0.7 : isResetting ? 0.5 : 1,
+              backgroundColor: '#FEE2E2',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.08,
+              shadowRadius: 8,
+              elevation: 2,
+            },
+          ]}
+          className="rounded-xl px-8 py-6">
           <View className="items-center">
-            <View className="mb-2 h-14 w-14 items-center justify-center rounded border-2 border-stone-800 bg-red-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <View
+              className="mb-4 h-16 w-16 items-center justify-center rounded-2xl"
+              style={{ backgroundColor: '#FECACA' }}>
               <Text className="text-3xl">⚠️</Text>
             </View>
-            <Text className="text-base font-black uppercase text-red-800">
+            <Text className="text-lg font-medium" style={{ color: '#DC2626' }}>
               {isResetting ? 'Resetting...' : 'Reset All Data'}
             </Text>
-            <Text className="mt-1 text-center text-xs font-bold text-red-700">
+            <Text className="mt-2 text-center text-sm font-normal" style={{ color: '#991B1B' }}>
               Clear history, sessions, and preferences
             </Text>
           </View>

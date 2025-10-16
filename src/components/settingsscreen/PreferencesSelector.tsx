@@ -6,23 +6,33 @@ import { TimingPreference } from './TimingPreference';
 
 export function PreferencesSelector() {
   return (
-    <View className="rounded-lg border-4 border-stone-800 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+    <View
+      className="rounded-2xl bg-white"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        elevation: 3,
+      }}>
       {/* Header */}
-      <View className="border-b-4 border-stone-800 bg-amber-400 px-5 py-4">
-        <View className="flex-row items-center gap-3">
-          <View className="h-10 w-10 items-center justify-center rounded border-2 border-stone-800 bg-amber-300">
-            <Ionicons name="options" size={20} color="#292524" />
+      <View className="px-8 py-6">
+        <View className="mb-8 flex-row items-center gap-4">
+          <View
+            className="h-12 w-12 items-center justify-center rounded-xl"
+            style={{ backgroundColor: '#F5F5EC' }}>
+            <Ionicons name="options" size={24} color="#E8B84B" />
           </View>
-          <Text className="text-xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
+          <Text className="text-2xl font-light tracking-wide" style={{ color: '#333333' }}>
             Preferences
           </Text>
         </View>
-      </View>
 
-      <View className="p-5">
-        <TimingPreference />
-        <GongSelector />
-        <PauseDurationSelector />
+        <View className="gap-8">
+          <TimingPreference />
+          <GongSelector />
+          <PauseDurationSelector />
+        </View>
       </View>
     </View>
   );

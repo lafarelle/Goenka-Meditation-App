@@ -6,7 +6,7 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 
 export default function Settings() {
   return (
-    <View className="flex-1 bg-amber-50">
+    <View className="flex-1" style={{ backgroundColor: '#F5F5EC' }}>
       <Stack.Screen
         options={{
           title: 'Settings',
@@ -16,28 +16,46 @@ export default function Settings() {
       <Container>
         <ScrollView
           className="flex-1"
-          contentContainerClassName="gap-6 py-6"
+          contentContainerClassName="gap-8 py-6"
           showsVerticalScrollIndicator={false}>
-          {/* Retro Header with Back Button */}
-          <View className="rounded-lg border-4 border-stone-800 bg-amber-400 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          {/* Serene Header with Back Button */}
+          <View
+            className="rounded-2xl bg-white px-8 py-8"
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.08,
+              shadowRadius: 8,
+              elevation: 3,
+            }}>
             <Pressable
               onPress={() => router.back()}
-              className="mb-4 flex-row items-center gap-2 active:opacity-70">
-              <View className="rounded border-2 border-stone-800 bg-stone-800 p-1">
-                <Ionicons name="arrow-back" size={20} color="#fef3c7" />
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.7 : 1,
+                  marginBottom: 24,
+                },
+              ]}
+              className="flex-row items-center gap-3">
+              <View className="rounded-xl p-2" style={{ backgroundColor: '#E8B84B' }}>
+                <Ionicons name="arrow-back" size={20} color="#333333" />
               </View>
-              <Text className="font-bold text-stone-800">Back</Text>
+              <Text className="text-base font-medium" style={{ color: '#333333' }}>
+                Back
+              </Text>
             </Pressable>
 
-            <View className="flex-row items-center gap-3">
-              <View className="h-12 w-12 items-center justify-center rounded border-2 border-stone-800 bg-amber-300">
-                <Text className="text-2xl">⚙️</Text>
+            <View className="flex-row items-center gap-4">
+              <View
+                className="h-14 w-14 items-center justify-center rounded-2xl"
+                style={{ backgroundColor: '#F5F5EC' }}>
+                <Ionicons name="settings-outline" size={28} color="#E8B84B" />
               </View>
               <View className="flex-1">
-                <Text className="text-3xl font-black text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
-                  SETTINGS
+                <Text className="text-3xl font-light tracking-wide" style={{ color: '#333333' }}>
+                  Settings
                 </Text>
-                <Text className="text-sm font-bold text-stone-700">
+                <Text className="mt-1 text-sm font-normal" style={{ color: '#666666' }}>
                   Customize your meditation experience
                 </Text>
               </View>

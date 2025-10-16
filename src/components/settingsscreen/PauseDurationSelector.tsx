@@ -17,11 +17,11 @@ export function PauseDurationSelector() {
   const { preferences, setPauseDuration } = usePreferencesStore();
 
   return (
-    <View className="mb-4">
-      <Text className="mb-2 text-xs font-black uppercase tracking-wider text-stone-800">
+    <View>
+      <Text className="mb-3 text-sm font-medium tracking-wide" style={{ color: '#333333' }}>
         Pause Between Segments
       </Text>
-      <View className="flex-row gap-2">
+      <View className="flex-row gap-3">
         {PAUSE_OPTIONS.map((option) => {
           const isSelected = preferences.pauseDuration === option.value;
 
@@ -29,19 +29,26 @@ export function PauseDurationSelector() {
             <Pressable
               key={option.value}
               onPress={() => setPauseDuration(option.value)}
-              style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className={`border-3 flex-1 rounded px-4 py-3 ${
-                isSelected
-                  ? 'border-amber-500 bg-amber-50 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]'
-                  : 'border-stone-800 bg-stone-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
-              }`}
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: isSelected ? '#F5C563' : '#F5F5EC',
+                  borderWidth: 2,
+                  borderColor: isSelected ? '#D4A444' : 'transparent',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: isSelected ? 0.2 : 0.08,
+                  shadowRadius: 8,
+                  elevation: isSelected ? 4 : 2,
+                },
+              ]}
+              className="flex-1 rounded-xl px-6 py-4"
               accessibilityRole="radio"
               accessibilityState={{ checked: isSelected }}
               accessibilityLabel={`${option.label} pause duration`}>
               <Text
-                className={`text-center text-sm font-black uppercase ${
-                  isSelected ? 'text-amber-900' : 'text-stone-800'
-                }`}>
+                className="text-center text-base font-semibold"
+                style={{ color: isSelected ? '#1A1A1A' : '#666666' }}>
                 {option.label}
               </Text>
             </Pressable>

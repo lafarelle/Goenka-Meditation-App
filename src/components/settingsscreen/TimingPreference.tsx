@@ -6,28 +6,35 @@ export function TimingPreference() {
   const isTotalTiming = preferences.timingPreference === 'total';
 
   return (
-    <View className="mb-4">
-      <Text className="mb-2 text-xs font-black uppercase tracking-wider text-stone-800">
+    <View>
+      <Text className="mb-3 text-sm font-medium tracking-wide" style={{ color: '#333333' }}>
         Timing Mode
       </Text>
       <Pressable
         onPress={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
-        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-        className="border-3 flex-row items-center justify-between rounded border-amber-500 bg-amber-100 px-4 py-3 shadow-[3px_3px_0px_0px_rgba(245,158,11,1)]">
-        <Text className="flex-1 text-sm font-black uppercase text-amber-900">
+        style={({ pressed }) => [
+          {
+            opacity: pressed ? 0.7 : 1,
+            backgroundColor: '#F5F5EC',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.08,
+            shadowRadius: 8,
+            elevation: 2,
+          },
+        ]}
+        className="flex-row items-center justify-between rounded-xl px-6 py-4">
+        <Text className="flex-1 text-base font-normal" style={{ color: '#333333' }}>
           {isTotalTiming ? 'Total Session' : 'Silent Only'}
         </Text>
-        <View className="rounded border-2 border-stone-800 bg-amber-300 p-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-          <Switch
-            value={isTotalTiming}
-            onValueChange={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
-            trackColor={{ false: '#78716c', true: '#F59E0B' }}
-            thumbColor="#ffffff"
-            ios_backgroundColor="#78716c"
-          />
-        </View>
+        <Switch
+          value={isTotalTiming}
+          onValueChange={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
+          trackColor={{ false: '#E5E5E5', true: '#E8B84B' }}
+          thumbColor="#FFFFFF"
+          ios_backgroundColor="#E5E5E5"
+        />
       </Pressable>
     </View>
   );
 }
-
