@@ -1,10 +1,9 @@
 {
   "expo": {
-    "name": "goenka-october",
-    "slug": "goenka-october",
+    "name": "goenka",
+    "slug": "goenka",
     "version": "1.0.0",
-
-    "scheme": "goenka-october",
+    "scheme": "goenka",
     "platforms": ["ios", "android"],
     "web": {
       "bundler": "metro",
@@ -14,15 +13,11 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true,
-
       "tsconfigPaths": true
     },
-
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -30,12 +25,22 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rglafarelle.goenka",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ef1f6985-9ab6-4443-8405-51b8bc877c27"
       }
     }
   }
