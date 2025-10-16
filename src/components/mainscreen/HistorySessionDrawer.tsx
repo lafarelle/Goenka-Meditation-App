@@ -1,6 +1,7 @@
 import { useHistoryStore } from '@/store/historyStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
+import { lightHaptic, mediumHaptic } from '@/utils/haptics';
 import {
   formatHistoryDate,
   formatHistoryDuration,
@@ -136,7 +137,10 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                 <Text className="text-2xl font-bold text-[#333333]">Meditation History</Text>
               </View>
               <Pressable
-                onPress={onClose}
+                onPress={() => {
+                  lightHaptic();
+                  onClose();
+                }}
                 style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                 className="rounded-xl bg-stone-100 p-2.5 shadow-sm shadow-stone-300/50">
                 <Ionicons name="close" size={24} color="#333333" />
@@ -328,14 +332,20 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                         {/* Actions */}
                         <View className="flex-row gap-3">
                           <Pressable
-                            onPress={() => loadSession(session.id)}
+                            onPress={() => {
+                              mediumHaptic();
+                              loadSession(session.id);
+                            }}
                             style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                             className="flex-1 flex-row items-center justify-center gap-2 rounded-xl bg-[#E8B84B] px-5 py-4 shadow-md shadow-[#E8B84B]/30">
                             <Ionicons name="play" size={18} color="#333333" />
                             <Text className="text-sm font-semibold text-[#333333]">Repeat</Text>
                           </Pressable>
                           <Pressable
-                            onPress={() => handleSaveAsTemplate(session.id)}
+                            onPress={() => {
+                              mediumHaptic();
+                              handleSaveAsTemplate(session.id);
+                            }}
                             style={({ pressed }) => [
                               {
                                 opacity: pressed ? 0.8 : 1,

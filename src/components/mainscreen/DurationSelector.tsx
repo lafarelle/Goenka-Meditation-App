@@ -1,4 +1,5 @@
 import { useSessionStore } from '@/store/sessionStore';
+import { lightHaptic, selectionHaptic } from '@/utils/haptics';
 import Slider from '@react-native-community/slider';
 import { Alert, Pressable, Text, View } from 'react-native';
 
@@ -7,10 +8,12 @@ export function DurationSelector() {
   const setTotalDurationMinutes = useSessionStore((state) => state.setTotalDurationMinutes);
 
   const handleValueChange = (value: number) => {
+    selectionHaptic();
     setTotalDurationMinutes(value);
   };
 
   const handleTimePress = () => {
+    lightHaptic();
     Alert.prompt(
       'Custom Duration',
       'Enter duration in minutes (1-180):',

@@ -1,5 +1,6 @@
 import { PauseDuration } from '@/schemas/preferences';
 import { usePreferencesStore } from '@/store/preferencesStore';
+import { selectionHaptic } from '@/utils/haptics';
 import { Pressable, Text, View } from 'react-native';
 
 interface PauseOption {
@@ -28,7 +29,10 @@ export function PauseDurationSelector() {
           return (
             <Pressable
               key={option.value}
-              onPress={() => setPauseDuration(option.value)}
+              onPress={() => {
+                selectionHaptic();
+                setPauseDuration(option.value);
+              }}
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.7 : 1,

@@ -2,6 +2,7 @@ import { AudioPlayer } from '@/audio/AudioPlayer';
 import { AudioPreloader } from '@/audio/AudioPreloader';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { GongPreference } from '@/store/types';
+import { lightHaptic, selectionHaptic } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, Switch, Text, View } from 'react-native';
@@ -90,7 +91,10 @@ export function GongSelector() {
 
       {/* Toggle Switch */}
       <Pressable
-        onPress={() => setGongEnabled(!preferences.gongEnabled)}
+        onPress={() => {
+          selectionHaptic();
+          setGongEnabled(!preferences.gongEnabled);
+        }}
         style={({ pressed }) => [
           {
             opacity: pressed ? 0.7 : 1,
@@ -108,7 +112,10 @@ export function GongSelector() {
         </Text>
         <Switch
           value={preferences.gongEnabled}
-          onValueChange={setGongEnabled}
+          onValueChange={(value) => {
+            selectionHaptic();
+            setGongEnabled(value);
+          }}
           trackColor={{ false: '#E5E5E5', true: '#E8B84B' }}
           thumbColor="#FFFFFF"
           ios_backgroundColor="#E5E5E5"
@@ -120,7 +127,10 @@ export function GongSelector() {
         <>
           {/* Show/Hide Selector Button */}
           <Pressable
-            onPress={() => setShowGongSelector(!showGongSelector)}
+            onPress={() => {
+              lightHaptic();
+              setShowGongSelector(!showGongSelector);
+            }}
             style={({ pressed }) => [
               {
                 opacity: pressed ? 0.7 : 1,
@@ -153,7 +163,10 @@ export function GongSelector() {
                   <View key={gong.id} className="flex-row gap-3">
                     {/* Selection Button */}
                     <Pressable
-                      onPress={() => setGongPreference(gong.id)}
+                      onPress={() => {
+                        selectionHaptic();
+                        setGongPreference(gong.id);
+                      }}
                       style={({ pressed }) => [
                         {
                           opacity: pressed ? 0.7 : 1,
@@ -180,7 +193,10 @@ export function GongSelector() {
 
                     {/* Preview Button */}
                     <Pressable
-                      onPress={() => handlePlayGong(gong.id, gong.audioPath)}
+                      onPress={() => {
+                        lightHaptic();
+                        handlePlayGong(gong.id, gong.audioPath);
+                      }}
                       disabled={playingGong === gong.id || loadingGong === gong.id}
                       style={({ pressed }) => [
                         {

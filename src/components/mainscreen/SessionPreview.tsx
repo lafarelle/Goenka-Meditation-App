@@ -4,6 +4,7 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
+import { mediumHaptic } from '@/utils/haptics';
 import {
   formatDuration,
   formatDurationWithSeconds,
@@ -78,6 +79,7 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   };
 
   const handleSaveSession = () => {
+    mediumHaptic();
     // Show input dialog
     Alert.prompt(
       'Save Session',

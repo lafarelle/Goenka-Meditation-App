@@ -1,5 +1,6 @@
 import { Container } from '@/components/Container';
 import { PreferencesSelector, ResetDataButton } from '@/components/settingsscreen';
+import { lightHaptic } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -29,7 +30,10 @@ export default function Settings() {
               elevation: 3,
             }}>
             <Pressable
-              onPress={() => router.back()}
+              onPress={() => {
+                lightHaptic();
+                router.back();
+              }}
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.7 : 1,

@@ -2,6 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+
+import { lightHaptic, mediumHaptic } from '@/utils/haptics';
+
 import { AudioSelectionProvider } from './AudioSelectionProvider';
 import { DurationSelector } from './DurationSelector';
 import { HistorySessionDrawer } from './HistorySessionDrawer';
@@ -20,7 +23,10 @@ export function MainScreen() {
         <View className="flex-row items-center justify-between px-8 pb-8 pt-16">
           <View className="flex-row gap-4">
             <Pressable
-              onPress={() => setIsSavedSessionsDrawerVisible(true)}
+              onPress={() => {
+                lightHaptic();
+                setIsSavedSessionsDrawerVisible(true);
+              }}
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.7 : 1,
@@ -36,7 +42,10 @@ export function MainScreen() {
               <Ionicons name="bookmark-outline" size={24} color="#333333" />
             </Pressable>
             <Pressable
-              onPress={() => setIsHistoryDrawerVisible(true)}
+              onPress={() => {
+                lightHaptic();
+                setIsHistoryDrawerVisible(true);
+              }}
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.7 : 1,
@@ -54,6 +63,7 @@ export function MainScreen() {
           </View>
           <Link href="/settings" asChild>
             <Pressable
+              onPress={() => lightHaptic()}
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.7 : 1,
@@ -91,6 +101,7 @@ export function MainScreen() {
 
           <Link href="/meditation" asChild>
             <Pressable
+              onPress={() => mediumHaptic()}
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.85 : 1,

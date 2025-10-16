@@ -1,4 +1,5 @@
 import { usePreferencesStore } from '@/store/preferencesStore';
+import { selectionHaptic } from '@/utils/haptics';
 import { Pressable, Switch, Text, View } from 'react-native';
 
 export function TimingPreference() {
@@ -11,7 +12,10 @@ export function TimingPreference() {
         Timing Mode
       </Text>
       <Pressable
-        onPress={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
+        onPress={() => {
+          selectionHaptic();
+          setTimingPreference(isTotalTiming ? 'silent' : 'total');
+        }}
         style={({ pressed }) => [
           {
             opacity: pressed ? 0.7 : 1,
@@ -29,7 +33,10 @@ export function TimingPreference() {
         </Text>
         <Switch
           value={isTotalTiming}
-          onValueChange={() => setTimingPreference(isTotalTiming ? 'silent' : 'total')}
+          onValueChange={() => {
+            selectionHaptic();
+            setTimingPreference(isTotalTiming ? 'silent' : 'total');
+          }}
           trackColor={{ false: '#E5E5E5', true: '#E8B84B' }}
           thumbColor="#FFFFFF"
           ios_backgroundColor="#E5E5E5"

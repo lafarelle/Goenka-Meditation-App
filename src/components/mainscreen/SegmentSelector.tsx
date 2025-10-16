@@ -1,4 +1,5 @@
 import { useSessionStore } from '@/store/sessionStore';
+import { lightHaptic, mediumHaptic } from '@/utils/haptics';
 import React, { useContext } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { AudioSelectionContext } from './AudioSelectionProvider';
@@ -15,7 +16,10 @@ const SegmentButton = React.memo<SegmentButtonProps>(
   ({ title, number, isEnabled, selectedName, onPress }) => {
     return (
       <Pressable
-        onPress={onPress}
+        onPress={() => {
+          lightHaptic();
+          onPress();
+        }}
         style={({ pressed }) => [
           {
             opacity: pressed ? 0.7 : 1,
@@ -129,7 +133,10 @@ export function SegmentSelector() {
             Session Segments
           </Text>
           <Pressable
-            onPress={handleClear}
+            onPress={() => {
+              mediumHaptic();
+              handleClear();
+            }}
             style={({ pressed }) => [
               {
                 opacity: pressed ? 0.7 : 1,

@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 import { useAudioSession } from '@/audio/useAudioSession';
+import { heavyHaptic, mediumHaptic } from '@/utils/haptics';
 import { getSessionTotalDuration } from '@/utils/meditationTimer';
 import { formatTime } from '@/utils/timing';
 
@@ -70,6 +71,7 @@ export default function Meditation() {
   const remainingTime = sessionState.remainingTime || 0;
 
   const handleBackPress = () => {
+    mediumHaptic();
     Alert.alert('End Meditation', 'Are you sure you want to end this meditation session?', [
       {
         text: 'Cancel',
@@ -79,6 +81,7 @@ export default function Meditation() {
         text: 'End Session',
         style: 'destructive',
         onPress: () => {
+          heavyHaptic();
           stopSession();
           router.back();
         },
@@ -110,7 +113,14 @@ export default function Meditation() {
       {/* Single play/pause button - positioned at bottom center */}
       <View className="absolute bottom-12 left-0 right-0 items-center">
         <Pressable
-          onPress={sessionState.isPlaying ? pauseSession : resumeSession}
+          onPress={() => {
+            mediumHaptic();
+            if (sessionState.isPlaying) {
+              pauseSession();
+            } else {
+              resumeSession();
+            }
+          }}
           style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
           className="rounded-full bg-white/20 p-6">
           <Ionicons name={sessionState.isPlaying ? 'pause' : 'play'} size={32} color="white" />

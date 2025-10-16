@@ -3,6 +3,7 @@ import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { useStore } from '@/store/store';
+import { heavyHaptic, warningHaptic } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
@@ -17,6 +18,7 @@ export function ResetDataButton() {
   const removeAllBears = useStore((state) => state.removeAllBears);
 
   const handleReset = () => {
+    warningHaptic();
     Alert.alert(
       'Reset All Data',
       'This will clear all your meditation history, saved sessions, and reset all preferences. This action cannot be undone.\n\nAre you sure you want to continue?',
@@ -29,6 +31,7 @@ export function ResetDataButton() {
           text: 'Reset Everything',
           style: 'destructive',
           onPress: async () => {
+            heavyHaptic();
             setIsResetting(true);
             try {
               // Reset all stores

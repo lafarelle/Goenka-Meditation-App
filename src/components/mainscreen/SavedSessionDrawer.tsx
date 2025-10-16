@@ -1,5 +1,6 @@
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
+import { heavyHaptic, lightHaptic, mediumHaptic } from '@/utils/haptics';
 import {
   formatSessionDate,
   formatSessionDuration,
@@ -62,7 +63,10 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
               <Text className="text-2xl font-bold text-[#333333]">Saved Sessions</Text>
             </View>
             <Pressable
-              onPress={onClose}
+              onPress={() => {
+                lightHaptic();
+                onClose();
+              }}
               style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
               className="rounded-xl bg-stone-100 p-2.5 shadow-sm shadow-stone-300/50">
               <Ionicons name="close" size={24} color="#333333" />
@@ -87,7 +91,10 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
               {saved.map((session) => (
                 <Pressable
                   key={session.id}
-                  onPress={() => loadSession(session.id)}
+                  onPress={() => {
+                    mediumHaptic();
+                    loadSession(session.id);
+                  }}
                   style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
                   className="overflow-hidden rounded-2xl bg-white shadow-lg shadow-stone-300/50">
                   {/* Accent bar */}
@@ -143,6 +150,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                       <Pressable
                         onPress={(e) => {
                           e.stopPropagation();
+                          heavyHaptic();
                           deleteSession(session.id);
                         }}
                         style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
