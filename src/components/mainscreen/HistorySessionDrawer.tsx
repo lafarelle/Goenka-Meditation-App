@@ -6,7 +6,6 @@ import {
   formatHistoryDuration,
   formatHistoryTime,
   formatTotalMeditationTime,
-  getCompletionColor,
   getCompletionIcon,
   getCompletionText,
   loadHistorySessionIntoStore,
@@ -126,23 +125,21 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
         animationType="slide"
         presentationStyle="pageSheet"
         onRequestClose={onClose}>
-        <View className="flex-1 bg-amber-50">
+        <View className="flex-1 bg-[#F5F5EC]">
           {/* Header */}
-          <View className="border-b-4 border-stone-800 bg-amber-400 px-6 py-4 pt-16">
+          <View className="border-b border-stone-200 bg-white px-8 py-6 pt-16 shadow-sm">
             <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-3">
-                <View className="h-10 w-10 items-center justify-center rounded border-2 border-stone-800 bg-amber-300">
-                  <Ionicons name="time" size={22} color="#292524" />
+              <View className="flex-row items-center gap-4">
+                <View className="h-12 w-12 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
+                  <Ionicons name="time" size={24} color="#E8B84B" />
                 </View>
-                <Text className="text-2xl font-black uppercase text-stone-900 [text-shadow:2px_2px_0px_rgba(0,0,0,0.1)]">
-                  Meditation History
-                </Text>
+                <Text className="text-2xl font-bold text-[#333333]">Meditation History</Text>
               </View>
               <Pressable
                 onPress={onClose}
                 style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                className="rounded border-2 border-stone-800 bg-stone-100 p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Ionicons name="close" size={24} color="#292524" />
+                className="rounded-xl bg-stone-100 p-2.5 shadow-sm shadow-stone-300/50">
+                <Ionicons name="close" size={24} color="#333333" />
               </Pressable>
             </View>
           </View>
@@ -150,112 +147,137 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
           {/* Content */}
           <ScrollView className="flex-1">
             {/* Analytics Section */}
-            <View className="border-b-4 border-stone-800 bg-white px-6 py-6">
-              <View className="mb-4 flex-row items-center gap-2">
-                <View className="h-8 w-8 items-center justify-center rounded border-2 border-stone-800 bg-amber-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <Ionicons name="stats-chart" size={18} color="#F59E0B" />
+            <View className="border-b border-stone-200 bg-white px-8 py-8">
+              <View className="mb-6 flex-row items-center gap-3">
+                <View className="h-10 w-10 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
+                  <Ionicons name="stats-chart" size={20} color="#E8B84B" />
                 </View>
-                <Text className="text-xl font-black uppercase text-stone-800">
-                  Your Meditations
-                </Text>
+                <Text className="text-xl font-semibold text-[#333333]">Your Meditations</Text>
               </View>
 
-              <View className="flex-row flex-wrap gap-3">
+              <View className="flex-row flex-wrap gap-4">
                 {/* Current Streak */}
-                <View className="min-w-[45%] flex-1 overflow-hidden rounded-lg border-4 border-stone-800 bg-orange-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <View className="mb-2 flex-row items-center gap-2">
-                    <Ionicons name="flame" size={20} color="#EA580C" />
-                    <Text className="text-xs font-black uppercase tracking-wide text-orange-700">
+                <View
+                  className="min-w-[45%] flex-1 overflow-hidden rounded-2xl p-5"
+                  style={{
+                    backgroundColor: '#FFF3D6',
+                    shadowColor: '#E8B84B',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.15,
+                    shadowRadius: 8,
+                    elevation: 3,
+                  }}>
+                  <View className="mb-3 flex-row items-center gap-2">
+                    <Ionicons name="flame" size={22} color="#C89635" />
+                    <Text className="text-xs font-medium uppercase tracking-wider text-[#C89635]">
                       Streak
                     </Text>
                   </View>
-                  <Text className="text-3xl font-black text-orange-900">{currentStreak}</Text>
-                  <Text className="text-xs font-black text-orange-700">
+                  <Text className="text-4xl font-bold text-[#C89635]">{currentStreak}</Text>
+                  <Text className="mt-1 text-xs font-medium text-[#D4A73D]">
                     {currentStreak === 1 ? 'day' : 'days'}
                   </Text>
                 </View>
 
                 {/* Longest Streak */}
-                <View className="min-w-[45%] flex-1 overflow-hidden rounded-lg border-4 border-stone-800 bg-amber-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <View className="mb-2 flex-row items-center gap-2">
-                    <Ionicons name="trophy" size={20} color="#D97706" />
-                    <Text className="text-xs font-black uppercase tracking-wide text-amber-700">
+                <View
+                  className="min-w-[45%] flex-1 overflow-hidden rounded-2xl p-5"
+                  style={{
+                    backgroundColor: '#FFF9E6',
+                    shadowColor: '#E8B84B',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.15,
+                    shadowRadius: 8,
+                    elevation: 3,
+                  }}>
+                  <View className="mb-3 flex-row items-center gap-2">
+                    <Ionicons name="trophy" size={22} color="#E8B84B" />
+                    <Text className="text-xs font-medium uppercase tracking-wider text-[#D4A73D]">
                       Best Streak
                     </Text>
                   </View>
-                  <Text className="text-3xl font-black text-amber-900">{longestStreak}</Text>
-                  <Text className="text-xs font-black text-amber-700">
+                  <Text className="text-4xl font-bold text-[#E8B84B]">{longestStreak}</Text>
+                  <Text className="mt-1 text-xs font-medium text-[#D4A73D]">
                     {longestStreak === 1 ? 'day' : 'days'}
                   </Text>
                 </View>
 
                 {/* Total Time */}
-                <View className="flex-1 overflow-hidden rounded-lg border-4 border-stone-800 bg-lime-50 p-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  <View className="mb-2 flex-row items-center gap-2">
-                    <Ionicons name="time" size={20} color="#65A30D" />
-                    <Text className="text-xs font-black uppercase tracking-wide text-lime-700">
+                <View
+                  className="flex-1 overflow-hidden rounded-2xl p-5"
+                  style={{
+                    backgroundColor: '#FFFBF0',
+                    shadowColor: '#E8B84B',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.15,
+                    shadowRadius: 8,
+                    elevation: 3,
+                  }}>
+                  <View className="mb-3 flex-row items-center gap-2">
+                    <Ionicons name="time" size={22} color="#D4A73D" />
+                    <Text className="text-xs font-medium uppercase tracking-wider text-[#C89635]">
                       Total Time
                     </Text>
                   </View>
-                  <Text className="text-3xl font-black text-lime-900">
+                  <Text className="text-4xl font-bold text-[#C89635]">
                     {formatTotalMeditationTime(stats.totalMinutesMeditated)}
                   </Text>
-                  <Text className="text-xs font-black text-lime-700">meditated</Text>
+                  <Text className="mt-1 text-xs font-medium text-[#D4A73D]">meditated</Text>
                 </View>
               </View>
             </View>
 
             {/* Recent Sessions */}
-            <View className="px-6 py-6">
-              <View className="mb-4 flex-row items-center gap-2">
-                <View className="h-8 w-8 items-center justify-center rounded border-2 border-stone-800 bg-amber-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                  <Ionicons name="list" size={18} color="#F59E0B" />
+            <View className="px-8 py-8">
+              <View className="mb-6 flex-row items-center gap-3">
+                <View className="h-10 w-10 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
+                  <Ionicons name="list" size={20} color="#E8B84B" />
                 </View>
-                <Text className="text-xl font-black uppercase text-stone-800">Recent Sessions</Text>
+                <Text className="text-xl font-semibold text-[#333333]">Recent Sessions</Text>
               </View>
 
               {recentSessions.length === 0 ? (
-                <View className="items-center py-16">
-                  <View className="mb-6 h-24 w-24 items-center justify-center rounded border-4 border-stone-800 bg-amber-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                    <Ionicons name="time-outline" size={48} color="#F59E0B" />
+                <View className="items-center py-20">
+                  <View className="mb-6 h-28 w-28 items-center justify-center rounded-3xl bg-[#E8B84B]/10 shadow-md shadow-stone-300/50">
+                    <Ionicons name="time-outline" size={56} color="#E8B84B" />
                   </View>
-                  <Text className="mb-3 text-xl font-black uppercase text-stone-800">
-                    No Sessions Yet
-                  </Text>
-                  <Text className="text-center text-base font-bold text-stone-600">
+                  <Text className="mb-3 text-xl font-semibold text-[#333333]">No Sessions Yet</Text>
+                  <Text className="text-center text-base text-stone-500">
                     Your meditation history will{'\n'}appear here
                   </Text>
                 </View>
               ) : (
-                <View className="gap-4">
+                <View className="gap-5">
                   {recentSessions.map((session) => (
                     <View
                       key={session.id}
-                      className="overflow-hidden rounded-xl border-4 border-stone-800 bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                      className="overflow-hidden rounded-2xl bg-white shadow-lg shadow-stone-300/50">
                       {/* Status bar */}
                       <View
-                        className={`h-3 border-b-4 border-stone-800 ${
-                          session.completed
-                            ? 'bg-green-400'
+                        className="h-1.5"
+                        style={{
+                          backgroundColor: session.completed
+                            ? '#E8B84B'
                             : session.completionPercentage >= 50
-                              ? 'bg-amber-400'
-                              : 'bg-red-400'
-                        }`}
+                              ? '#F0C86E'
+                              : '#D4A73D',
+                        }}
                       />
 
-                      <View className="p-5 pb-4">
-                        <View className="mb-4 flex-row items-start justify-between">
+                      <View className="p-6">
+                        <View className="mb-5 flex-row items-start justify-between">
                           <View className="flex-1">
-                            <View className="mb-3 flex-row items-center gap-2">
+                            <View className="mb-4 flex-row items-center gap-3">
                               <View
-                                className={`rounded-md border-2 px-2.5 py-1 ${
-                                  session.completed
-                                    ? 'border-green-600 bg-green-100 shadow-[2px_2px_0px_0px_rgba(22,163,74,1)]'
+                                className="rounded-xl px-3 py-2"
+                                style={{
+                                  backgroundColor: session.completed
+                                    ? '#FFF9E6'
                                     : session.completionPercentage >= 50
-                                      ? 'border-amber-600 bg-amber-100 shadow-[2px_2px_0px_0px_rgba(217,119,6,1)]'
-                                      : 'border-red-600 bg-red-100 shadow-[2px_2px_0px_0px_rgba(220,38,38,1)]'
-                                }`}>
-                                <View className="flex-row items-center gap-1.5">
+                                      ? '#FFFBF0'
+                                      : '#FFF3D6',
+                                }}>
+                                <View className="flex-row items-center gap-2">
                                   <Ionicons
                                     name={
                                       getCompletionIcon(session) as
@@ -265,30 +287,37 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                                     size={16}
                                     color={
                                       session.completed
-                                        ? '#16A34A'
+                                        ? '#E8B84B'
                                         : session.completionPercentage >= 50
-                                          ? '#D97706'
-                                          : '#DC2626'
+                                          ? '#D4A73D'
+                                          : '#C89635'
                                     }
                                   />
                                   <Text
-                                    className={`text-xs font-black uppercase ${getCompletionColor(session)}`}>
+                                    className="text-xs font-medium uppercase"
+                                    style={{
+                                      color: session.completed
+                                        ? '#E8B84B'
+                                        : session.completionPercentage >= 50
+                                          ? '#D4A73D'
+                                          : '#C89635',
+                                    }}>
                                     {getCompletionText(session)}
                                   </Text>
                                 </View>
                               </View>
 
-                              <View className="flex-row items-center gap-1.5 rounded-md border-2 border-stone-800 bg-stone-100 px-2.5 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                                <Ionicons name="time-outline" size={16} color="#57534e" />
-                                <Text className="text-sm font-black text-stone-700">
+                              <View className="flex-row items-center gap-2 rounded-xl bg-stone-100 px-3 py-2">
+                                <Ionicons name="time-outline" size={16} color="#78716c" />
+                                <Text className="text-sm font-medium text-stone-600">
                                   {formatHistoryDuration(session.totalDurationMinutes)}
                                 </Text>
                               </View>
                             </View>
 
-                            <View className="flex-row items-center gap-1.5">
-                              <Ionicons name="calendar-outline" size={14} color="#78716c" />
-                              <Text className="text-sm font-bold text-stone-600">
+                            <View className="flex-row items-center gap-2">
+                              <Ionicons name="calendar-outline" size={14} color="#999" />
+                              <Text className="text-sm text-stone-500">
                                 {formatHistoryDate(session.startedAt)} at{' '}
                                 {formatHistoryTime(session.startedAt)}
                               </Text>
@@ -300,18 +329,26 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                         <View className="flex-row gap-3">
                           <Pressable
                             onPress={() => loadSession(session.id)}
-                            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                            className="border-3 flex-1 flex-row items-center justify-center gap-2 rounded-lg border-stone-800 bg-amber-400 px-4 py-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                            <Ionicons name="play" size={18} color="#292524" />
-                            <Text className="text-sm font-black uppercase tracking-wide text-stone-900">
-                              Repeat
-                            </Text>
+                            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                            className="flex-1 flex-row items-center justify-center gap-2 rounded-xl bg-[#E8B84B] px-5 py-4 shadow-md shadow-[#E8B84B]/30">
+                            <Ionicons name="play" size={18} color="#333333" />
+                            <Text className="text-sm font-semibold text-[#333333]">Repeat</Text>
                           </Pressable>
                           <Pressable
                             onPress={() => handleSaveAsTemplate(session.id)}
-                            style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }]}
-                            className="border-3 min-w-[60px] items-center justify-center rounded-lg border-stone-800 bg-green-400 px-4 py-3.5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                            <Ionicons name="bookmark" size={22} color="#292524" />
+                            style={({ pressed }) => [
+                              {
+                                opacity: pressed ? 0.8 : 1,
+                                backgroundColor: '#FFF9E6',
+                                shadowColor: '#E8B84B',
+                                shadowOffset: { width: 0, height: 1 },
+                                shadowOpacity: 0.15,
+                                shadowRadius: 4,
+                                elevation: 2,
+                              },
+                            ]}
+                            className="items-center justify-center rounded-xl px-5 py-4">
+                            <Ionicons name="bookmark" size={22} color="#E8B84B" />
                           </Pressable>
                         </View>
                       </View>
