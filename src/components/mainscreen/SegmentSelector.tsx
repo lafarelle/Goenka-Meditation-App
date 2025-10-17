@@ -129,8 +129,8 @@ export function SegmentSelector() {
     <>
       <View className="w-full gap-5">
         <View className="flex-row items-center justify-between">
-          <Text className="text-base font-medium tracking-wide" style={{ color: '#666666' }}>
-            Session Segments
+          <Text className="text-lg font-bold tracking-wide" style={{ color: '#666666' }}>
+            Choose your audios
           </Text>
           <Pressable
             onPress={() => {
