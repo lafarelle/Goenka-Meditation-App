@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { lightHaptic, mediumHaptic } from '@/utils/haptics';
 
@@ -15,6 +15,7 @@ import { SessionPreview } from './SessionPreview';
 export function MainScreen() {
   const [isSavedSessionsDrawerVisible, setIsSavedSessionsDrawerVisible] = useState(false);
   const [isHistoryDrawerVisible, setIsHistoryDrawerVisible] = useState(false);
+  const [isSessionPreviewVisible, setIsSessionPreviewVisible] = useState(false);
 
   return (
     <AudioSelectionProvider>
@@ -117,7 +118,7 @@ export function MainScreen() {
                     elevation: 4,
                   },
                 ]}
-                className="mb-8 mt-4 rounded-2xl border px-8 py-3">
+                className="mb-6 mt-4 rounded-2xl border px-8 py-3">
                 <Text
                   className=" text-center text-2xl font-bold tracking-wide"
                   style={{ color: '#333333' }}>
@@ -125,10 +126,60 @@ export function MainScreen() {
                 </Text>
               </Pressable>
             </Link>
-          </View>
 
-          <SessionPreview />
+            {/* Toggle Session Preview Button */}
+            <Pressable
+              onPress={() => {
+                lightHaptic();
+                setIsSessionPreviewVisible(true);
+              }}
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.6 : 1,
+                },
+              ]}
+              className="mb-16 py-2">
+              <Text className="text-center text-sm underline" style={{ color: '#666666' }}>
+                Show Session Preview
+              </Text>
+            </Pressable>
+          </View>
         </ScrollView>
+
+        {/* Session Preview Drawer */}
+        <Modal
+          visible={isSessionPreviewVisible}
+          animationType="slide"
+          presentationStyle="pageSheet"
+          onRequestClose={() => setIsSessionPreviewVisible(false)}>
+          <View className="flex-1 bg-[#F5F5EC]">
+            {/* Header */}
+            <View className="border-b border-stone-200 bg-white px-8 py-6 pt-16">
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-4">
+                  <View className="h-12 w-12 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
+                    <Ionicons name="eye-outline" size={24} color="#E8B84B" />
+                  </View>
+                  <Text className="text-2xl font-bold text-[#333333]">Session Preview</Text>
+                </View>
+                <Pressable
+                  onPress={() => {
+                    lightHaptic();
+                    setIsSessionPreviewVisible(false);
+                  }}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                  className="rounded-xl bg-stone-100 p-2.5">
+                  <Ionicons name="close" size={24} color="#333333" />
+                </Pressable>
+              </View>
+            </View>
+
+            {/* Content */}
+            <ScrollView className="flex-1 px-8 py-8">
+              <SessionPreview />
+            </ScrollView>
+          </View>
+        </Modal>
 
         {/* Saved Sessions Drawer */}
         <SavedSessionDrawer
