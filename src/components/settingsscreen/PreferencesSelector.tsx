@@ -28,7 +28,7 @@ export function PreferencesSelector() {
           </Text>
         </View>
 
-        <View className="gap-8">
+        <View className="gap-2">
           <TimingPreference />
           <GongSelector />
           <PauseDurationSelector />

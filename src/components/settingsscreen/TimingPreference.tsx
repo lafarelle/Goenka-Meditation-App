@@ -8,9 +8,6 @@ export function TimingPreference() {
 
   return (
     <View>
-      <Text className="mb-3 text-sm font-medium tracking-wide" style={{ color: '#333333' }}>
-        Timing Mode
-      </Text>
       <Pressable
         onPress={() => {
           selectionHaptic();

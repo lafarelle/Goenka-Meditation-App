@@ -19,8 +19,8 @@ export function PauseDurationSelector() {
 
   return (
     <View>
-      <Text className="mb-3 text-sm font-medium tracking-wide" style={{ color: '#333333' }}>
-        Pause Between Segments
+      <Text className="mb-2 mt-6 text-base font-medium tracking-wide" style={{ color: '#333333' }}>
+        Time between each audio
       </Text>
       <View className="flex-row gap-3">
         {PAUSE_OPTIONS.map((option) => {

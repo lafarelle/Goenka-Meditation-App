@@ -17,11 +17,11 @@ export default function Settings() {
       <Container>
         <ScrollView
           className="flex-1"
-          contentContainerClassName="gap-8 py-6"
+          contentContainerClassName="gap-8 py-4"
           showsVerticalScrollIndicator={false}>
-          {/* Serene Header with Back Button */}
+          {/* Back button in its own card */}
           <View
-            className="rounded-2xl bg-white px-8 py-8"
+            className="rounded-2xl px-2"
             style={{
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },
@@ -37,18 +37,25 @@ export default function Settings() {
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.7 : 1,
-                  marginBottom: 24,
                 },
               ]}
               className="flex-row items-center gap-3">
               <View className="rounded-xl p-2" style={{ backgroundColor: '#E8B84B' }}>
                 <Ionicons name="arrow-back" size={20} color="#333333" />
               </View>
-              <Text className="text-base font-medium" style={{ color: '#333333' }}>
-                Back
-              </Text>
             </Pressable>
+          </View>
 
+          {/* Settings header in its own card */}
+          <View
+            className="rounded-2xl bg-white px-8 py-8"
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.08,
+              shadowRadius: 8,
+              elevation: 3,
+            }}>
             <View className="flex-row items-center gap-4">
               <View
                 className="h-14 w-14 items-center justify-center rounded-2xl"

@@ -85,10 +85,6 @@ export function GongSelector() {
 
   return (
     <View>
-      <Text className="mb-3 text-sm font-medium tracking-wide" style={{ color: '#333333' }}>
-        Beginning Gong
-      </Text>
-
       {/* Toggle Switch */}
       <Pressable
         onPress={() => {
@@ -106,7 +102,7 @@ export function GongSelector() {
             elevation: 2,
           },
         ]}
-        className="mb-4 flex-row items-center justify-between rounded-xl px-6 py-4">
+        className="flex-row items-center justify-between rounded-xl px-6 py-4">
         <Text className="flex-1 text-base font-normal" style={{ color: '#333333' }}>
           {preferences.gongEnabled ? 'Gong Enabled' : 'No Gong'}
         </Text>
@@ -142,8 +138,9 @@ export function GongSelector() {
                 elevation: 2,
               },
             ]}
-            className="mt-2 flex-row items-center justify-between rounded-xl px-6 py-4">
+            className="flex-row items-center justify-between rounded-xl bg-orange-50 px-6 py-4">
             <Text className="text-base font-normal" style={{ color: '#333333' }}>
+              {'Current: '}
               {GONG_OPTIONS.find((g) => g.id === preferences.gongPreference)?.name || 'Select Gong'}
             </Text>
             <Ionicons
