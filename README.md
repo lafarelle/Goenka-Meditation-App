@@ -15,4 +15,4 @@ A meditation timer application for Vipassana practice built with Expo and React 
 - **Copilot Guide**: `.vscode/copilot-instructions.md`
 - **GitHub Copilot**: `.github/copilot-instructions.md`
 
-## 🚀 Quick Start
+## 🚀 Quick Start# Goenka-Meditation-App
