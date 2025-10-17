@@ -102,28 +102,30 @@ export function MainScreen() {
           <DurationSelector />
           <SegmentSelector />
 
-          <Link href="/meditation" asChild>
-            <Pressable
-              onPress={() => mediumHaptic()}
-              style={({ pressed }) => [
-                {
-                  opacity: pressed ? 0.85 : 1,
-                  backgroundColor: '#E8B84B',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.12,
-                  shadowRadius: 12,
-                  elevation: 4,
-                },
-              ]}
-              className="mb-8 mt-8 rounded-2xl border px-2 py-2">
-              <Text
-                className=" text-center text-2xl font-bold tracking-wide"
-                style={{ color: '#333333' }}>
-                Start Meditation
-              </Text>
-            </Pressable>
-          </Link>
+          <View className="items-center">
+            <Link href="/meditation" asChild>
+              <Pressable
+                onPress={() => mediumHaptic()}
+                style={({ pressed }) => [
+                  {
+                    opacity: pressed ? 0.85 : 1,
+                    backgroundColor: '#E8B84B',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.12,
+                    shadowRadius: 12,
+                    elevation: 4,
+                  },
+                ]}
+                className="mb-8 mt-4 rounded-2xl border px-8 py-3">
+                <Text
+                  className=" text-center text-2xl font-bold tracking-wide"
+                  style={{ color: '#333333' }}>
+                  Start Meditation
+                </Text>
+              </Pressable>
+            </Link>
+          </View>
 
           <SessionPreview />
         </ScrollView>
