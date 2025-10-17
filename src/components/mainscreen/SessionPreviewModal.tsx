@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 
 import { lightHaptic } from '@/utils/haptics';
 
@@ -67,12 +67,6 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
               borderBottomColor: '#E5E5E5',
               backgroundColor: '#FFFFFF',
             }}>
-                
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#333333' }}>
-                Session Preview
-              </Text>
-            </View>
             <Pressable
               onPress={() => {
                 lightHaptic();

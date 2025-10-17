@@ -116,10 +116,15 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
         </View>
         <Pressable
           onPress={handleSaveSession}
-          style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-          className="flex-row items-center gap-2 rounded-xl bg-[#E8B84B] px-5 py-3 shadow-md shadow-[#E8B84B]/30">
-          <Ionicons name="save-outline" size={18} color="#333333" />
-          <Text className="text-sm font-semibold text-[#333333]">Save</Text>
+          style={({ pressed }) => [
+            {
+              opacity: pressed ? 0.9 : 1,
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+            },
+          ]}
+          className="flex-row items-center gap-2.5 rounded-2xl bg-gradient-to-r from-[#E8B84B] to-[#F0C86E] px-6 py-3.5 shadow-lg shadow-[#E8B84B]/40">
+          <Ionicons name="bookmark-outline" size={20} color="#333333" />
+          <Text className="text-base font-bold text-[#333333]">Save</Text>
         </Pressable>
       </View>
 
