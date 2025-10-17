@@ -83,14 +83,19 @@ export function MainScreen() {
 
         <ScrollView
           className="flex-1"
-          contentContainerClassName="gap-8 px-8 py-6"
+          contentContainerClassName="gap-4 px-8"
           showsVerticalScrollIndicator={false}>
-          {/* Title with serene styling */}
+          {/* Title with serene styling - split into two lines */}
           <View className="mb-4 items-center">
             <Text
-              className="text-center text-5xl font-light tracking-wide"
+              className="text-center text-lg font-light tracking-wide"
               style={{ color: '#333333' }}>
-              Goenka
+              Meditate with
+            </Text>
+            <Text
+              className=" text-center text-5xl font-semibold tracking-wide"
+              style={{ color: '#333333' }}>
+              GOENKA
             </Text>
           </View>
 
