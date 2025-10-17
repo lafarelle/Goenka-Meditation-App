@@ -1,10 +1,9 @@
 import { useHistoryStore } from '@/store/historyStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
-import { lightHaptic, mediumHaptic } from '@/utils/haptics';
+import { lightHaptic } from '@/utils/haptics';
 import {
   formatHistoryDate,
-  formatHistoryDuration,
   formatTotalMeditationTime,
   loadHistorySessionIntoStore,
 } from '@/utils/historyUtils';
@@ -12,6 +11,7 @@ import { createSegmentsCopy } from '@/utils/session';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Alert, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { HistorySessionCard } from './HistorySessionCard';
 
 interface HistorySessionDrawerProps {
   isVisible: boolean;
@@ -248,75 +248,14 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
               </View>
             ) : (
               <View className="gap-3">
-                {recentSessions.map((session) => {
-                  const isSaved = useSavedSessionsStore
-                    .getState()
-                    .saved.some((saved) =>
-                      saved.name.includes(formatHistoryDate(session.startedAt))
-                    );
-
-                  return (
-                    <View
-                      key={session.id}
-                      className="flex-row items-center justify-between rounded-xl bg-white p-4 shadow-sm shadow-stone-300/50">
-                      {/* Left side: Info */}
-                      <View className="flex-1">
-                        <View className="mb-1 flex-row items-center gap-2">
-                          <Ionicons
-                            name={
-                              session.completed
-                                ? 'checkmark-circle'
-                                : session.completionPercentage >= 50
-                                  ? 'ellipse-outline'
-                                  : 'close-circle'
-                            }
-                            size={16}
-                            color={
-                              session.completed
-                                ? '#78716c'
-                                : session.completionPercentage >= 50
-                                  ? '#a8a29e'
-                                  : '#d6d3d1'
-                            }
-                          />
-                          <Text className="text-sm font-medium text-stone-700">
-                            {formatHistoryDuration(session.totalDurationMinutes)}
-                          </Text>
-                          <Text className="text-xs text-stone-400">•</Text>
-                          <Text className="text-xs text-stone-500">
-                            {formatHistoryDate(session.startedAt)}
-                          </Text>
-                        </View>
-                      </View>
-
-                      {/* Right side: Actions */}
-                      <View className="flex-row gap-2">
-                        <Pressable
-                          onPress={() => {
-                            mediumHaptic();
-                            loadSession(session.id);
-                          }}
-                          style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
-                          className="h-9 w-9 items-center justify-center rounded-lg bg-stone-100">
-                          <Ionicons name="play" size={16} color="#57534e" />
-                        </Pressable>
-                        <Pressable
-                          onPress={() => {
-                            mediumHaptic();
-                            handleSaveAsTemplate(session.id);
-                          }}
-                          style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
-                          className="h-9 w-9 items-center justify-center rounded-lg bg-stone-100">
-                          <Ionicons
-                            name={isSaved ? 'bookmark' : 'bookmark-outline'}
-                            size={16}
-                            color="#57534e"
-                          />
-                        </Pressable>
-                      </View>
-                    </View>
-                  );
-                })}
+                {recentSessions.map((session) => (
+                  <HistorySessionCard
+                    key={session.id}
+                    session={session}
+                    onLoad={loadSession}
+                    onSaveAsTemplate={handleSaveAsTemplate}
+                  />
+                ))}
               </View>
             )}
           </View>
