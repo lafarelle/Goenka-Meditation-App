@@ -213,15 +213,6 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
                   {title}
                 </Text>
               </View>
-              {selectedAudioIds.length > 0 && (
-                <View className="ml-13 mt-3 flex-row items-center gap-1">
-                  <View className="rounded-lg px-3 py-1.5" style={{ backgroundColor: '#FFF3D6' }}>
-                    <Text className="text-xs font-medium" style={{ color: '#E8B84B' }}>
-                      {selectedAudioIds.length} selected
-                    </Text>
-                  </View>
-                </View>
-              )}
             </View>
             <Pressable
               onPress={handleDone}

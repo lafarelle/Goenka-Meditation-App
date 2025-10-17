@@ -43,7 +43,7 @@ const SegmentButton = React.memo<SegmentButtonProps>(
               }}>
               <Text
                 className="text-sm font-medium"
-                style={{ color: isEnabled ? '#FFFFFF' : '#999999' }}>
+                style={{ color: isEnabled ? '#FFFFFF' : '#333333' }}>
                 {number}
               </Text>
             </View>
