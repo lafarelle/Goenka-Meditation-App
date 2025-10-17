@@ -31,7 +31,7 @@ const SegmentButton = React.memo<SegmentButtonProps>(
             elevation: isEnabled ? 4 : 2,
           },
         ]}
-        className="rounded-2xl p-6"
+        className="rounded-2xl p-2"
         accessibilityRole="button"
         accessibilityLabel={`${title}: ${selectedName || 'None selected'}`}>
         <View className="flex-row items-center justify-between">
@@ -127,11 +127,9 @@ export function SegmentSelector() {
 
   return (
     <>
-      <View className="w-full gap-5">
+      <View className="mt-3 w-full gap-5">
         <View className="flex-row items-center justify-between">
-          <Text className="text-lg font-bold tracking-wide" style={{ color: '#666666' }}>
-            Choose your audios
-          </Text>
+          <Text className="text-lg font-bold tracking-wide text-slate-700">Choose your audios</Text>
           <Pressable
             onPress={() => {
               mediumHaptic();
@@ -148,10 +146,8 @@ export function SegmentSelector() {
                 elevation: 2,
               },
             ]}
-            className="rounded-xl px-4 py-2">
-            <Text className="text-sm font-medium" style={{ color: '#666666' }}>
-              Clear
-            </Text>
+            className=" rounded-xl border border-slate-700 px-4 py-1">
+            <Text className="text-sm font-medium text-slate-700">Clear</Text>
           </Pressable>
         </View>
 

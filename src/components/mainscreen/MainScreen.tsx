@@ -20,8 +20,8 @@ export function MainScreen() {
     <AudioSelectionProvider>
       <View className="flex-1" style={{ backgroundColor: '#F5F5EC' }}>
         {/* Header with Saved Sessions and Settings buttons */}
-        <View className="flex-row items-center justify-between px-8 pb-8 pt-16">
-          <View className="flex-row gap-4">
+        <View className="flex-row items-center justify-between px-8 pb-4 pt-20">
+          <View className="flex-row gap-6">
             <Pressable
               onPress={() => {
                 lightHaptic();
@@ -86,7 +86,7 @@ export function MainScreen() {
           contentContainerClassName="gap-4 px-8"
           showsVerticalScrollIndicator={false}>
           {/* Title with serene styling - split into two lines */}
-          <View className="mb-4 items-center">
+          <View className=" items-center">
             <Text
               className="text-center text-lg font-light tracking-wide"
               style={{ color: '#333333' }}>
@@ -102,8 +102,6 @@ export function MainScreen() {
           <DurationSelector />
           <SegmentSelector />
 
-          <SessionPreview />
-
           <Link href="/meditation" asChild>
             <Pressable
               onPress={() => mediumHaptic()}
@@ -118,14 +116,16 @@ export function MainScreen() {
                   elevation: 4,
                 },
               ]}
-              className="rounded-2xl px-8 py-6">
+              className="mb-8 mt-8 rounded-2xl border px-2 py-2">
               <Text
-                className="text-center text-lg font-medium tracking-wide"
+                className=" text-center text-2xl font-bold tracking-wide"
                 style={{ color: '#333333' }}>
                 Start Meditation
               </Text>
             </Pressable>
           </Link>
+
+          <SessionPreview />
         </ScrollView>
 
         {/* Saved Sessions Drawer */}
