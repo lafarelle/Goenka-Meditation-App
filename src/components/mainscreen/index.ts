@@ -6,3 +6,4 @@ export { MainScreen } from './MainScreen';
 export { SavedSessionDrawer } from './SavedSessionDrawer';
 export { SegmentSelector } from './SegmentSelector';
 export { SessionPreview } from './SessionPreview';
+export { SessionPreviewModal } from './SessionPreviewModal';

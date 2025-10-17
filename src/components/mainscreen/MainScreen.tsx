@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 import { lightHaptic, mediumHaptic } from '@/utils/haptics';
 
@@ -10,7 +10,7 @@ import { DurationSelector } from './DurationSelector';
 import { HistorySessionDrawer } from './HistorySessionDrawer';
 import { SavedSessionDrawer } from './SavedSessionDrawer';
 import { SegmentSelector } from './SegmentSelector';
-import { SessionPreview } from './SessionPreview';
+import { SessionPreviewModal } from './SessionPreviewModal';
 
 export function MainScreen() {
   const [isSavedSessionsDrawerVisible, setIsSavedSessionsDrawerVisible] = useState(false);
@@ -146,40 +146,11 @@ export function MainScreen() {
           </View>
         </ScrollView>
 
-        {/* Session Preview Drawer */}
-        <Modal
+        {/* Session Preview Modal */}
+        <SessionPreviewModal
           visible={isSessionPreviewVisible}
-          animationType="slide"
-          presentationStyle="pageSheet"
-          onRequestClose={() => setIsSessionPreviewVisible(false)}>
-          <View className="flex-1 bg-[#F5F5EC]">
-            {/* Header */}
-            <View className="border-b border-stone-200 bg-white px-8 py-6 pt-16">
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-4">
-                  <View className="h-12 w-12 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
-                    <Ionicons name="eye-outline" size={24} color="#E8B84B" />
-                  </View>
-                  <Text className="text-2xl font-bold text-[#333333]">Session Preview</Text>
-                </View>
-                <Pressable
-                  onPress={() => {
-                    lightHaptic();
-                    setIsSessionPreviewVisible(false);
-                  }}
-                  style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                  className="rounded-xl bg-stone-100 p-2.5">
-                  <Ionicons name="close" size={24} color="#333333" />
-                </Pressable>
-              </View>
-            </View>
-
-            {/* Content */}
-            <ScrollView className="flex-1 px-8 py-8">
-              <SessionPreview />
-            </ScrollView>
-          </View>
-        </Modal>
+          onClose={() => setIsSessionPreviewVisible(false)}
+        />
 
         {/* Saved Sessions Drawer */}
         <SavedSessionDrawer
