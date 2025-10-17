@@ -5,6 +5,7 @@ export { DurationSelector } from './DurationSelector';
 export { HistorySessionCard } from './HistorySessionCard';
 export { HistorySessionDrawer } from './HistorySessionDrawer';
 export { MainScreen } from './MainScreen';
+export { SavedSessionCard } from './SavedSessionCard';
 export { SavedSessionDrawer } from './SavedSessionDrawer';
 export { SegmentSelector } from './SegmentSelector';
 export { SessionPreview } from './SessionPreview';
