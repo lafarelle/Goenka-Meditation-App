@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Alert, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { HistorySessionCard } from './HistorySessionCard';
+import { MeditationHeatmap } from './MeditationHeatmap';
 
 interface HistorySessionDrawerProps {
   isVisible: boolean;
@@ -225,6 +226,11 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                 <Text className="mt-1 text-xs font-medium text-[#D4A73D]">meditated</Text>
               </View>
             </View>
+          </View>
+
+          {/* Meditation Heatmap */}
+          <View className="px-8 pb-8 pt-8">
+            <MeditationHeatmap months={3} />
           </View>
 
           {/* Recent Sessions */}
