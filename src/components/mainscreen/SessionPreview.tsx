@@ -106,7 +106,7 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   };
 
   return (
-    <View className="mb-8 rounded-2xl bg-white p-8 shadow-lg shadow-stone-300/50">
+    <View className="#FFFFFF mb-8 rounded-2xl p-8 shadow-lg shadow-stone-300/50">
       <View className="mb-6 flex-row items-center justify-between">
         <View className="flex-row items-center gap-3">
           <View className="rounded-xl bg-[#E8B84B]/10 p-3">

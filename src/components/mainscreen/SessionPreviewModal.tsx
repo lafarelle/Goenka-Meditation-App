@@ -44,8 +44,8 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
           style={{
             width: '100%',
             maxWidth: 600,
-            maxHeight: '200%',
-            backgroundColor: '#F5F5EC',
+            maxHeight: '100%',
+            backgroundColor: 'transparent',
             borderRadius: 24,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 10 },
@@ -63,23 +63,23 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
               paddingHorizontal: 24,
               paddingTop: 20,
               paddingBottom: 16,
-              borderBottomWidth: 1,
-              borderBottomColor: '#E5E5E5',
               backgroundColor: '#FFFFFF',
             }}>
-            <Pressable
-              onPress={() => {
-                lightHaptic();
-                onClose();
-              }}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.7 : 1,
-                backgroundColor: '#F5F5F5',
-                borderRadius: 10,
-                padding: 8,
-              })}>
-              <Ionicons name="close" size={20} color="#333333" />
-            </Pressable>
+            <View className="w-full flex-row items-end justify-end">
+              <Pressable
+                onPress={() => {
+                  lightHaptic();
+                  onClose();
+                }}
+                style={({ pressed }) => ({
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: '#F5F5F5',
+                  borderRadius: 10,
+                  padding: 8,
+                })}>
+                <Ionicons name="close" size={20} color="#333333" />
+              </Pressable>
+            </View>
             <SessionPreview />
           </View>
         </View>
