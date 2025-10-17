@@ -2,7 +2,6 @@ import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { heavyHaptic, lightHaptic, mediumHaptic } from '@/utils/haptics';
 import {
-  formatSessionDate,
   formatSessionDuration,
   getSessionUsageText,
   loadSessionIntoStore,
@@ -54,7 +53,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
       onRequestClose={onClose}>
       <View className="flex-1 bg-[#F5F5EC]">
         {/* Header */}
-        <View className="border-b border-stone-200 bg-white px-8 py-6 pt-16 shadow-sm">
+        <View className="border-b border-stone-200 bg-white px-8 py-6 pt-16 ">
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-4">
               <View className="h-12 w-12 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
@@ -68,7 +67,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                 onClose();
               }}
               style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-              className="rounded-xl bg-stone-100 p-2.5 shadow-sm shadow-stone-300/50">
+              className="rounded-xl bg-stone-100 p-2.5 ">
               <Ionicons name="close" size={24} color="#333333" />
             </Pressable>
           </View>
@@ -78,7 +77,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
         <ScrollView className="flex-1 px-8 py-8">
           {saved.length === 0 ? (
             <View className="items-center py-20">
-              <View className="mb-6 h-28 w-28 items-center justify-center rounded-3xl bg-[#E8B84B]/10 shadow-md shadow-stone-300/50">
+              <View className="0 mb-6 h-28 w-28 items-center justify-center rounded-3xl ">
                 <Ionicons name="bookmark-outline" size={56} color="#E8B84B" />
               </View>
               <Text className="mb-3 text-xl font-semibold text-[#333333]">No Saved Sessions</Text>
@@ -96,68 +95,52 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
                     loadSession(session.id);
                   }}
                   style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                  className="overflow-hidden rounded-2xl bg-white shadow-lg shadow-stone-300/50">
+                  className="mb-4 overflow-hidden rounded-xl bg-white shadow-md ">
                   {/* Accent bar */}
-                  <View className="h-1.5 bg-gradient-to-r from-[#E8B84B] to-[#D4A73D]" />
+                  <View className="h-1 bg-gradient-to-r from-[#E8B84B] to-[#D4A73D]" />
 
-                  <View className="p-6">
-                    <View className="flex-row items-start justify-between">
+                  <View className="flex-row items-center justify-between p-4">
+                    {/* Left side: Icon + Name + Duration */}
+                    <View className="flex-1 flex-row items-center gap-3">
                       <View className="flex-1">
-                        <View className="mb-4 flex-row items-center gap-3">
-                          <View className="rounded-xl bg-[#E8B84B]/10 px-3 py-1.5">
-                            <Ionicons name="bookmark" size={16} color="#E8B84B" />
-                          </View>
-                          <Text className="flex-1 text-lg font-semibold text-[#333333]">
-                            {session.name}
-                          </Text>
-                        </View>
-
-                        <View className="mb-4 flex-row items-center gap-3">
-                          <View className="flex-row items-center gap-2 rounded-xl bg-[#E8B84B]/10 px-4 py-2">
-                            <Ionicons name="time-outline" size={16} color="#E8B84B" />
-                            <Text className="text-sm font-medium text-[#E8B84B]">
+                        <Text
+                          className="mb-1 text-base font-semibold text-[#333333]"
+                          numberOfLines={1}>
+                          {session.name}
+                        </Text>
+                        <View className="flex-row items-center gap-3">
+                          <View className="flex-row items-center gap-1.5">
+                            <Ionicons name="time-outline" size={14} color="#E8B84B" />
+                            <Text className="text-xs font-medium text-[#E8B84B]">
                               {formatSessionDuration(session.totalDuration)}
                             </Text>
                           </View>
                           {session.useCount > 0 && (
-                            <View className="flex-row items-center gap-2 rounded-xl bg-stone-100 px-4 py-2">
-                              <Ionicons name="repeat" size={14} color="#78716c" />
-                              <Text className="text-sm font-medium text-stone-600">
-                                {getSessionUsageText(session.useCount)}
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-
-                        <View className="gap-2">
-                          <View className="flex-row items-center gap-2">
-                            <Ionicons name="calendar-outline" size={14} color="#999" />
-                            <Text className="text-xs text-stone-500">
-                              Created {formatSessionDate(session.createdAt)}
-                            </Text>
-                          </View>
-                          {session.lastUsedAt && (
-                            <View className="flex-row items-center gap-2">
-                              <Ionicons name="time-outline" size={14} color="#999" />
-                              <Text className="text-xs text-stone-500">
-                                Last used {formatSessionDate(session.lastUsedAt)}
-                              </Text>
-                            </View>
+                            <>
+                              <Text className="text-xs text-stone-300">•</Text>
+                              <View className="flex-row items-center gap-1.5">
+                                <Ionicons name="repeat" size={12} color="#78716c" />
+                                <Text className="text-xs font-medium text-stone-500">
+                                  {getSessionUsageText(session.useCount)}
+                                </Text>
+                              </View>
+                            </>
                           )}
                         </View>
                       </View>
-
-                      <Pressable
-                        onPress={(e) => {
-                          e.stopPropagation();
-                          heavyHaptic();
-                          deleteSession(session.id);
-                        }}
-                        style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                        className="ml-4 rounded-xl bg-red-50 p-3 shadow-sm shadow-red-200/50">
-                        <Ionicons name="trash-outline" size={22} color="#EF4444" />
-                      </Pressable>
                     </View>
+
+                    {/* Right side: Delete button */}
+                    <Pressable
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        heavyHaptic();
+                        deleteSession(session.id);
+                      }}
+                      style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
+                      className="ml-3 rounded-lg bg-red-50 p-2.5 shadow-sm shadow-red-200/50">
+                      <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                    </Pressable>
                   </View>
                 </Pressable>
               ))}
