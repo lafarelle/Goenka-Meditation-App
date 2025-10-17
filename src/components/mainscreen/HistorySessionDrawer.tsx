@@ -5,10 +5,7 @@ import { lightHaptic, mediumHaptic } from '@/utils/haptics';
 import {
   formatHistoryDate,
   formatHistoryDuration,
-  formatHistoryTime,
   formatTotalMeditationTime,
-  getCompletionIcon,
-  getCompletionText,
   loadHistorySessionIntoStore,
 } from '@/utils/historyUtils';
 import { createSegmentsCopy } from '@/utils/session';
@@ -234,16 +231,16 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
             {/* Recent Sessions */}
             <View className="px-8 py-8">
               <View className="mb-6 flex-row items-center gap-3">
-                <View className="h-10 w-10 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
-                  <Ionicons name="list" size={20} color="#E8B84B" />
+                <View className="h-10 w-10 items-center justify-center rounded-2xl bg-stone-100">
+                  <Ionicons name="list" size={20} color="#78716c" />
                 </View>
                 <Text className="text-xl font-semibold text-[#333333]">Recent Sessions</Text>
               </View>
 
               {recentSessions.length === 0 ? (
                 <View className="items-center py-20">
-                  <View className="mb-6 h-28 w-28 items-center justify-center rounded-3xl bg-[#E8B84B]/10 shadow-md shadow-stone-300/50">
-                    <Ionicons name="time-outline" size={56} color="#E8B84B" />
+                  <View className="mb-6 h-28 w-28 items-center justify-center rounded-3xl bg-stone-100 shadow-md shadow-stone-300/50">
+                    <Ionicons name="time-outline" size={56} color="#78716c" />
                   </View>
                   <Text className="mb-3 text-xl font-semibold text-[#333333]">No Sessions Yet</Text>
                   <Text className="text-center text-base text-stone-500">
@@ -251,119 +248,76 @@ export function HistorySessionDrawer({ isVisible, onClose }: HistorySessionDrawe
                   </Text>
                 </View>
               ) : (
-                <View className="gap-5">
-                  {recentSessions.map((session) => (
-                    <View
-                      key={session.id}
-                      className="overflow-hidden rounded-2xl bg-white shadow-lg shadow-stone-300/50">
-                      {/* Status bar */}
+                <View className="gap-3">
+                  {recentSessions.map((session) => {
+                    const isSaved = useSavedSessionsStore
+                      .getState()
+                      .saved.some((saved) =>
+                        saved.name.includes(formatHistoryDate(session.startedAt))
+                      );
+
+                    return (
                       <View
-                        className="h-1.5"
-                        style={{
-                          backgroundColor: session.completed
-                            ? '#E8B84B'
-                            : session.completionPercentage >= 50
-                              ? '#F0C86E'
-                              : '#D4A73D',
-                        }}
-                      />
-
-                      <View className="p-6">
-                        <View className="mb-5 flex-row items-start justify-between">
-                          <View className="flex-1">
-                            <View className="mb-4 flex-row items-center gap-3">
-                              <View
-                                className="rounded-xl px-3 py-2"
-                                style={{
-                                  backgroundColor: session.completed
-                                    ? '#FFF9E6'
-                                    : session.completionPercentage >= 50
-                                      ? '#FFFBF0'
-                                      : '#FFF3D6',
-                                }}>
-                                <View className="flex-row items-center gap-2">
-                                  <Ionicons
-                                    name={
-                                      getCompletionIcon(session) as
-                                        | 'checkmark-circle'
-                                        | 'close-circle'
-                                    }
-                                    size={16}
-                                    color={
-                                      session.completed
-                                        ? '#E8B84B'
-                                        : session.completionPercentage >= 50
-                                          ? '#D4A73D'
-                                          : '#C89635'
-                                    }
-                                  />
-                                  <Text
-                                    className="text-xs font-medium uppercase"
-                                    style={{
-                                      color: session.completed
-                                        ? '#E8B84B'
-                                        : session.completionPercentage >= 50
-                                          ? '#D4A73D'
-                                          : '#C89635',
-                                    }}>
-                                    {getCompletionText(session)}
-                                  </Text>
-                                </View>
-                              </View>
-
-                              <View className="flex-row items-center gap-2 rounded-xl bg-stone-100 px-3 py-2">
-                                <Ionicons name="time-outline" size={16} color="#78716c" />
-                                <Text className="text-sm font-medium text-stone-600">
-                                  {formatHistoryDuration(session.totalDurationMinutes)}
-                                </Text>
-                              </View>
-                            </View>
-
-                            <View className="flex-row items-center gap-2">
-                              <Ionicons name="calendar-outline" size={14} color="#999" />
-                              <Text className="text-sm text-stone-500">
-                                {formatHistoryDate(session.startedAt)} at{' '}
-                                {formatHistoryTime(session.startedAt)}
-                              </Text>
-                            </View>
+                        key={session.id}
+                        className="flex-row items-center justify-between rounded-xl bg-white p-4 shadow-sm shadow-stone-300/50">
+                        {/* Left side: Info */}
+                        <View className="flex-1">
+                          <View className="mb-1 flex-row items-center gap-2">
+                            <Ionicons
+                              name={
+                                session.completed
+                                  ? 'checkmark-circle'
+                                  : session.completionPercentage >= 50
+                                    ? 'ellipse-outline'
+                                    : 'close-circle'
+                              }
+                              size={16}
+                              color={
+                                session.completed
+                                  ? '#78716c'
+                                  : session.completionPercentage >= 50
+                                    ? '#a8a29e'
+                                    : '#d6d3d1'
+                              }
+                            />
+                            <Text className="text-sm font-medium text-stone-700">
+                              {formatHistoryDuration(session.totalDurationMinutes)}
+                            </Text>
+                            <Text className="text-xs text-stone-400">•</Text>
+                            <Text className="text-xs text-stone-500">
+                              {formatHistoryDate(session.startedAt)}
+                            </Text>
                           </View>
                         </View>
 
-                        {/* Actions */}
-                        <View className="flex-row gap-3">
+                        {/* Right side: Actions */}
+                        <View className="flex-row gap-2">
                           <Pressable
                             onPress={() => {
                               mediumHaptic();
                               loadSession(session.id);
                             }}
-                            style={({ pressed }) => [{ opacity: pressed ? 0.8 : 1 }]}
-                            className="flex-1 flex-row items-center justify-center gap-2 rounded-xl bg-[#E8B84B] px-5 py-4 shadow-md shadow-[#E8B84B]/30">
-                            <Ionicons name="play" size={18} color="#333333" />
-                            <Text className="text-sm font-semibold text-[#333333]">Repeat</Text>
+                            style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+                            className="h-9 w-9 items-center justify-center rounded-lg bg-stone-100">
+                            <Ionicons name="play" size={16} color="#57534e" />
                           </Pressable>
                           <Pressable
                             onPress={() => {
                               mediumHaptic();
                               handleSaveAsTemplate(session.id);
                             }}
-                            style={({ pressed }) => [
-                              {
-                                opacity: pressed ? 0.8 : 1,
-                                backgroundColor: '#FFF9E6',
-                                shadowColor: '#E8B84B',
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowOpacity: 0.15,
-                                shadowRadius: 4,
-                                elevation: 2,
-                              },
-                            ]}
-                            className="items-center justify-center rounded-xl px-5 py-4">
-                            <Ionicons name="bookmark" size={22} color="#E8B84B" />
+                            style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+                            className="h-9 w-9 items-center justify-center rounded-lg bg-stone-100">
+                            <Ionicons
+                              name={isSaved ? 'bookmark' : 'bookmark-outline'}
+                              size={16}
+                              color="#57534e"
+                            />
                           </Pressable>
                         </View>
                       </View>
-                    </View>
-                  ))}
+                    );
+                  })}
                 </View>
               )}
             </View>
