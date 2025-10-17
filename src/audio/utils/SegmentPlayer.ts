@@ -90,17 +90,13 @@ export class SegmentPlayer {
     getElapsedSeconds: () => number
   ): Promise<void> {
     if (!this.session || this.session.segments.beforeSilent.audioIds.length === 0) {
-      console.log('[SegmentPlayer] No beforeSilent audio configured, skipping');
       return;
     }
 
     // Prevent multiple calls to this method
     if (currentSegment === 'beforeSilent' || this.isTransitioning) {
-      console.log('[SegmentPlayer] Already in beforeSilent or transitioning, skipping');
       return;
     }
-
-    console.log('[SegmentPlayer] Starting beforeSilent audio playback');
 
     // Update state immediately to prevent multiple calls
     this.onStateUpdate?.({
@@ -138,10 +134,6 @@ export class SegmentPlayer {
     const audioIds = this.session.segments.beforeSilent.audioIds;
 
     if (this.currentAudioIndex < audioIds.length) {
-      console.log(
-        `[SegmentPlayer] Playing next beforeSilent audio (${this.currentAudioIndex + 1}/${audioIds.length})`
-      );
-
       try {
         // Add silent pause before next audio
         await this.playSilentPause();
@@ -165,7 +157,6 @@ export class SegmentPlayer {
       }
     }
 
-    console.log('[SegmentPlayer] No more beforeSilent audio to play');
     return false;
   }
 
@@ -175,27 +166,14 @@ export class SegmentPlayer {
   ): Promise<void> {
     if (!this.session) return;
 
-    console.log(
-      'playAfterSilentAudio called, currentSegment:',
-      currentSegment,
-      'isTransitioning:',
-      this.isTransitioning
-    );
-
     // Check if there are any after-silent audio files
     if (
       !this.session.segments.afterSilent.audioIds ||
       this.session.segments.afterSilent.audioIds.length === 0
     ) {
-      console.log('No after-silent audio files, completing session');
       this.onSegmentComplete?.();
       return;
     }
-
-    console.log(
-      'Playing after-silent audio, audioIds:',
-      this.session.segments.afterSilent.audioIds
-    );
 
     // Add silent pause before after-silent audio
     await this.playSilentPause();
@@ -207,18 +185,13 @@ export class SegmentPlayer {
     const firstAudioId = this.session.segments.afterSilent.audioIds[0];
     const audioFile = getAudioFile(firstAudioId);
 
-    console.log('First audio ID:', firstAudioId, 'Audio file:', audioFile);
-
     if (audioFile) {
-      console.log('Loading and playing audio...');
-
       // Track when this audio starts
       this.onAudioStarted?.(getElapsedSeconds());
 
       await this.audioPlayer.loadAudio(firstAudioId, audioFile);
       await this.audioPlayer.play();
     } else {
-      console.log('No valid audio file, completing session');
       this.onSegmentComplete?.();
     }
   }
@@ -308,8 +281,6 @@ export class SegmentPlayer {
     const pauseDuration =
       durationSeconds ?? usePreferencesStore.getState().preferences.pauseDuration;
 
-    console.log(`[SegmentPlayer] Starting silent pause (${pauseDuration}s)`);
-
     return new Promise((resolve) => {
       // Clear any existing timer first
       this.clearSilentPauseTimer();
@@ -317,7 +288,6 @@ export class SegmentPlayer {
       // Don't change the playing state during silent pauses
       // The session timer continues running, so isPlaying should remain true
       this.silentPauseTimer = setTimeout(() => {
-        console.log('[SegmentPlayer] Silent pause completed');
         this.silentPauseTimer = null;
         resolve();
       }, pauseDuration * 1000);
@@ -326,7 +296,6 @@ export class SegmentPlayer {
 
   clearSilentPauseTimer(): void {
     if (this.silentPauseTimer) {
-      console.log('[SegmentPlayer] Clearing silent pause timer');
       clearTimeout(this.silentPauseTimer);
       this.silentPauseTimer = null;
     }

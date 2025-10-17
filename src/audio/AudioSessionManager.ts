@@ -132,7 +132,6 @@ export class AudioSessionManager {
     if (!this.session) return;
 
     const currentSegment = this.sessionState.currentSegment;
-    console.log(`[AudioSessionManager] Audio finished for segment: ${currentSegment}`);
 
     // Record the playback event for the audio that just finished
     this.historyTracker.recordCurrentAudioPlayback(
@@ -146,10 +145,8 @@ export class AudioSessionManager {
     try {
       if (currentSegment === 'gong') {
         if (this.segmentPlayer.isEndGong()) {
-          console.log('[AudioSessionManager] End gong finished, finalizing session');
           this.finalizeSession();
         } else {
-          console.log('[AudioSessionManager] Start gong finished, transitioning to beforeSilent');
           await this.segmentPlayer.playSilentPause();
           await this.segmentPlayer.playBeforeSilentAudio(this.sessionState.currentSegment, () =>
             this.historyTracker.getElapsedSeconds()
@@ -160,9 +157,6 @@ export class AudioSessionManager {
           this.historyTracker.getElapsedSeconds()
         );
         if (!hasMore) {
-          console.log(
-            '[AudioSessionManager] All beforeSilent audio finished, transitioning to silent'
-          );
           // Disable time-based transition since we're handling it here
           this.transitionManager.markTransitionComplete('beforeSilent->silent');
           await this.segmentPlayer.playSilentPause();
@@ -175,7 +169,6 @@ export class AudioSessionManager {
           this.historyTracker.getElapsedSeconds()
         );
         if (!hasMore) {
-          console.log('[AudioSessionManager] All afterSilent audio finished, completing session');
           await this.segmentPlayer.playSilentPause();
           await this.handleSessionComplete();
         }
@@ -248,7 +241,6 @@ export class AudioSessionManager {
     )
       return;
 
-    console.log('[AudioSessionManager] Time-based transition to beforeSilent (fallback)');
     this.segmentPlayer.setIsTransitioning(true);
 
     try {
@@ -281,7 +273,6 @@ export class AudioSessionManager {
     if (this.sessionState.currentSegment === 'silent' || this.segmentPlayer.getIsTransitioning())
       return;
 
-    console.log('[AudioSessionManager] Time-based transition to silent (fallback)');
     this.segmentPlayer.setIsTransitioning(true);
 
     try {
@@ -317,7 +308,6 @@ export class AudioSessionManager {
     )
       return;
 
-    console.log('[AudioSessionManager] Time-based transition to afterSilent (fallback)');
     this.segmentPlayer.setIsTransitioning(true);
 
     try {
@@ -342,7 +332,6 @@ export class AudioSessionManager {
       this.handleError(`Error in transitionToAfterSilent: ${error}`);
     } finally {
       this.segmentPlayer.setIsTransitioning(false);
-      console.log('[AudioSessionManager] Transition to afterSilent completed');
     }
   }
 
@@ -416,8 +405,6 @@ export class AudioSessionManager {
    * Cleanup all resources and prevent memory leaks
    */
   async cleanup(): Promise<void> {
-    console.log('[AudioSessionManager] Cleaning up resources');
-
     this.sessionTimer.stop();
     await this.audioPlayer.cleanup();
     this.segmentPlayer.cleanup();

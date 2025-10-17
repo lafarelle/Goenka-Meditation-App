@@ -43,7 +43,6 @@ export class SegmentTransitionManager {
    * This is called by event-driven transitions to disable the fallback mechanism
    */
   markTransitionComplete(transitionKey: string): void {
-    console.log(`[SegmentTransitionManager] Marking transition complete: ${transitionKey}`);
     this.attemptedTransitions.add(transitionKey);
   }
 
@@ -113,9 +112,6 @@ export class SegmentTransitionManager {
       elapsedSeconds >= beforeSilentEnd &&
       !this.attemptedTransitions.has('gong->beforeSilent')
     ) {
-      console.log(
-        `[SegmentTransitionManager] TIME-BASED FALLBACK: gong -> beforeSilent (elapsed: ${elapsedSeconds.toFixed(1)}s, expected: ${beforeSilentEnd.toFixed(1)}s)`
-      );
       this.attemptedTransitions.add('gong->beforeSilent');
       this.onTransitionToBeforeSilent?.();
     } else if (
@@ -123,9 +119,6 @@ export class SegmentTransitionManager {
       elapsedSeconds >= beforeSilentEnd &&
       !this.attemptedTransitions.has('beforeSilent->silent')
     ) {
-      console.log(
-        `[SegmentTransitionManager] TIME-BASED FALLBACK: beforeSilent -> silent (elapsed: ${elapsedSeconds.toFixed(1)}s, expected: ${beforeSilentEnd.toFixed(1)}s)`
-      );
       this.attemptedTransitions.add('beforeSilent->silent');
       this.onTransitionToSilent?.();
     } else if (
@@ -133,9 +126,6 @@ export class SegmentTransitionManager {
       elapsedSeconds >= silentEnd &&
       !this.attemptedTransitions.has('silent->afterSilent')
     ) {
-      console.log(
-        `[SegmentTransitionManager] TIME-BASED FALLBACK: silent -> afterSilent (elapsed: ${elapsedSeconds.toFixed(1)}s, expected: ${silentEnd.toFixed(1)}s)`
-      );
       this.attemptedTransitions.add('silent->afterSilent');
       this.onTransitionToAfterSilent?.();
     } else if (
@@ -143,9 +133,6 @@ export class SegmentTransitionManager {
       elapsedSeconds >= afterSilentEnd &&
       !this.attemptedTransitions.has('afterSilent->complete')
     ) {
-      console.log(
-        `[SegmentTransitionManager] TIME-BASED FALLBACK: afterSilent -> complete (elapsed: ${elapsedSeconds.toFixed(1)}s, expected: ${afterSilentEnd.toFixed(1)}s)`
-      );
       this.attemptedTransitions.add('afterSilent->complete');
       this.onSessionComplete?.();
     }
