@@ -21,38 +21,16 @@ export class AudioPlayer {
 
       this.currentAudioId = audioId;
 
-      // Try to get preloaded source first, then fallback to provided source
-      let asset = audioSource;
-      if (!asset) {
-        const preloadedAsset = AudioPreloader.getPreloadedSound(audioId);
-        if (preloadedAsset) {
-          asset = preloadedAsset;
-        } else {
-          throw new Error(`No audio source provided for ${audioId}`);
-        }
+      // Use the audioSource directly if provided (should be a module number from require())
+      if (!audioSource) {
+        throw new Error(`No audio source provided for ${audioId}`);
       }
 
-      // Ensure the asset is downloaded
-      if (asset && typeof asset === 'object' && 'downloadAsync' in asset) {
-        await asset.downloadAsync();
-
-        // Use the local URI from the asset
-        const finalSource = asset.localUri || asset.uri;
-
-        if (!finalSource) {
-          throw new Error(`Asset for ${audioId} has no valid URI`);
-        }
-
-        this.player = createAudioPlayer(finalSource, {
-          updateInterval: 250,
-        });
-      } else {
-        // Fallback for direct URIs or module numbers
-        const finalSource = typeof asset === 'string' ? { uri: asset } : asset;
-        this.player = createAudioPlayer(finalSource, {
-          updateInterval: 250,
-        });
-      }
+      // For bundled assets, audioSource is a module number from require()
+      // Pass it directly to createAudioPlayer - expo-audio handles module numbers correctly
+      this.player = createAudioPlayer(audioSource, {
+        updateInterval: 250,
+      });
 
       // Set up status listener
       this.player.addListener('playbackStatusUpdate', (status) => {
