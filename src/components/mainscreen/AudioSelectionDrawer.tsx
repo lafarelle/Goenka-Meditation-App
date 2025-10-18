@@ -40,11 +40,11 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
           elevation: isSelected ? 3 : 2,
         },
       ]}
-      className="mx-4 mb-4 overflow-hidden rounded-2xl p-5"
+      className="mx-4 mb-3 overflow-hidden rounded-2xl px-4 py-3"
       accessibilityRole="checkbox"
       accessibilityState={{ checked: isSelected }}
       accessibilityLabel={option.name}>
-      <View className="flex-row items-start justify-between">
+      <View className="flex-row items-center justify-between">
         <View className="flex-1">
           <Text
             className="text-base font-medium"
@@ -52,43 +52,36 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
             {option.name}
           </Text>
 
-          {/* Metadata row */}
-          {option.duration !== '0:00' && (
-            <View className="mt-3 flex-row flex-wrap items-center gap-2">
-              {option.duration && option.duration !== '0:00' && (
-                <View
-                  className="flex-row items-center gap-1.5 rounded-lg px-2.5 py-1.5"
-                  style={{
-                    backgroundColor: isSelected ? '#FFF3D6' : '#F5F5F5',
-                  }}>
-                  <Ionicons
-                    name="time-outline"
-                    size={12}
-                    color={isSelected ? '#E8B84B' : '#999999'}
-                  />
-                  <Text
-                    className="text-xs font-medium"
-                    style={{ color: isSelected ? '#E8B84B' : '#999999' }}>
-                    {option.duration}
-                  </Text>
-                </View>
-              )}
-            </View>
-          )}
-
           {/* Description */}
           {option.description && (
-            <Text className="mt-2 text-xs font-normal" style={{ color: '#999999' }}>
+            <Text className="mt-1 text-xs font-normal" style={{ color: '#999999' }}>
               {option.description}
             </Text>
           )}
         </View>
 
-        {/* Selection indicator with order */}
-        <View className="ml-4 flex-col items-center justify-center">
+        {/* Duration and Selection indicator */}
+        <View className="ml-3 flex-row items-center gap-3">
+          {/* Duration */}
+          {option.duration !== '0:00' && (
+            <View className="flex-row items-center gap-1">
+              <Ionicons
+                name="time-outline"
+                size={14}
+                color={isSelected ? '#E8B84B' : '#999999'}
+              />
+              <Text
+                className="text-xs font-medium"
+                style={{ color: isSelected ? '#E8B84B' : '#999999' }}>
+                {option.duration}
+              </Text>
+            </View>
+          )}
+
+          {/* Selection indicator with order */}
           {isSelected && selectionOrder !== null && (
             <View
-              className="h-9 w-9 flex-row items-center justify-center rounded-xl"
+              className="h-8 w-8 flex-row items-center justify-center rounded-lg"
               style={{
                 backgroundColor: '#E8B84B',
                 shadowColor: '#000',
@@ -97,12 +90,12 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
                 shadowRadius: 4,
                 elevation: 2,
               }}>
-              <Text className="text-base font-medium text-white">{selectionOrder}</Text>
+              <Text className="text-sm font-medium text-white">{selectionOrder}</Text>
             </View>
           )}
           {!isSelected && (
             <View
-              className="h-9 w-9 rounded-xl"
+              className="h-8 w-8 rounded-lg"
               style={{ backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#E5E5E5' }}
             />
           )}
@@ -183,6 +176,8 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         snapPoints={snapPoints}
         index={-1}
         enablePanDownToClose
+        enableOverDrag={false}
+        enableContentPanningGesture={false}
         backdropComponent={renderBackdrop}
         backgroundStyle={{
           backgroundColor: '#F5F5EC',
