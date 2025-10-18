@@ -1,6 +1,6 @@
 import { createAudioPlayer, AudioPlayer as ExpoAudioPlayer } from 'expo-audio';
-import { AudioPreloader } from './AudioPreloader';
 import { AudioPlayerCallbacks } from './types';
+import { AudioSessionConfig } from './AudioSessionConfig';
 
 export class AudioPlayer {
   private player: ExpoAudioPlayer | null = null;
@@ -14,8 +14,15 @@ export class AudioPlayer {
 
   async loadAudio(audioId: string, audioSource?: any): Promise<void> {
     try {
+      // Ensure audio session is configured before loading audio
+      if (!AudioSessionConfig.isAudioSessionInitialized()) {
+        console.log('[AudioPlayer] Initializing audio session before loading audio');
+        await AudioSessionConfig.initializeAudioSession();
+      }
+
       // Clean up previous player
       if (this.player) {
+        console.log('[AudioPlayer] Cleaning up previous audio player');
         this.player = null;
       }
 
@@ -23,8 +30,12 @@ export class AudioPlayer {
 
       // Use the audioSource directly if provided (should be a module number from require())
       if (!audioSource) {
-        throw new Error(`No audio source provided for ${audioId}`);
+        const errorMsg = `No audio source provided for ${audioId}`;
+        console.error('[AudioPlayer]', errorMsg);
+        throw new Error(errorMsg);
       }
+
+      console.log(`[AudioPlayer] Loading audio: ${audioId}`);
 
       // For bundled assets, audioSource is a module number from require()
       // Pass it directly to createAudioPlayer - expo-audio handles module numbers correctly
@@ -40,27 +51,37 @@ export class AudioPlayer {
 
           if (status.didJustFinish) {
             this.isPlaying = false;
+            console.log(`[AudioPlayer] Playback finished: ${this.currentAudioId}`);
             this.callbacks.onPlaybackFinished?.();
           }
         }
       });
+
+      console.log(`[AudioPlayer] Audio loaded successfully: ${audioId}`);
     } catch (error) {
-      this.callbacks.onError?.(`Failed to load audio: ${error}`);
+      const errorMsg = `Failed to load audio: ${error}`;
+      console.error('[AudioPlayer]', errorMsg);
+      this.callbacks.onError?.(errorMsg);
       throw error;
     }
   }
 
   async play(): Promise<void> {
     if (!this.player) {
-      this.callbacks.onError?.('No audio loaded');
+      const errorMsg = 'No audio loaded';
+      console.error('[AudioPlayer]', errorMsg);
+      this.callbacks.onError?.(errorMsg);
       return;
     }
 
     try {
+      console.log(`[AudioPlayer] Playing audio: ${this.currentAudioId}`);
       await this.player.play();
       this.isPlaying = true;
     } catch (error) {
-      this.callbacks.onError?.(`Failed to play audio: ${error}`);
+      const errorMsg = `Failed to play audio: ${error}`;
+      console.error('[AudioPlayer]', errorMsg);
+      this.callbacks.onError?.(errorMsg);
       throw error;
     }
   }
@@ -69,10 +90,13 @@ export class AudioPlayer {
     if (!this.player) return;
 
     try {
+      console.log(`[AudioPlayer] Pausing audio: ${this.currentAudioId}`);
       await this.player.pause();
       this.isPlaying = false;
     } catch (error) {
-      this.callbacks.onError?.(`Failed to pause audio: ${error}`);
+      const errorMsg = `Failed to pause audio: ${error}`;
+      console.error('[AudioPlayer]', errorMsg);
+      this.callbacks.onError?.(errorMsg);
     }
   }
 
@@ -80,11 +104,14 @@ export class AudioPlayer {
     if (!this.player) return;
 
     try {
+      console.log(`[AudioPlayer] Stopping audio: ${this.currentAudioId}`);
       await this.player.pause();
       await this.player.seekTo(0);
       this.isPlaying = false;
     } catch (error) {
-      this.callbacks.onError?.(`Failed to stop audio: ${error}`);
+      const errorMsg = `Failed to stop audio: ${error}`;
+      console.error('[AudioPlayer]', errorMsg);
+      this.callbacks.onError?.(errorMsg);
     }
   }
 

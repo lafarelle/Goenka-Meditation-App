@@ -6,12 +6,18 @@ export class AudioPreloader {
   private static preloadedModules: Map<string, number> = new Map();
 
   static async preloadAllAudio(): Promise<void> {
-    if (this.isPreloading) return;
+    if (this.isPreloading) {
+      console.log('[AudioPreloader] Preloading already in progress');
+      return;
+    }
 
     this.isPreloading = true;
+    console.log('[AudioPreloader] Starting audio preload...');
 
     try {
       const promises: Promise<void>[] = [];
+      let successCount = 0;
+      let failureCount = 0;
 
       // Preload all audio files using expo-asset
       // This ensures assets are available on the device
@@ -20,12 +26,16 @@ export class AudioPreloader {
           const promise = (async () => {
             try {
               // Convert require() module to Asset to trigger download
+              console.log(`[AudioPreloader] Preloading: ${audio.id}`);
               const asset = Asset.fromModule(audio.fileUri);
               await asset.downloadAsync();
               // Store the original module number, not the asset
               this.preloadedModules.set(audio.id, audio.fileUri);
+              successCount++;
+              console.log(`[AudioPreloader] Successfully preloaded: ${audio.id}`);
             } catch (error) {
-              // Audio preload failed silently
+              failureCount++;
+              console.warn(`[AudioPreloader] Failed to preload audio ${audio.id}: ${error}`);
             }
           })();
           promises.push(promise);
@@ -33,8 +43,11 @@ export class AudioPreloader {
       }
 
       await Promise.all(promises);
+      console.log(
+        `[AudioPreloader] Preload complete. Success: ${successCount}, Failed: ${failureCount}`
+      );
     } catch (error) {
-      // Some audio sources failed to cache
+      console.error('[AudioPreloader] Preload error:', error);
     } finally {
       this.isPreloading = false;
     }
