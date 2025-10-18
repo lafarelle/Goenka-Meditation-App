@@ -20,7 +20,7 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
   const containerOpacityAnim = useRef(new Animated.Value(1)).current;
 
   // Minimum splash duration to ensure smooth transition and audio preloading
-  const MIN_SPLASH_DURATION = 4000;
+  const MIN_SPLASH_DURATION = 2000;
 
   useEffect(() => {
     // Start preloading audio in the background
