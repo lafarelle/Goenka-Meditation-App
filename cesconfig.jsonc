@@ -2,23 +2,23 @@
 // It is safe to delete this file as it does not affect the functionality of your application.
 {
   "cesVersion": "2.20.0",
-  "projectName": "goenka-october",
+  "projectName": "Meditate with Goenka",
   "packages": [
     {
       "name": "expo-router",
       "type": "navigation",
       "options": {
-        "type": "stack"
-      }
+        "type": "stack",
+      },
     },
     {
       "name": "nativewind",
-      "type": "styling"
+      "type": "styling",
     },
     {
       "name": "zustand",
-      "type": "state-management"
-    }
+      "type": "state-management",
+    },
   ],
   "flags": {
     "noGit": false,
@@ -27,16 +27,16 @@
     "importAlias": true,
     "packageManager": "pnpm",
     "eas": false,
-    "publish": false
+    "publish": false,
   },
   "packageManager": {
     "type": "pnpm",
-    "version": "9.15.2"
+    "version": "9.15.2",
   },
   "os": {
     "type": "Darwin",
     "platform": "darwin",
     "arch": "arm64",
-    "kernelVersion": "24.1.0"
-  }
+    "kernelVersion": "24.1.0",
+  },
 }
