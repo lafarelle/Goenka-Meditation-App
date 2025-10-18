@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Meditate with Goenka",
-    "slug": "Meditate with Goenka",
+    "slug": "meditatewithgoenka",
     "version": "1.0.0",
     "scheme": "Meditate with Goenka",
     "platforms": ["ios", "android"],
@@ -40,7 +40,12 @@
       "package": "com.rglafarelle.goenka",
       "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"]
     },
-
-    "owner": "rglafarelle"
+    "owner": "rglafarelle",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d0b5fa25-438c-4d2e-bca5-bc83ffbf8cf5"
+      }
+    }
   }
 }

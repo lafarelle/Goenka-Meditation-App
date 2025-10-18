@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Animated, Easing, View } from 'react-native';
 
 import { AudioPreloader } from '@/audio/AudioPreloader';
@@ -14,7 +14,7 @@ interface AnimatedSplashScreenProps {
  */
 export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
   onAnimationComplete,
-}) => {
+}: AnimatedSplashScreenProps) => {
   const scaleAnim = useRef(new Animated.Value(0.3)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const containerOpacityAnim = useRef(new Animated.Value(1)).current;
@@ -101,8 +101,7 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
           opacity: containerOpacityAnim,
         },
       ]}
-      pointerEvents="none"
-    >
+      pointerEvents="none">
       <View style={{ alignItems: 'center', gap: 20 }}>
         {/* Animated breathing circle */}
         <Animated.View
@@ -148,8 +147,7 @@ export const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({
               marginTop: 40,
               opacity: opacityAnim,
             },
-          ]}
-        >
+          ]}>
           Take a deep breath...
         </Animated.Text>
       </View>
