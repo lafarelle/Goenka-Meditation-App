@@ -76,8 +76,8 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
             </View>
           )}
 
-          {/* Description for items without duration metadata */}
-          {option.description && option.duration === '0:00' && (
+          {/* Description */}
+          {option.description && (
             <Text className="mt-2 text-xs font-normal" style={{ color: '#999999' }}>
               {option.description}
             </Text>
