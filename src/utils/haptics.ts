@@ -25,7 +25,6 @@ export const lightHaptic = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   } catch (error) {
     // Silently fail if haptics are not available
-    console.debug('Haptics not available:', error);
   }
 };
 
@@ -37,7 +36,7 @@ export const mediumHaptic = async () => {
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   } catch (error) {
-    console.debug('Haptics not available:', error);
+    // Silently fail if haptics are not available
   }
 };
 
@@ -49,7 +48,7 @@ export const heavyHaptic = async () => {
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
   } catch (error) {
-    console.debug('Haptics not available:', error);
+    // Silently fail if haptics are not available
   }
 };
 
@@ -61,7 +60,7 @@ export const rigidHaptic = async () => {
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
   } catch (error) {
-    console.debug('Haptics not available:', error);
+    // Silently fail if haptics are not available
   }
 };
 
@@ -73,7 +72,7 @@ export const softHaptic = async () => {
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
   } catch (error) {
-    console.debug('Haptics not available:', error);
+    // Silently fail if haptics are not available
   }
 };
 
@@ -85,7 +84,7 @@ export const successHaptic = async () => {
   try {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   } catch (error) {
-    console.debug('Haptics not available:', error);
+    // Silently fail if haptics are not available
   }
 };
 
@@ -97,7 +96,7 @@ export const warningHaptic = async () => {
   try {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   } catch (error) {
-    console.debug('Haptics not available:', error);
+    // Silently fail if haptics are not available
   }
 };
 
@@ -109,7 +108,7 @@ export const errorHaptic = async () => {
   try {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   } catch (error) {
-    console.debug('Haptics not available:', error);
+    // Silently fail if haptics are not available
   }
 };
 
@@ -121,7 +120,7 @@ export const selectionHaptic = async () => {
   try {
     await Haptics.selectionAsync();
   } catch (error) {
-    console.debug('Haptics not available:', error);
+    // Silently fail if haptics are not available
   }
 };
 

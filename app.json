@@ -4,10 +4,7 @@
     "slug": "goenka",
     "version": "1.0.0",
     "scheme": "goenka",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -18,9 +15,7 @@
       [
         "expo-asset",
         {
-          "assets": [
-            "./assets/audio"
-          ]
+          "assets": ["./assets/audio"]
         }
       ]
     ],
@@ -36,17 +31,13 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.rglafarelle.goenka",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": [
-          "audio"
-        ]
+        "UIBackgroundModes": ["audio"]
       }
     },
     "android": {

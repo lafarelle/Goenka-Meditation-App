@@ -86,6 +86,7 @@ export class AudioSessionManager {
       this.isInitialized = true;
     } catch (error) {
       this.handleError(`Failed to initialize audio system: ${error}`);
+      throw error;
     }
   }
 

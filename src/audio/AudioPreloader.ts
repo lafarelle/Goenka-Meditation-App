@@ -1,8 +1,9 @@
+import { Asset } from 'expo-asset';
 import { segmentTypeToAudioMap } from '@/data/audioData';
 
 export class AudioPreloader {
   private static isPreloading = false;
-  private static preloadedSources: Map<string, any> = new Map();
+  private static preloadedAssets: Map<string, Asset> = new Map();
 
   static async preloadAllAudio(): Promise<void> {
     if (this.isPreloading) return;
@@ -10,30 +11,43 @@ export class AudioPreloader {
     this.isPreloading = true;
 
     try {
-      // For expo-audio, we just cache the audio sources
-      // The actual loading happens when creating the player
+      const promises: Promise<void>[] = [];
+
+      // Preload all audio files using expo-asset
       for (const audioList of Object.values(segmentTypeToAudioMap)) {
         for (const audio of audioList) {
-          this.preloadedSources.set(audio.id, audio.fileUri);
+          const promise = (async () => {
+            try {
+              // Convert require() module to Asset
+              const asset = Asset.fromModule(audio.fileUri);
+              await asset.downloadAsync();
+              this.preloadedAssets.set(audio.id, asset);
+            } catch (error) {
+              // Audio preload failed silently
+            }
+          })();
+          promises.push(promise);
         }
       }
+
+      await Promise.all(promises);
     } catch (error) {
-      console.warn('Some audio sources failed to cache:', error);
+      // Some audio sources failed to cache
     } finally {
       this.isPreloading = false;
     }
   }
 
-  static getPreloadedSound(audioId: string): any | null {
-    return this.preloadedSources.get(audioId) || null;
+  static getPreloadedSound(audioId: string): Asset | null {
+    return this.preloadedAssets.get(audioId) || null;
   }
 
   static async cleanup(): Promise<void> {
-    // For expo-audio, we just clear the cached sources
-    this.preloadedSources.clear();
+    // Clear the cached assets
+    this.preloadedAssets.clear();
   }
 
   static isAudioPreloaded(audioId: string): boolean {
-    return this.preloadedSources.has(audioId);
+    return this.preloadedAssets.has(audioId);
   }
 }

@@ -22,21 +22,37 @@ export class AudioPlayer {
       this.currentAudioId = audioId;
 
       // Try to get preloaded source first, then fallback to provided source
-      let source = audioSource;
-      if (!source) {
-        const preloadedSource = AudioPreloader.getPreloadedSound(audioId);
-        if (preloadedSource) {
-          source = preloadedSource;
+      let asset = audioSource;
+      if (!asset) {
+        const preloadedAsset = AudioPreloader.getPreloadedSound(audioId);
+        if (preloadedAsset) {
+          asset = preloadedAsset;
         } else {
           throw new Error(`No audio source provided for ${audioId}`);
         }
       }
 
-      const finalSource = typeof source === 'string' ? { uri: source } : source;
+      // Ensure the asset is downloaded
+      if (asset && typeof asset === 'object' && 'downloadAsync' in asset) {
+        await asset.downloadAsync();
 
-      this.player = createAudioPlayer(finalSource, {
-        updateInterval: 250,
-      });
+        // Use the local URI from the asset
+        const finalSource = asset.localUri || asset.uri;
+
+        if (!finalSource) {
+          throw new Error(`Asset for ${audioId} has no valid URI`);
+        }
+
+        this.player = createAudioPlayer(finalSource, {
+          updateInterval: 250,
+        });
+      } else {
+        // Fallback for direct URIs or module numbers
+        const finalSource = typeof asset === 'string' ? { uri: asset } : asset;
+        this.player = createAudioPlayer(finalSource, {
+          updateInterval: 250,
+        });
+      }
 
       // Set up status listener
       this.player.addListener('playbackStatusUpdate', (status) => {

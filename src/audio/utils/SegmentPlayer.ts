@@ -56,7 +56,6 @@ export class SegmentPlayer {
 
   async playGong(getElapsedSeconds: () => number): Promise<void> {
     if (!this.session?.segments.gong) {
-      console.warn('[SegmentPlayer] No gong segment configured');
       return;
     }
 
@@ -77,11 +76,8 @@ export class SegmentPlayer {
         await this.audioPlayer.loadAudio(gongAudioId, audioFile);
         await this.audioPlayer.play();
       } catch (error) {
-        console.error('[SegmentPlayer] Error playing gong:', error);
         throw error;
       }
-    } else {
-      console.error('[SegmentPlayer] Gong audio file not found:', gongAudioId);
     }
   }
 
@@ -119,11 +115,8 @@ export class SegmentPlayer {
         await this.audioPlayer.loadAudio(firstAudioId, audioFile);
         await this.audioPlayer.play();
       } catch (error) {
-        console.error('[SegmentPlayer] Error playing beforeSilent audio:', error);
         throw error;
       }
-    } else {
-      console.error('[SegmentPlayer] BeforeSilent audio file not found:', firstAudioId);
     }
   }
 
@@ -148,11 +141,8 @@ export class SegmentPlayer {
           await this.audioPlayer.loadAudio(nextAudioId, audioFile);
           await this.audioPlayer.play();
           return true;
-        } else {
-          console.error('[SegmentPlayer] Audio file not found:', nextAudioId);
         }
       } catch (error) {
-        console.error('[SegmentPlayer] Error playing next beforeSilent audio:', error);
         throw error;
       }
     }
