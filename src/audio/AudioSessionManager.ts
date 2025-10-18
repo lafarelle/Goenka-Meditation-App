@@ -82,7 +82,10 @@ export class AudioSessionManager {
     if (this.isInitialized) return;
 
     try {
-      await AudioPreloader.preloadAllAudio();
+      // Preload audio if not already done (may have been done during splash screen)
+      if (!AudioPreloader.isPreloadingComplete()) {
+        await AudioPreloader.preloadAllAudio();
+      }
       this.isInitialized = true;
     } catch (error) {
       this.handleError(`Failed to initialize audio system: ${error}`);

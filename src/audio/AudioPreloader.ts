@@ -1,13 +1,36 @@
 import { Asset } from 'expo-asset';
 import { segmentTypeToAudioMap } from '@/data/audioData';
 
+/**
+ * AudioPreloader - Manages efficient audio file preloading and caching
+ *
+ * PERFORMANCE OPTIMIZATION NOTES:
+ * - Preloading happens ONCE during app startup (in AnimatedSplashScreen)
+ * - All audio files (stored locally) are downloaded to device cache during preload
+ * - Cached modules are stored in memory via Map for instant access
+ * - This approach ensures smooth playback without stuttering during meditation sessions
+ *
+ * MEMORY CONSIDERATIONS:
+ * - Audio files are preloaded into the device's file system cache (not RAM)
+ * - The preloadedModules Map only stores module references (~100 bytes per entry)
+ * - Actual audio data is not duplicated in memory
+ * - For typical meditation apps (10-20 audio files), impact is minimal
+ *
+ * APP PERFORMANCE:
+ * - ✅ Prevents duplicate preloading via isPreloadComplete flag
+ * - ✅ Uses Promise.all() for concurrent loading (faster than sequential)
+ * - ✅ Preloads during splash screen (4 seconds), so not blocking user interaction
+ * - ✅ AudioSessionManager checks completion before redundant preload
+ */
 export class AudioPreloader {
   private static isPreloading = false;
+  private static isPreloadComplete = false;
   private static preloadedModules: Map<string, number> = new Map();
 
   static async preloadAllAudio(): Promise<void> {
-    if (this.isPreloading) {
-      console.log('[AudioPreloader] Preloading already in progress');
+    // Skip if already preloaded or currently preloading
+    if (this.isPreloadComplete || this.isPreloading) {
+      console.log('[AudioPreloader] Audio already preloaded or preloading in progress');
       return;
     }
 
@@ -46,6 +69,7 @@ export class AudioPreloader {
       console.log(
         `[AudioPreloader] Preload complete. Success: ${successCount}, Failed: ${failureCount}`
       );
+      this.isPreloadComplete = true;
     } catch (error) {
       console.error('[AudioPreloader] Preload error:', error);
     } finally {
@@ -64,5 +88,9 @@ export class AudioPreloader {
 
   static isAudioPreloaded(audioId: string): boolean {
     return this.preloadedModules.has(audioId);
+  }
+
+  static isPreloadingComplete(): boolean {
+    return this.isPreloadComplete;
   }
 }

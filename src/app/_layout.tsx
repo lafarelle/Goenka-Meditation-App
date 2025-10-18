@@ -28,9 +28,7 @@ export default function Layout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         {!isAnimationComplete ? (
-          <AnimatedSplashScreen
-            onAnimationComplete={() => setIsAnimationComplete(true)}
-          />
+          <AnimatedSplashScreen onAnimationComplete={() => setIsAnimationComplete(true)} />
         ) : (
           <Stack />
         )}
