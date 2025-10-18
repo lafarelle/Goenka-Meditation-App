@@ -1,5 +1,5 @@
 import { Container } from '@/components/Container';
-import { PreferencesSelector, ResetDataButton } from '@/components/settingsscreen';
+import { PreferencesSelector, ResetDataButton, SupportUsButton } from '@/components/settingsscreen';
 import { lightHaptic } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
@@ -16,7 +16,7 @@ export default function Settings() {
       />
       <Container>
         <ScrollView
-          className="flex-1"
+          className="flex-1 "
           contentContainerClassName="gap-8 py-4"
           showsVerticalScrollIndicator={false}>
           {/* Back button in its own card */}
@@ -74,6 +74,7 @@ export default function Settings() {
           </View>
 
           <PreferencesSelector />
+          <SupportUsButton />
           <ResetDataButton />
         </ScrollView>
       </Container>
