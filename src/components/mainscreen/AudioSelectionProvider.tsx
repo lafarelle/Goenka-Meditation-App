@@ -7,11 +7,12 @@ import {
 } from '@/data/audioData';
 import React, { createContext, useRef } from 'react';
 import { AudioSelectionDrawer, AudioSelectionDrawerRef } from './AudioSelectionDrawer';
+import { TechniqueReminderDrawer, TechniqueReminderDrawerRef } from './TechniqueReminderDrawer';
 
 interface AudioSelectionContextType {
   openingChantDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
   openingGuidanceDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
-  techniqueReminderDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
+  techniqueReminderDrawerRef: React.RefObject<TechniqueReminderDrawerRef | null>;
   mettaDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
   closingChantDrawerRef: React.RefObject<AudioSelectionDrawerRef | null>;
 }
@@ -21,7 +22,7 @@ export const AudioSelectionContext = createContext<AudioSelectionContextType | n
 export function AudioSelectionProvider({ children }: { children: React.ReactNode }) {
   const openingChantDrawerRef = useRef<AudioSelectionDrawerRef>(null);
   const openingGuidanceDrawerRef = useRef<AudioSelectionDrawerRef>(null);
-  const techniqueReminderDrawerRef = useRef<AudioSelectionDrawerRef>(null);
+  const techniqueReminderDrawerRef = useRef<TechniqueReminderDrawerRef>(null);
   const mettaDrawerRef = useRef<AudioSelectionDrawerRef>(null);
   const closingChantDrawerRef = useRef<AudioSelectionDrawerRef>(null);
 
@@ -50,10 +51,8 @@ export function AudioSelectionProvider({ children }: { children: React.ReactNode
         title="Select Opening Guidance"
         audioOptions={guidanceAudios}
       />
-      <AudioSelectionDrawer
+      <TechniqueReminderDrawer
         ref={techniqueReminderDrawerRef}
-        segmentType="techniqueReminder"
-        title="Select Technique Reminder"
         audioOptions={techniqueAudios}
       />
       <AudioSelectionDrawer
