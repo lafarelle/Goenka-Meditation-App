@@ -4,8 +4,10 @@ import {
   SessionSegmentType,
   TechniqueType,
 } from '@/schemas/session';
+import { AudioItem } from '@/schemas/audio';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { calculateSessionTiming } from '@/utils/preferences/timingUtils';
+import { pickRandomAudio } from '@/utils/audioUtils';
 import { create } from 'zustand';
 import { usePreferencesStore } from './preferencesStore';
 
@@ -18,6 +20,7 @@ interface SessionState {
   setSegmentAudioIds: (type: SessionSegmentType, audioIds: string[]) => void;
   toggleAudioInSegment: (type: SessionSegmentType, audioId: string) => void;
   setSegmentTechniqueType: (type: SessionSegmentType, techniqueType: TechniqueType) => void;
+  setSegmentAudioToRandom: (type: SessionSegmentType, audioOptions: AudioItem[]) => void;
   setTotalDurationMinutes: (minutes: number) => void;
   resetSession: () => void;
   getActiveSegmentsDurationSec: () => number;
@@ -98,6 +101,20 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         };
       }
       return state; // Do nothing if not a technique segment
+    }),
+
+  setSegmentAudioToRandom: (type, audioOptions) =>
+    set((state) => {
+      const randomAudio = pickRandomAudio(audioOptions);
+      if (randomAudio) {
+        return {
+          segments: {
+            ...state.segments,
+            [type]: { ...state.segments[type], selectedAudioIds: [randomAudio.id] },
+          },
+        };
+      }
+      return state; // Do nothing if no random audio was selected
     }),
 
   setTotalDurationMinutes: (minutes) => set({ totalDurationMinutes: minutes }),

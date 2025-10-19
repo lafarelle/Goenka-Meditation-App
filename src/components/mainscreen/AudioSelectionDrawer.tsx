@@ -1,6 +1,7 @@
 import { AudioItem } from '@/schemas/audio';
 import { SessionSegmentType } from '@/schemas/session';
 import { useSessionStore } from '@/store/sessionStore';
+import { pickRandomAudio } from '@/utils/audioUtils';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
@@ -116,6 +117,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
     );
     const toggleAudioInSegment = useSessionStore((state) => state.toggleAudioInSegment);
     const setSegmentEnabled = useSessionStore((state) => state.setSegmentEnabled);
+    const setSegmentAudioToRandom = useSessionStore((state) => state.setSegmentAudioToRandom);
 
     useImperativeHandle(ref, () => ({
       present: () => bottomSheetRef.current?.expand(),
@@ -141,6 +143,14 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
     const handleDone = useCallback(() => {
       bottomSheetRef.current?.close();
     }, []);
+
+    const handleRandomSelection = useCallback(() => {
+      const randomAudio = pickRandomAudio(audioOptions);
+      if (randomAudio) {
+        setSegmentAudioToRandom(segmentType, audioOptions);
+        setSegmentEnabled(segmentType, true);
+      }
+    }, [segmentType, audioOptions, setSegmentAudioToRandom, setSegmentEnabled]);
 
     const renderBackdrop = useCallback(
       (props: any) => (
@@ -209,25 +219,48 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
                 </Text>
               </View>
             </View>
-            <Pressable
-              onPress={handleDone}
-              style={({ pressed }) => [
-                {
-                  opacity: pressed ? 0.7 : 1,
-                  backgroundColor: '#FFFFFF',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 0.06,
-                  shadowRadius: 4,
-                  elevation: 2,
-                },
-              ]}
-              className="rounded-xl p-2.5"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              accessibilityRole="button"
-              accessibilityLabel="Done">
-              <Ionicons name="checkmark" size={24} color="#333333" />
-            </Pressable>
+            <View className="flex-row items-center gap-2">
+              {/* Random Button */}
+              <Pressable
+                onPress={handleRandomSelection}
+                style={({ pressed }) => [
+                  {
+                    opacity: pressed ? 0.7 : 1,
+                    backgroundColor: '#FFFFFF',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.06,
+                    shadowRadius: 4,
+                    elevation: 2,
+                  },
+                ]}
+                className="rounded-xl p-2.5"
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                accessibilityRole="button"
+                accessibilityLabel="Random">
+                <Ionicons name="shuffle" size={24} color="#E8B84B" />
+              </Pressable>
+              {/* Done Button */}
+              <Pressable
+                onPress={handleDone}
+                style={({ pressed }) => [
+                  {
+                    opacity: pressed ? 0.7 : 1,
+                    backgroundColor: '#FFFFFF',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.06,
+                    shadowRadius: 4,
+                    elevation: 2,
+                  },
+                ]}
+                className="rounded-xl p-2.5"
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                accessibilityRole="button"
+                accessibilityLabel="Done">
+                <Ionicons name="checkmark" size={24} color="#333333" />
+              </Pressable>
+            </View>
           </View>
         </View>
 
