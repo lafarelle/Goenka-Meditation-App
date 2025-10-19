@@ -3,7 +3,7 @@
     "name": "Meditate with Goenka",
     "slug": "meditatewithgoenka",
     "version": "1.0.0",
-    "scheme": "Meditate with Goenka",
+    "scheme": "meditatewithgoenka",
     "platforms": ["ios", "android"],
     "web": {
       "bundler": "metro",
@@ -26,7 +26,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.rglafarelle.goenka",
+      "bundleIdentifier": "com.lafarelle.meditatewithgoenka",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": ["audio"]
@@ -37,14 +37,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.rglafarelle.goenka",
-      "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"]
+      "package": "com.lafarelle.meditatewithgoenka",
+      "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS", "android.permission.POST_NOTIFICATIONS"]
     },
     "owner": "rglafarelle",
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "d0b5fa25-438c-4d2e-bca5-bc83ffbf8cf5"
+        "projectId": "31eb7100-1a1a-4c49-998a-88644acb12d5"
       }
     }
   }

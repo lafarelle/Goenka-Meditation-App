@@ -7,12 +7,16 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AnimatedSplashScreen } from '@/components/AnimatedSplashScreen';
+import { useNotificationSetup } from '@/notifications';
 
 // Prevent the splash screen from auto-hiding before we're ready
 SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+
+  // Initialize notifications on app startup
+  useNotificationSetup();
 
   useEffect(() => {
     const hideSplashScreen = async () => {
