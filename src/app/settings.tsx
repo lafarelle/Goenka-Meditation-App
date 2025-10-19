@@ -1,5 +1,5 @@
 import { Container } from '@/components/Container';
-import { PreferencesSelector, ResetDataButton, SupportUsButton, NotificationPreferencesCard } from '@/components/settingsscreen';
+import { PreferencesSelector, ResetDataButton, SupportUsButton, NotificationPreferencesCard, GoenkaButton } from '@/components/settingsscreen';
 import { lightHaptic } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
@@ -75,6 +75,7 @@ export default function Settings() {
 
           <PreferencesSelector />
           <NotificationPreferencesCard />
+          <GoenkaButton />
           <SupportUsButton />
           <ResetDataButton />
         </ScrollView>

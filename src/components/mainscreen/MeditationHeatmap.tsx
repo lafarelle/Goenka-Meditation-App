@@ -1,7 +1,7 @@
 import { useHistoryStore } from '@/store/historyStore';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Text, View, Pressable } from 'react-native';
 
 interface MeditationHeatmapProps {
   months?: number; // Default to 3 months
@@ -15,11 +15,17 @@ interface DayData {
 
 export function MeditationHeatmap({ months = 3 }: MeditationHeatmapProps) {
   const { history } = useHistoryStore();
+  const [monthOffset, setMonthOffset] = useState(0); // 0 = current month, -1 = last month, etc.
 
   const heatmapData = useMemo(() => {
-    // Calculate date range (3 months back from today)
-    const today = new Date();
-    const startDate = new Date(today);
+    // Calculate date range based on monthOffset
+    const referenceDate = new Date();
+    referenceDate.setMonth(referenceDate.getMonth() + monthOffset);
+
+    const today = new Date(referenceDate);
+    today.setHours(23, 59, 59, 999);
+
+    const startDate = new Date(referenceDate);
     startDate.setMonth(startDate.getMonth() - months);
     startDate.setHours(0, 0, 0, 0);
 
@@ -71,8 +77,8 @@ export function MeditationHeatmap({ months = 3 }: MeditationHeatmapProps) {
     // Calculate max minutes for color intensity
     const maxMinutes = Math.max(...allDays.map((d) => d.minutes), 1);
 
-    return { weeks, maxMinutes };
-  }, [history, months]);
+    return { weeks, maxMinutes, referenceDate };
+  }, [history, months, monthOffset]);
 
   // Get color intensity based on minutes meditated
   const getColorIntensity = (minutes: number, maxMinutes: number): string => {
@@ -87,16 +93,48 @@ export function MeditationHeatmap({ months = 3 }: MeditationHeatmapProps) {
   };
 
   const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  const { weeks, maxMinutes } = heatmapData;
+  const { weeks, maxMinutes, referenceDate } = heatmapData;
+
+  const monthYear = referenceDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const canGoForward = monthOffset < 0;
 
   return (
     <View className="overflow-hidden rounded-2xl bg-white p-6 shadow-sm shadow-stone-300/50">
-      {/* Header */}
-      <View className="mb-4 flex-row items-center gap-3">
-        <View className="h-10 w-10 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
-          <Ionicons name="calendar" size={20} color="#E8B84B" />
+      {/* Header with Navigation */}
+      <View className="mb-4 flex-row items-center justify-between">
+        <View className="flex-row items-center gap-3">
+          <View className="h-10 w-10 items-center justify-center rounded-2xl bg-[#E8B84B]/10">
+            <Ionicons name="calendar" size={20} color="#E8B84B" />
+          </View>
+          <View>
+            <Text className="text-xl font-semibold text-[#333333]">Activity</Text>
+            <Text className="text-sm text-stone-500">{monthYear}</Text>
+          </View>
         </View>
-        <Text className="text-xl font-semibold text-[#333333]">Activity</Text>
+
+        {/* Navigation Arrows */}
+        <View className="flex-row gap-2">
+          <Pressable
+            onPress={() => setMonthOffset(monthOffset - 1)}
+            className="h-8 w-8 items-center justify-center rounded-lg bg-stone-100 active:bg-stone-200"
+          >
+            <Ionicons name="chevron-back" size={18} color="#666666" />
+          </Pressable>
+
+          <Pressable
+            onPress={() => setMonthOffset(monthOffset + 1)}
+            disabled={!canGoForward}
+            className={`h-8 w-8 items-center justify-center rounded-lg ${
+              canGoForward ? 'bg-stone-100 active:bg-stone-200' : 'bg-stone-50'
+            }`}
+          >
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={canGoForward ? '#666666' : '#CCCCCC'}
+            />
+          </Pressable>
+        </View>
       </View>
 
       {/* Heatmap Grid */}
