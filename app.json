@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Meditate with Goenka",
+    "name": "w/ Goenka",
     "slug": "meditatewithgoenka",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "scheme": "meditatewithgoenka",
     "platforms": ["ios", "android"],
     "web": {
@@ -38,7 +38,10 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.lafarelle.meditatewithgoenka",
-      "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS", "android.permission.POST_NOTIFICATIONS"]
+      "permissions": [
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     },
     "owner": "rglafarelle",
     "extra": {

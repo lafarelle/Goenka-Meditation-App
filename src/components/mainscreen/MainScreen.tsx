@@ -94,7 +94,7 @@ export function MainScreen() {
               Meditate with
             </Text>
             <Text
-              className=" text-center text-5xl font-semibold tracking-wide"
+              className=" text-center text-5xl font-bold tracking-wide"
               style={{ color: '#333333' }}>
               GOENKA
             </Text>

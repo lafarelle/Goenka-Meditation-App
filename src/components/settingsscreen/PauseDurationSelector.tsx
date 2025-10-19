@@ -9,9 +9,9 @@ interface PauseOption {
 }
 
 const PAUSE_OPTIONS: PauseOption[] = [
-  { value: 1, label: '1s' },
   { value: 10, label: '10s' },
   { value: 30, label: '30s' },
+  { value: 60, label: '1min' },
 ];
 
 export function PauseDurationSelector() {
@@ -36,14 +36,14 @@ export function PauseDurationSelector() {
               style={({ pressed }) => [
                 {
                   opacity: pressed ? 0.7 : 1,
-                  backgroundColor: isSelected ? '#F5C563' : '#F5F5EC',
-                  borderWidth: 2,
-                  borderColor: isSelected ? '#D4A444' : 'transparent',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: isSelected ? 0.2 : 0.08,
-                  shadowRadius: 8,
-                  elevation: isSelected ? 4 : 2,
+                  backgroundColor: isSelected ? '#E8B84B' : '#F5F5EC',
+                  borderWidth: isSelected ? 3 : 2,
+                  borderColor: isSelected ? '#C49A2F' : '#E0E0E0',
+                  shadowColor: isSelected ? '#E8B84B' : '#000',
+                  shadowOffset: { width: 0, height: isSelected ? 4 : 2 },
+                  shadowOpacity: isSelected ? 0.3 : 0.08,
+                  shadowRadius: isSelected ? 12 : 8,
+                  elevation: isSelected ? 6 : 2,
                 },
               ]}
               className="flex-1 rounded-xl px-6 py-4"
@@ -51,7 +51,7 @@ export function PauseDurationSelector() {
               accessibilityState={{ checked: isSelected }}
               accessibilityLabel={`${option.label} pause duration`}>
               <Text
-                className="text-center text-base font-semibold"
+                className="text-center text-base font-bold"
                 style={{ color: isSelected ? '#1A1A1A' : '#666666' }}>
                 {option.label}
               </Text>

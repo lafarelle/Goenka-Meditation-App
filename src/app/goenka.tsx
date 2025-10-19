@@ -62,36 +62,9 @@ export default function GoenkaPage() {
             </Pressable>
           </View>
 
-          {/* Header */}
-          <View
-            className="rounded-2xl bg-white px-8 py-8"
-            style={{
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.08,
-              shadowRadius: 8,
-              elevation: 3,
-            }}>
-            <View className="flex-row items-center gap-4">
-              <View
-                className="h-14 w-14 items-center justify-center rounded-2xl"
-                style={{ backgroundColor: '#FEF3C7' }}>
-                <Ionicons name="person" size={28} color="#E8B84B" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-3xl font-light tracking-wide" style={{ color: '#333333' }}>
-                  S.N. Goenka
-                </Text>
-                <Text className="mt-1 text-sm font-normal" style={{ color: '#666666' }}>
-                  (1924-2013)
-                </Text>
-              </View>
-            </View>
-          </View>
-
           {/* Portrait Image */}
           <View
-            className="rounded-2xl bg-white px-8 py-6"
+            className="rounded-2xl bg-white px-6 py-6"
             style={{
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },
@@ -99,6 +72,15 @@ export default function GoenkaPage() {
               shadowRadius: 8,
               elevation: 3,
             }}>
+            <View className="flex-row items-center gap-2 p-4">
+              <Text className="text-3xl font-bold tracking-wide" style={{ color: '#333333' }}>
+                S.N. Goenka
+              </Text>
+              <Text className="mt-1 text-xl font-normal" style={{ color: '#666666' }}>
+                (1924-2013)
+              </Text>
+            </View>
+
             <Image
               source={goenkaImage}
               style={{

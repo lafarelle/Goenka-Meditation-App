@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { ScrollView, Text, View, Pressable, Switch } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import {
-  useNotificationPreferencesStore,
-  enableDailyReminders,
   disableDailyReminders,
-  updateDailyReminderTime,
+  enableDailyReminders,
   getFormattedReminderTime12Hour,
+  updateDailyReminderTime,
+  useNotificationPreferencesStore,
 } from '@/notifications';
 import { lightHaptic } from '@/utils/haptics';
+import { Ionicons } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 interface TimePickerProps {
   visible: boolean;
@@ -21,7 +21,13 @@ interface TimePickerProps {
 /**
  * Simple Time Picker Component
  */
-const TimePicker = ({ visible, onClose, currentHour, currentMinute, onTimeChange }: TimePickerProps) => {
+const TimePicker = ({
+  visible,
+  onClose,
+  currentHour,
+  currentMinute,
+  onTimeChange,
+}: TimePickerProps) => {
   const [selectedHour, setSelectedHour] = useState(currentHour);
   const [selectedMinute, setSelectedMinute] = useState(currentMinute);
 
@@ -142,12 +148,8 @@ const TimePicker = ({ visible, onClose, currentHour, currentMinute, onTimeChange
  * Allows users to enable/disable daily reminders and configure reminder time
  */
 export const NotificationPreferencesCard = () => {
-  const {
-    dailyReminderEnabled,
-    dailyReminderHour,
-    dailyReminderMinute,
-    permissionsGranted,
-  } = useNotificationPreferencesStore();
+  const { dailyReminderEnabled, dailyReminderHour, dailyReminderMinute, permissionsGranted } =
+    useNotificationPreferencesStore();
 
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [formattedTime, setFormattedTime] = useState('');
@@ -254,7 +256,12 @@ export const NotificationPreferencesCard = () => {
                 </Text>
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#E8B84B" style={{ marginRight: 16 }} />
+            <Ionicons
+              name="chevron-forward"
+              size={20}
+              color="#E8B84B"
+              style={{ marginRight: 16 }}
+            />
           </Pressable>
         )}
       </View>

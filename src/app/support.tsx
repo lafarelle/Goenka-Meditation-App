@@ -82,7 +82,7 @@ export default function Support() {
                   Support Us
                 </Text>
                 <Text className="mt-1 text-sm font-normal" style={{ color: '#666666' }}>
-                  Learn about the app and how to help
+                  Learn about the app
                 </Text>
               </View>
             </View>
@@ -157,8 +157,8 @@ export default function Support() {
               className="mb-3 text-base leading-relaxed"
               style={{ color: '#666666', lineHeight: 24 }}>
               This policy is based on the philosophy of{' '}
-              <Text className="font-medium">Dharma Dāna</Text> (the gift of Dhamma). The teaching
-              is considered priceless and cannot be sold.
+              <Text className="font-medium">Dharma Dāna</Text> (the gift of Dhamma). The teaching is
+              considered priceless and cannot be sold.
             </Text>
             <Text
               className="text-base leading-relaxed"

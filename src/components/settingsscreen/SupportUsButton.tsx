@@ -42,7 +42,7 @@ export function SupportUsButton() {
                   Support Us
                 </Text>
                 <Text className="mt-1 text-sm font-normal" style={{ color: '#666666' }}>
-                  Learn more about the app and how to help
+                  Learn more about the app
                 </Text>
               </View>
             </View>
