@@ -43,7 +43,6 @@ export function calculatePauseDuration(
   gongEnabled: boolean,
   gongPreference: 'none' | 'G1' | 'G2'
 ): number {
-  if (pauseDurationSec === 0) return 0;
 
   // Count enabled audio segments (excluding silent)
   const enabledAudioSegments: SessionSegmentType[] = [];
@@ -81,7 +80,7 @@ export function calculateSessionTiming(
   totalDurationMinutes: number,
   segments: Record<SessionSegmentType, SessionSegment>,
   timingPreference: TimingPreference,
-  pauseDurationSec: PauseDuration = 0,
+  pauseDurationSec: PauseDuration = 10,
   gongEnabled: boolean = false,
   gongPreference: 'none' | 'G1' | 'G2' = 'none'
 ): {
@@ -136,7 +135,7 @@ export function getEffectiveDuration(
   totalDurationMinutes: number,
   segments: Record<SessionSegmentType, SessionSegment>,
   timingPreference: TimingPreference,
-  pauseDurationSec: PauseDuration = 0,
+  pauseDurationSec: PauseDuration = 10,
   gongEnabled: boolean = false,
   gongPreference: 'none' | 'G1' | 'G2' = 'none'
 ): {
