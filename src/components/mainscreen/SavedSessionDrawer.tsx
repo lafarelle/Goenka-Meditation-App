@@ -20,6 +20,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
     setSegmentDuration,
     setSegmentAudioIds,
     setSegmentTechniqueType,
+    setSegmentIsRandom,
   } = useSessionStore();
 
   const loadSession = (sessionId: string) => {
@@ -36,6 +37,7 @@ export function SavedSessionDrawer({ isVisible, onClose }: SavedSessionDrawerPro
       setSegmentDuration,
       setSegmentAudioIds,
       setSegmentTechniqueType,
+      setSegmentIsRandom,
     });
 
     // Close the drawer

@@ -17,6 +17,7 @@ export function loadSessionIntoStore(
       type: SessionSegmentType,
       techniqueType: 'anapana' | 'vipassana'
     ) => void;
+    setSegmentIsRandom: (type: SessionSegmentType, isRandom: boolean) => void;
   }
 ): void {
   // Load session parameters
@@ -34,6 +35,11 @@ export function loadSessionIntoStore(
 
     // Set audio selections
     sessionStore.setSegmentAudioIds(segmentType, segment.selectedAudioIds);
+
+    // Set random flag
+    if (segment.isRandom !== undefined) {
+      sessionStore.setSegmentIsRandom(segmentType, segment.isRandom);
+    }
 
     // Set technique type for technique reminder
     if (segmentType === 'techniqueReminder' && segment.techniqueType) {
@@ -60,6 +66,7 @@ export function createSegmentsCopy(
     segmentsCopy[segmentType] = {
       ...segment,
       selectedAudioIds: [...segment.selectedAudioIds], // Create a new array
+      isRandom: segment.isRandom, // Preserve random flag
     };
   });
 
