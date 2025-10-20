@@ -1,16 +1,17 @@
-import { segmentTypeToAudioMap } from '@/data/audioData';
-import { SessionSegmentType } from '@/schemas/session';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
-import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { mediumHaptic } from '@/utils/haptics';
-import {
-  formatDuration,
-  formatDurationWithSeconds,
-  getEffectiveDuration,
-} from '@/utils/preferences';
+import { formatDuration, formatDurationWithSeconds } from '@/utils/preferences';
 import { createSegmentsCopy, isValidSessionName } from '@/utils/sessionUtils';
+import {
+  buildSessionTimeline,
+  calculateTimelineTotalDuration,
+  calculateTimelineAudioDuration,
+  calculateTimelineGongDuration,
+  calculateTimelinePauseDuration,
+  getTimelineItemColor,
+} from '@/utils/sessionTimelineBuilder';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
@@ -24,58 +25,32 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   const { preferences } = usePreferencesStore();
   const { saveSession } = useSavedSessionsStore();
 
-  const orderedSegmentTypes: SessionSegmentType[] = [
-    'openingChant',
-    'openingGuidance',
-    'techniqueReminder',
-    'silent',
-    'metta',
-    'closingChant',
-  ];
-
-  // Get enabled segments only
-  const enabledSegments = orderedSegmentTypes.filter((type) => {
-    const segment = segments[type];
-    if (!segment) return false;
-    if (type === 'silent') {
-      // Include silent if there's any silent duration or if it's the only thing enabled
-      return (
-        getSilentDurationSec() > 0 ||
-        Object.values(segments).every((s) => s.type === 'silent' || !s.isEnabled)
-      );
-    }
-    return segment.isEnabled;
-  });
+  // Build the session timeline using the utility function
+  const timeline = buildSessionTimeline(
+    segments,
+    preferences.pauseDuration,
+    preferences.gongEnabled,
+    preferences.gongPreference,
+    getSilentDurationSec
+  );
 
   // Show a message if no segments are enabled (silent-only session)
-  const isSilentOnlySession = enabledSegments.length === 1 && enabledSegments[0] === 'silent';
+  const isSilentOnlySession = timeline.length === 1 && timeline[0].type === 'silent';
 
-  // Color mapping for segment types - using warm theme colors
-  const getSegmentColor = (type: SessionSegmentType): string => {
-    if (type === 'openingChant' || type === 'closingChant') return '#DC2626'; // warm red
-    if (type === 'openingGuidance') return '#EA580C'; // vibrant orange
-    if (type === 'techniqueReminder') return '#F59E0B'; // amber/yellow-orange
-    if (type === 'metta') return '#EAB308'; // golden yellow
-    if (type === 'silent') return '#F5E6D3'; // warm cream
-    return '#EA580C'; // default orange
-  };
-
-  // Get selected audio names for display
-  const getSelectedAudioNames = (type: SessionSegmentType): string[] => {
-    const segment = segments[type];
-    if (!segment || segment.selectedAudioIds.length === 0) return ['None'];
-
-    const audioOptions = segmentTypeToAudioMap[type];
-    if (!audioOptions) return ['None'];
-
-    return segment.selectedAudioIds
-      .map((id: string) => audioOptions.find((audio) => audio.id === id)?.name)
-      .filter(Boolean) as string[];
-  };
-
-  // Calculate total duration for timeline
+  // Calculate total duration based on timing preference
   const getTotalDurationSec = () => {
-    return totalDurationMinutes * 60;
+    if (preferences.timingPreference === 'total') {
+      // For 'total' mode, the total is fixed at the selected duration
+      // UNLESS audio/gong/pauses exceed it (warning case)
+      const timelineTotal = calculateTimelineTotalDuration(timeline);
+      const selectedTotal = totalDurationMinutes * 60;
+
+      // If timeline exceeds selected duration, use timeline total (warning case)
+      return Math.max(timelineTotal, selectedTotal);
+    } else {
+      // For 'silent' mode, sum up all timeline items (audio + silent + pauses + gong)
+      return calculateTimelineTotalDuration(timeline);
+    }
   };
 
   const handleSaveSession = () => {
@@ -106,7 +81,7 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   };
 
   return (
-    <View className="mb-8 rounded-2xl bg-yellow-900/10 p-6">
+    <View className="mb-8 rounded-2xl  p-6">
       <View className="mb-6 flex-row items-center justify-between gap-16">
         <View className="flex-row items-center gap-3">
           <Text className="text-xl font-bold ">Session Preview</Text>
@@ -138,46 +113,34 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
         <View className="mb-6">
           {/* Timeline Bar */}
           <View className="mb-6 h-4 flex-row overflow-hidden rounded-full bg-stone-100">
-            {enabledSegments.map((type) => {
-              const segment = segments[type];
-              if (!segment) return null;
+            {timeline.map((item, index) => {
+              if (item.durationSec === 0) return null;
 
-              const duration =
-                type === 'silent'
-                  ? getSilentDurationSec()
-                  : getSegmentDisplayDuration(type, segment.selectedAudioIds, segment.durationSec);
-              if (duration === 0) return null;
-
-              const color = getSegmentColor(type);
+              const color = getTimelineItemColor(item.type);
               const totalDurationSec = getTotalDurationSec();
-              const flexGrow = totalDurationSec > 0 ? duration / totalDurationSec : 0;
+              const flexGrow = totalDurationSec > 0 ? item.durationSec / totalDurationSec : 0;
 
               return (
-                <View key={type} className="h-full" style={{ flexGrow, backgroundColor: color }} />
+                <View
+                  key={`${item.type}-${index}`}
+                  className="h-full"
+                  style={{ flexGrow, backgroundColor: color }}
+                />
               );
             })}
           </View>
 
           {/* Segment Breakdown */}
           <View className="space-y-4">
-            {enabledSegments.map((type) => {
-              const segment = segments[type];
-              if (!segment) return null;
+            {timeline.map((item, index) => {
+              if (item.durationSec === 0) return null;
 
-              const displayDurationSec =
-                type === 'silent'
-                  ? getSilentDurationSec()
-                  : getSegmentDisplayDuration(type, segment.selectedAudioIds, segment.durationSec);
-
-              if (displayDurationSec === 0) return null;
-
-              const displayDurationMin = Math.floor(displayDurationSec / 60);
-              const displayRemainderSec = displayDurationSec % 60;
-              const color = getSegmentColor(type);
-              const selectedAudioNames = getSelectedAudioNames(type);
+              const displayDurationMin = Math.floor(item.durationSec / 60);
+              const displayRemainderSec = item.durationSec % 60;
+              const color = getTimelineItemColor(item.type);
 
               return (
-                <View key={type} className="flex-row items-center justify-between py-2">
+                <View key={`${item.type}-${index}`} className="flex-row items-center justify-between py-2">
                   <View className="flex-1 flex-row items-center gap-4">
                     <View
                       className="h-4 w-4 rounded-full"
@@ -191,10 +154,12 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
                       }}
                     />
                     <View className="flex-1">
-                      <Text className="font-semibold text-[#333333]">{segment.label}</Text>
-                      {selectedAudioNames.length > 0 && selectedAudioNames[0] !== 'None' && (
+                      <Text className="font-semibold text-[#333333]">{item.label}</Text>
+                      {item.audioName && (
                         <Text className="mt-1 text-xs text-stone-500">
-                          {selectedAudioNames.join(', ')}
+                          {item.isRandom && '🎲 '}
+                          {item.audioName}
+                          {item.isRandom && ' (Random)'}
                         </Text>
                       )}
                     </View>
@@ -212,22 +177,13 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
         </View>
       )}
 
-      {/* Total Duration */}
+      {/* Total Duration Summary */}
       <View className="mt-6 space-y-3 rounded-xl bg-stone-50 p-6">
         {(() => {
-          const effectiveDuration = getEffectiveDuration(
-            totalDurationMinutes,
-            segments,
-            preferences.timingPreference,
-            preferences.pauseDuration,
-            preferences.gongEnabled,
-            preferences.gongPreference
-          );
-
-          // Calculate exact seconds for all components
-          const audioDurationSec = effectiveDuration.audioDurationSec || 0;
-          const gongDurationSec = effectiveDuration.gongDurationSec || 0;
-          const pauseDurationSec = effectiveDuration.pauseDurationSec || 0;
+          // Calculate durations from the actual timeline
+          const audioDurationSec = calculateTimelineAudioDuration(timeline);
+          const gongDurationSec = calculateTimelineGongDuration(timeline);
+          const pauseDurationSec = calculateTimelinePauseDuration(timeline);
 
           // Check for warning condition first
           const nonSilentDurationSec = audioDurationSec + gongDurationSec + pauseDurationSec;
@@ -235,14 +191,8 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
           const showWarning =
             preferences.timingPreference === 'total' && nonSilentDurationSec >= selectedDurationSec;
 
-          // Calculate total duration based on timing preference and warning condition
-          const silentDurationSec = effectiveDuration.silentMinutes * 60;
-          const totalDurationSec =
-            preferences.timingPreference === 'total'
-              ? showWarning
-                ? nonSilentDurationSec // Use full audio + gong + pause duration when warning
-                : totalDurationMinutes * 60 // Use selected duration when no warning
-              : audioDurationSec + gongDurationSec + pauseDurationSec + silentDurationSec; // Calculate total for silent preference
+          // Calculate total duration based on timing preference
+          const totalDurationSec = getTotalDurationSec();
 
           return (
             <View className="space-y-3">
@@ -259,55 +209,11 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               )}
 
               <View className="flex-row items-center justify-between py-2">
-                <Text className="text-base font-semibold text-[#333333]">
-                  {preferences.timingPreference === 'total' ? 'Total Session' : 'Silent Meditation'}
-                </Text>
+                <Text className="text-base font-semibold text-[#333333]">Total Session</Text>
                 <Text className="text-base font-bold text-[#E8B84B]">
-                  {preferences.timingPreference === 'total'
-                    ? formatDuration(totalDurationMinutes)
-                    : formatDuration(effectiveDuration.silentMinutes)}
+                  {formatDurationWithSeconds(totalDurationSec)}
                 </Text>
               </View>
-
-              {effectiveDuration.audioMinutes > 0 && (
-                <View className="flex-row items-center justify-between py-1">
-                  <Text className="text-sm text-stone-500">+ Audio Content</Text>
-                  <Text className="text-sm font-medium text-stone-600">
-                    {formatDurationWithSeconds(audioDurationSec)}
-                  </Text>
-                </View>
-              )}
-
-              {gongDurationSec > 0 && (
-                <View className="flex-row items-center justify-between py-1">
-                  <Text className="text-sm text-stone-500">+ Gong</Text>
-                  <Text className="text-sm font-medium text-stone-600">
-                    {formatDurationWithSeconds(gongDurationSec)}
-                  </Text>
-                </View>
-              )}
-
-              {preferences.pauseDuration > 0 && pauseDurationSec > 0 && (
-                <View className="flex-row items-center justify-between py-1">
-                  <Text className="text-sm text-stone-500">+ Pause Duration</Text>
-                  <Text className="text-sm font-medium text-stone-600">
-                    {formatDurationWithSeconds(pauseDurationSec)}
-                  </Text>
-                </View>
-              )}
-
-              {(effectiveDuration.audioMinutes > 0 ||
-                gongDurationSec > 0 ||
-                (preferences.pauseDuration > 0 && pauseDurationSec > 0)) && (
-                <View className="mt-4 flex-row items-center justify-between border-t border-stone-200 pt-4">
-                  <Text className="text-base font-semibold text-[#333333]">
-                    {preferences.timingPreference === 'total' ? 'Actual Duration' : 'Total Session'}
-                  </Text>
-                  <Text className="text-base font-bold text-[#E8B84B]">
-                    {formatDurationWithSeconds(totalDurationSec)}
-                  </Text>
-                </View>
-              )}
             </View>
           );
         })()}

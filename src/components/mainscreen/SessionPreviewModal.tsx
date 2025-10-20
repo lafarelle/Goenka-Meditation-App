@@ -45,7 +45,7 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
               paddingHorizontal: 20,
               paddingTop: 12,
               paddingBottom: 16,
-              backgroundColor: '#F5F5F5',
+              backgroundColor: '#FFFEF6',
             }}>
             <View className="w-full flex-row items-end justify-end">
               <Pressable
@@ -54,7 +54,7 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
                   onClose();
                 }}
                 className="p-2">
-                <Ionicons name="close" size={24} color="#333333" />
+                <Ionicons name="close" size={30} color="#333333" />
               </Pressable>
             </View>
             <SessionPreview />

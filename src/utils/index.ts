@@ -9,3 +9,4 @@ export * from './meditationTimer';
 export * from './preferences'; // Includes timingUtils with calculateSessionTiming
 export * from './session'; // Canonical source for session utilities
 export * from './sessionGenerator';
+export * from './sessionTimelineBuilder'; // Session timeline building utilities
