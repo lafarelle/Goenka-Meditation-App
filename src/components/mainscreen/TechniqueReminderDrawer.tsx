@@ -1,3 +1,4 @@
+import { AudioPreloader } from '@/audio/AudioPreloader';
 import { AudioItem } from '@/schemas/audio';
 import { useSessionStore } from '@/store/sessionStore';
 import { Ionicons } from '@expo/vector-icons';
@@ -172,7 +173,7 @@ export const TechniqueReminderDrawer = forwardRef<
     };
   }, []);
 
-  const handlePlayToggle = useCallback(async (audioId: string, audioSource: any) => {
+  const handlePlayToggle = useCallback(async (audioId: string) => {
     try {
       // If already playing this audio, stop it
       if (playingAudioId === audioId && playerRef.current) {
@@ -187,6 +188,13 @@ export const TechniqueReminderDrawer = forwardRef<
       if (playerRef.current) {
         await playerRef.current.pause();
         playerRef.current = null;
+      }
+
+      // Get preloaded audio source
+      const audioSource = AudioPreloader.getPreloadedSound(audioId);
+      if (!audioSource) {
+        console.warn(`[TechniqueReminderDrawer] Audio ${audioId} not preloaded`);
+        return;
       }
 
       // Play new audio
@@ -283,7 +291,7 @@ export const TechniqueReminderDrawer = forwardRef<
             selectionOrder={selectionOrder}
             onToggle={onToggle}
             isPlaying={isPlaying}
-            onPlayToggle={() => handlePlayToggle(item.id, item.fileUri)}
+            onPlayToggle={() => handlePlayToggle(item.id)}
           />
         </View>
       );

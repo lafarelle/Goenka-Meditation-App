@@ -1,11 +1,18 @@
+import { AudioPreloader } from '@/audio/AudioPreloader';
 import { AudioItem } from '@/schemas/audio';
 import { SessionSegmentType } from '@/schemas/session';
 import { useSessionStore } from '@/store/sessionStore';
-import { pickRandomAudio } from '@/utils/audioUtils';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { createAudioPlayer, AudioPlayer } from 'expo-audio';
-import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { AudioPlayer, createAudioPlayer } from 'expo-audio';
+import React, {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 interface AudioSelectionDrawerProps {
@@ -28,107 +35,109 @@ interface AudioOptionItemProps {
   onPlayToggle: () => void;
 }
 
-const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrder, onToggle, isPlaying, onPlayToggle }) => {
-  const isSelected = selectionOrder !== null;
+const AudioOptionItem = React.memo<AudioOptionItemProps>(
+  ({ option, selectionOrder, onToggle, isPlaying, onPlayToggle }) => {
+    const isSelected = selectionOrder !== null;
 
-  return (
-    <Pressable
-      onPress={onToggle}
-      style={({ pressed }) => [
-        {
-          opacity: pressed ? 0.7 : 1,
-          backgroundColor: isSelected ? '#FFF9E6' : '#FFFFFF',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: isSelected ? 0.1 : 0.06,
-          shadowRadius: 8,
-          elevation: isSelected ? 3 : 2,
-        },
-      ]}
-      className="mx-4 mb-3 overflow-hidden rounded-2xl px-4 py-3"
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked: isSelected }}
-      accessibilityLabel={option.name}>
-      <View className="flex-row items-center justify-between">
-        {/* Play button */}
-        <Pressable
-          onPress={(e) => {
-            e.stopPropagation();
-            onPlayToggle();
-          }}
-          style={({ pressed }) => ({
-            opacity: pressed ? 0.5 : 1,
-          })}
-          className="mr-3"
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          accessibilityRole="button"
-          accessibilityLabel={isPlaying ? 'Stop audio' : 'Play audio'}>
-          <Ionicons
-            name={isPlaying ? 'stop-circle' : 'play-circle-outline'}
-            size={28}
-            color={isPlaying ? '#E8B84B' : '#999999'}
-          />
-        </Pressable>
-
-        <View className="flex-1">
-          <Text
-            className="text-base font-medium"
-            style={{ color: isSelected ? '#333333' : '#666666' }}>
-            {option.name}
-          </Text>
-
-          {/* Description */}
-          {option.description && (
-            <Text className="mt-1 text-xs font-normal" style={{ color: '#999999' }}>
-              {option.description}
-            </Text>
-          )}
-        </View>
-
-        {/* Duration and Selection indicator */}
-        <View className="ml-3 flex-row items-center gap-3">
-          {/* Duration */}
-          {option.duration !== '0:00' && (
-            <View className="flex-row items-center gap-1">
-              <Ionicons
-                name="time-outline"
-                size={14}
-                color={isSelected ? '#E8B84B' : '#999999'}
-              />
-              <Text
-                className="text-xs font-medium"
-                style={{ color: isSelected ? '#E8B84B' : '#999999' }}>
-                {option.duration}
-              </Text>
-            </View>
-          )}
-
-          {/* Selection indicator with order */}
-          {isSelected && selectionOrder !== null && (
-            <View
-              className="h-8 w-8 flex-row items-center justify-center rounded-lg"
-              style={{
-                backgroundColor: '#E8B84B',
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-                elevation: 2,
-              }}>
-              <Text className="text-sm font-medium text-white">{selectionOrder}</Text>
-            </View>
-          )}
-          {!isSelected && (
-            <View
-              className="h-8 w-8 rounded-lg"
-              style={{ backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#E5E5E5' }}
+    return (
+      <Pressable
+        onPress={onToggle}
+        style={({ pressed }) => [
+          {
+            opacity: pressed ? 0.7 : 1,
+            backgroundColor: isSelected ? '#FFF9E6' : '#FFFFFF',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: isSelected ? 0.1 : 0.06,
+            shadowRadius: 8,
+            elevation: isSelected ? 3 : 2,
+          },
+        ]}
+        className="mx-4 mb-3 overflow-hidden rounded-2xl px-4 py-3"
+        accessibilityRole="checkbox"
+        accessibilityState={{ checked: isSelected }}
+        accessibilityLabel={option.name}>
+        <View className="flex-row items-center justify-between">
+          {/* Play button */}
+          <Pressable
+            onPress={(e) => {
+              e.stopPropagation();
+              onPlayToggle();
+            }}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.5 : 1,
+            })}
+            className="mr-3"
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel={isPlaying ? 'Stop audio' : 'Play audio'}>
+            <Ionicons
+              name={isPlaying ? 'stop-circle' : 'play-circle-outline'}
+              size={28}
+              color={isPlaying ? '#E8B84B' : '#999999'}
             />
-          )}
+          </Pressable>
+
+          <View className="flex-1">
+            <Text
+              className="text-base font-medium"
+              style={{ color: isSelected ? '#333333' : '#666666' }}>
+              {option.name}
+            </Text>
+
+            {/* Description */}
+            {option.description && (
+              <Text className="mt-1 text-xs font-normal" style={{ color: '#999999' }}>
+                {option.description}
+              </Text>
+            )}
+          </View>
+
+          {/* Duration and Selection indicator */}
+          <View className="ml-3 flex-row items-center gap-3">
+            {/* Duration */}
+            {option.duration !== '0:00' && (
+              <View className="flex-row items-center gap-1">
+                <Ionicons
+                  name="time-outline"
+                  size={14}
+                  color={isSelected ? '#E8B84B' : '#999999'}
+                />
+                <Text
+                  className="text-xs font-medium"
+                  style={{ color: isSelected ? '#E8B84B' : '#999999' }}>
+                  {option.duration}
+                </Text>
+              </View>
+            )}
+
+            {/* Selection indicator with order */}
+            {isSelected && selectionOrder !== null && (
+              <View
+                className="h-8 w-8 flex-row items-center justify-center rounded-lg"
+                style={{
+                  backgroundColor: '#E8B84B',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                  elevation: 2,
+                }}>
+                <Text className="text-sm font-medium text-white">{selectionOrder}</Text>
+              </View>
+            )}
+            {!isSelected && (
+              <View
+                className="h-8 w-8 rounded-lg"
+                style={{ backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#E5E5E5' }}
+              />
+            )}
+          </View>
         </View>
-      </View>
-    </Pressable>
-  );
-});
+      </Pressable>
+    );
+  }
+);
 
 AudioOptionItem.displayName = 'AudioOptionItem';
 
@@ -141,9 +150,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
     const selectedAudioIds = useSessionStore(
       (state) => state.segments[segmentType]?.selectedAudioIds || []
     );
-    const isRandom = useSessionStore(
-      (state) => state.segments[segmentType]?.isRandom || false
-    );
+    const isRandom = useSessionStore((state) => state.segments[segmentType]?.isRandom || false);
     const toggleAudioInSegment = useSessionStore((state) => state.toggleAudioInSegment);
     const setSegmentEnabled = useSessionStore((state) => state.setSegmentEnabled);
     const setSegmentAudioToRandom = useSessionStore((state) => state.setSegmentAudioToRandom);
@@ -166,42 +173,52 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
       };
     }, []);
 
-    const handlePlayToggle = useCallback(async (audioId: string, audioSource: any) => {
-      try {
-        // If already playing this audio, stop it
-        if (playingAudioId === audioId && playerRef.current) {
-          await playerRef.current.pause();
-          await playerRef.current.seekTo(0);
-          playerRef.current = null;
-          setPlayingAudioId(null);
-          return;
-        }
-
-        // Stop current audio if any
-        if (playerRef.current) {
-          await playerRef.current.pause();
-          playerRef.current = null;
-        }
-
-        // Play new audio
-        const player = createAudioPlayer(audioSource);
-
-        // Set up listener for playback finished
-        player.addListener('playbackStatusUpdate', (status) => {
-          if (status.isLoaded && status.didJustFinish) {
+    const handlePlayToggle = useCallback(
+      async (audioId: string) => {
+        try {
+          // If already playing this audio, stop it
+          if (playingAudioId === audioId && playerRef.current) {
+            await playerRef.current.pause();
+            await playerRef.current.seekTo(0);
+            playerRef.current = null;
             setPlayingAudioId(null);
+            return;
+          }
+
+          // Stop current audio if any
+          if (playerRef.current) {
+            await playerRef.current.pause();
             playerRef.current = null;
           }
-        });
 
-        await player.play();
-        playerRef.current = player;
-        setPlayingAudioId(audioId);
-      } catch (error) {
-        console.error('Error playing audio:', error);
-        setPlayingAudioId(null);
-      }
-    }, [playingAudioId]);
+          // Get preloaded audio source
+          const audioSource = AudioPreloader.getPreloadedSound(audioId);
+          if (!audioSource) {
+            console.warn(`[AudioSelectionDrawer] Audio ${audioId} not preloaded`);
+            return;
+          }
+
+          // Play new audio
+          const player = createAudioPlayer(audioSource);
+
+          // Set up listener for playback finished
+          player.addListener('playbackStatusUpdate', (status) => {
+            if (status.isLoaded && status.didJustFinish) {
+              setPlayingAudioId(null);
+              playerRef.current = null;
+            }
+          });
+
+          await player.play();
+          playerRef.current = player;
+          setPlayingAudioId(audioId);
+        } catch (error) {
+          console.error('Error playing audio:', error);
+          setPlayingAudioId(null);
+        }
+      },
+      [playingAudioId]
+    );
 
     const handleToggleAudio = useCallback(
       (audioId: string) => {
@@ -232,7 +249,14 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         setSegmentAudioToRandom(segmentType, audioOptions);
         setSegmentEnabled(segmentType, true);
       }
-    }, [isRandom, segmentType, audioOptions, setSegmentAudioToRandom, setSegmentEnabled, setSegmentIsRandom]);
+    }, [
+      isRandom,
+      segmentType,
+      audioOptions,
+      setSegmentAudioToRandom,
+      setSegmentEnabled,
+      setSegmentIsRandom,
+    ]);
 
     const renderBackdrop = useCallback(
       (props: any) => (
@@ -263,7 +287,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
               selectionOrder={selectionOrder}
               onToggle={onToggle}
               isPlaying={isPlaying}
-              onPlayToggle={() => handlePlayToggle(item.id, item.fileUri)}
+              onPlayToggle={() => handlePlayToggle(item.id)}
             />
           </View>
         );
@@ -362,11 +386,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
               </View>
 
               <View className="ml-3 flex-row items-center gap-3">
-                <Ionicons
-                  name="shuffle"
-                  size={20}
-                  color={isRandom ? '#E8B84B' : '#999999'}
-                />
+                <Ionicons name="shuffle" size={20} color={isRandom ? '#E8B84B' : '#999999'} />
                 {isRandom && (
                   <View
                     className="h-8 w-8 flex-row items-center justify-center rounded-lg"
