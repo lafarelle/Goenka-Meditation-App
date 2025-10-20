@@ -121,55 +121,6 @@ export default function Support() {
             </Text>
           </View>
 
-          {/* Dhamma Dana Section */}
-          <View
-            className="rounded-2xl bg-white px-8 py-6"
-            style={{
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.08,
-              shadowRadius: 8,
-              elevation: 3,
-            }}>
-            <View className="mb-4 flex-row items-center gap-3">
-              <View
-                className="h-12 w-12 items-center justify-center rounded-xl"
-                style={{ backgroundColor: '#F5F5EC' }}>
-                <Ionicons name="leaf-outline" size={24} color="#E8B84B" />
-              </View>
-              <Text className="text-xl font-medium" style={{ color: '#333333' }}>
-                Dharma Dāna Tradition
-              </Text>
-            </View>
-            <Text
-              className="mb-3 text-base leading-relaxed"
-              style={{ color: '#333333', lineHeight: 24 }}>
-              The Dhamma Vipassana organization, in the tradition of S.N. Goenka, offers its
-              meditation courses <Text className="font-semibold">completely free of charge</Text>.
-            </Text>
-            <Text
-              className="mb-3 text-base leading-relaxed"
-              style={{ color: '#666666', lineHeight: 24 }}>
-              There are no registration fees, including for food and accommodation, regardless of
-              the country.
-            </Text>
-            <Text
-              className="mb-3 text-base leading-relaxed"
-              style={{ color: '#666666', lineHeight: 24 }}>
-              This policy is based on the philosophy of{' '}
-              <Text className="font-medium">Dharma Dāna</Text> (the gift of Dhamma). The teaching is
-              considered priceless and cannot be sold.
-            </Text>
-            <Text
-              className="text-base leading-relaxed"
-              style={{ color: '#666666', lineHeight: 24 }}>
-              All expenses are covered solely by voluntary donations from former students who,
-              having benefited from the practice, wish in turn to make it available to new students.
-              This ensures that the technique remains pure, uncommercialized, and available to
-              anyone who is sincere, regardless of their financial situation.
-            </Text>
-          </View>
-
           {/* Support the Developers Section */}
           <View
             className="rounded-2xl bg-white px-8 py-6"

@@ -19,10 +19,13 @@ export function PauseDurationSelector() {
 
   return (
     <View>
-      <Text className="mb-2 mt-6 text-base font-medium tracking-wide text-slate-800">
-        Time between each audio
+      {/* Section Title */}
+      <Text className="mb-3 text-sm font-medium uppercase tracking-wider text-gray-400">
+        Pause Duration
       </Text>
-      <View className="flex-row gap-3">
+
+      {/* Duration Options */}
+      <View className="flex-row gap-2">
         {PAUSE_OPTIONS.map((option) => {
           const isSelected = preferences.pauseDuration === option.value;
 
@@ -33,11 +36,12 @@ export function PauseDurationSelector() {
                 selectionHaptic();
                 setPauseDuration(option.value);
               }}
-              className={`flex-1 rounded-xl px-6 py-4 ${isSelected ? 'bg-amber-400' : 'bg-stone-100'}`}
+              className={`flex-1 rounded-lg px-4 py-3 ${isSelected ? 'bg-amber-400' : 'bg-gray-50'}`}
               accessibilityRole="radio"
               accessibilityState={{ checked: isSelected }}
               accessibilityLabel={`${option.label} pause duration`}>
-              <Text className={`text-center text-base font-bold ${isSelected ? 'text-slate-900' : 'text-gray-500'}`}>
+              <Text
+                className={`text-center text-sm font-medium ${isSelected ? 'text-slate-900' : 'text-gray-500'}`}>
                 {option.label}
               </Text>
             </Pressable>
