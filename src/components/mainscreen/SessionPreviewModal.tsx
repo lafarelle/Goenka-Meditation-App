@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Modal, Pressable, View } from 'react-native';
+import { Modal, Pressable, ScrollView, View } from 'react-native';
 
 import { lightHaptic } from '@/utils/haptics';
 
@@ -35,6 +35,7 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
           style={{
             borderRadius: 24,
             overflow: 'hidden',
+            maxHeight: '100%',
           }}>
           {/* Header */}
           <View
@@ -57,7 +58,12 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
                 <Ionicons name="close" size={30} color="#333333" />
               </Pressable>
             </View>
-            <SessionPreview />
+            <ScrollView
+              style={{ maxHeight: '100%' }}
+              showsVerticalScrollIndicator={false}
+              bounces={true}>
+              <SessionPreview />
+            </ScrollView>
           </View>
         </View>
       </View>
