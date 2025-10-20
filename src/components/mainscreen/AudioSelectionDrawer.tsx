@@ -4,7 +4,8 @@ import { useSessionStore } from '@/store/sessionStore';
 import { pickRandomAudio } from '@/utils/audioUtils';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
+import { createAudioPlayer, AudioPlayer } from 'expo-audio';
+import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 interface AudioSelectionDrawerProps {
@@ -23,9 +24,11 @@ interface AudioOptionItemProps {
   option: AudioItem;
   selectionOrder: number | null; // null if not selected, otherwise 1, 2, 3...
   onToggle: () => void;
+  isPlaying: boolean;
+  onPlayToggle: () => void;
 }
 
-const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrder, onToggle }) => {
+const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrder, onToggle, isPlaying, onPlayToggle }) => {
   const isSelected = selectionOrder !== null;
 
   return (
@@ -47,6 +50,26 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
       accessibilityState={{ checked: isSelected }}
       accessibilityLabel={option.name}>
       <View className="flex-row items-center justify-between">
+        {/* Play button */}
+        <Pressable
+          onPress={(e) => {
+            e.stopPropagation();
+            onPlayToggle();
+          }}
+          style={({ pressed }) => ({
+            opacity: pressed ? 0.5 : 1,
+          })}
+          className="mr-3"
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel={isPlaying ? 'Stop audio' : 'Play audio'}>
+          <Ionicons
+            name={isPlaying ? 'stop-circle' : 'play-circle-outline'}
+            size={28}
+            color={isPlaying ? '#E8B84B' : '#999999'}
+          />
+        </Pressable>
+
         <View className="flex-1">
           <Text
             className="text-base font-medium"
@@ -112,6 +135,8 @@ AudioOptionItem.displayName = 'AudioOptionItem';
 export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSelectionDrawerProps>(
   ({ segmentType, title, description, audioOptions }, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
+    const [playingAudioId, setPlayingAudioId] = useState<string | null>(null);
+    const playerRef = useRef<AudioPlayer | null>(null);
 
     const selectedAudioIds = useSessionStore(
       (state) => state.segments[segmentType]?.selectedAudioIds || []
@@ -130,6 +155,53 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
     }));
 
     const snapPoints = useMemo(() => ['40%', '60%', '75%'], []);
+
+    // Cleanup audio on unmount
+    React.useEffect(() => {
+      return () => {
+        if (playerRef.current) {
+          playerRef.current.pause();
+          playerRef.current = null;
+        }
+      };
+    }, []);
+
+    const handlePlayToggle = useCallback(async (audioId: string, audioSource: any) => {
+      try {
+        // If already playing this audio, stop it
+        if (playingAudioId === audioId && playerRef.current) {
+          await playerRef.current.pause();
+          await playerRef.current.seekTo(0);
+          playerRef.current = null;
+          setPlayingAudioId(null);
+          return;
+        }
+
+        // Stop current audio if any
+        if (playerRef.current) {
+          await playerRef.current.pause();
+          playerRef.current = null;
+        }
+
+        // Play new audio
+        const player = createAudioPlayer(audioSource);
+
+        // Set up listener for playback finished
+        player.addListener('playbackStatusUpdate', (status) => {
+          if (status.isLoaded && status.didJustFinish) {
+            setPlayingAudioId(null);
+            playerRef.current = null;
+          }
+        });
+
+        await player.play();
+        playerRef.current = player;
+        setPlayingAudioId(audioId);
+      } catch (error) {
+        console.error('Error playing audio:', error);
+        setPlayingAudioId(null);
+      }
+    }, [playingAudioId]);
 
     const handleToggleAudio = useCallback(
       (audioId: string) => {
@@ -182,6 +254,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         // Don't show selection order or allow selection if random is enabled
         const selectionOrder = isRandom ? null : getSelectionOrder(item.id);
         const onToggle = isRandom ? () => {} : () => handleToggleAudio(item.id);
+        const isPlaying = playingAudioId === item.id;
 
         return (
           <View style={{ opacity: isRandom ? 0.4 : 1 }}>
@@ -189,11 +262,13 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
               option={item}
               selectionOrder={selectionOrder}
               onToggle={onToggle}
+              isPlaying={isPlaying}
+              onPlayToggle={() => handlePlayToggle(item.id, item.fileUri)}
             />
           </View>
         );
       },
-      [isRandom, getSelectionOrder, handleToggleAudio]
+      [isRandom, getSelectionOrder, handleToggleAudio, playingAudioId, handlePlayToggle]
     );
 
     const keyExtractor = useCallback((item: AudioItem) => item.id, []);
