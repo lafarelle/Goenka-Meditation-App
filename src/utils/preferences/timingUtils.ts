@@ -21,21 +21,34 @@ export function calculateAudioSegmentsDuration(
 
 /**
  * Calculates the gong duration based on gong preference
+ * Note: Closing gong is ALWAYS present (regardless of gongEnabled)
+ *       Opening gong is only present if gongEnabled is true
+ *       So duration is either 1x (closing only) or 2x (opening + closing)
  */
 export function calculateGongDuration(
   segments: Record<SessionSegmentType, SessionSegment>,
   gongEnabled: boolean,
   gongPreference: 'none' | 'G1' | 'G2'
 ): number {
-  if (!gongEnabled || gongPreference === 'none') return 0;
+  if (gongPreference === 'none') return 0;
 
   // Use the default gong duration from the segment
   const gongSegment = segments.gong;
-  return gongSegment ? gongSegment.durationSec : 5; // Default 5 seconds
+  const singleGongDuration = gongSegment ? gongSegment.durationSec : 5; // Default 5 seconds
+
+  // Closing gong is always present, opening gong only if gongEnabled
+  return gongEnabled ? singleGongDuration * 2 : singleGongDuration;
 }
 
 /**
  * Calculates the total pause duration between audio segments
+ *
+ * Pause logic matches sessionTimelineBuilder.ts:
+ * - With gong: [Opening Gong] -> [Pause] -> [Before-silent audio with pauses] -> [Silent] -> [After-silent audio with pauses] -> [Pause] -> [Closing Gong]
+ * - Without gong: [Before-silent audio with pauses] -> [Silent] -> [After-silent audio with pauses]
+ *
+ * Key insight: Silent meditation BREAKS the pause chain (needsPauseBeforeNext = false in timeline builder)
+ * So we calculate pauses separately for before-silent and after-silent segments
  */
 export function calculatePauseDuration(
   segments: Record<SessionSegmentType, SessionSegment>,
@@ -44,32 +57,68 @@ export function calculatePauseDuration(
   gongPreference: 'none' | 'G1' | 'G2'
 ): number {
 
-  // Count enabled audio segments (excluding silent)
-  const enabledAudioSegments: SessionSegmentType[] = [];
-
-  // Add gong if enabled
-  if (gongEnabled && gongPreference !== 'none') {
-    enabledAudioSegments.push('gong');
-  }
-
-  // Add other enabled audio segments
-  const otherAudioSegments: SessionSegmentType[] = [
+  // Separate before-silent and after-silent segments
+  const beforeSilentTypes: SessionSegmentType[] = [
     'openingChant',
     'openingGuidance',
     'techniqueReminder',
+  ];
+
+  const afterSilentTypes: SessionSegmentType[] = [
     'metta',
     'closingChant',
   ];
 
-  otherAudioSegments.forEach((type) => {
+  const beforeSilentCount = beforeSilentTypes.filter((type) => {
     const segment = segments[type];
-    if (segment && segment.isEnabled) {
-      enabledAudioSegments.push(type);
-    }
-  });
+    return segment && segment.isEnabled;
+  }).length;
 
-  // Pause occurs between each audio segment, so we need (n-1) pauses
-  const pauseCount = Math.max(0, enabledAudioSegments.length - 1);
+  const afterSilentCount = afterSilentTypes.filter((type) => {
+    const segment = segments[type];
+    return segment && segment.isEnabled;
+  }).length;
+
+  // Calculate pause count based on whether opening gong is enabled
+  // Note: Closing gong is ALWAYS present (if gongPreference !== 'none')
+  let pauseCount = 0;
+
+  if (gongEnabled && gongPreference !== 'none') {
+    // With OPENING gong enabled (closing gong always present):
+    // - 1 pause after opening gong (if there are any before-silent segments)
+    // - (beforeSilentCount - 1) pauses between before-silent segments
+    // - (afterSilentCount - 1) pauses between after-silent segments
+    // - 1 pause before closing gong (if there are any after-silent segments)
+
+    if (beforeSilentCount > 0) {
+      pauseCount += 1; // pause after opening gong
+      pauseCount += Math.max(0, beforeSilentCount - 1); // pauses between before-silent items
+    }
+
+    if (afterSilentCount > 0) {
+      pauseCount += Math.max(0, afterSilentCount - 1); // pauses between after-silent items
+      pauseCount += 1; // pause before closing gong
+    }
+  } else if (gongPreference !== 'none') {
+    // Without OPENING gong (but closing gong IS present):
+    // - (beforeSilentCount - 1) pauses between before-silent segments
+    // - (afterSilentCount - 1) pauses between after-silent segments
+    // - 1 pause before closing gong (if there are any after-silent segments OR before-silent segments)
+
+    pauseCount = Math.max(0, beforeSilentCount - 1) + Math.max(0, afterSilentCount - 1);
+
+    // Add pause before closing gong if there are any audio segments
+    if (beforeSilentCount > 0 || afterSilentCount > 0) {
+      pauseCount += 1;
+    }
+  } else {
+    // No gongs at all (gongPreference === 'none'):
+    // - (beforeSilentCount - 1) pauses between before-silent segments
+    // - (afterSilentCount - 1) pauses between after-silent segments
+
+    pauseCount = Math.max(0, beforeSilentCount - 1) + Math.max(0, afterSilentCount - 1);
+  }
+
   return pauseCount * pauseDurationSec;
 }
 

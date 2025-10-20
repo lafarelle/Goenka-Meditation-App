@@ -151,8 +151,8 @@ export function buildSessionTimeline(
   // 4. Add after-silent segments (Metta, Closing Chant)
   addAudioSegments(afterSilentTypes);
 
-  // 5. Add closing gong if enabled
-  if (gongEnabled && gongPreference !== 'none') {
+  // 5. Add closing gong (always present - gongEnabled only controls opening gong)
+  if (gongPreference !== 'none') {
     // Add pause before closing gong if there were previous items
     if (needsPauseBeforeNext && pauseDurationSec > 0) {
       timeline.push({
