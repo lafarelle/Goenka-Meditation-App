@@ -9,7 +9,8 @@ import {
 import { lightHaptic } from '@/utils/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import Constants from 'expo-constants';
 
 export default function Settings() {
   return (
@@ -57,6 +58,13 @@ export default function Settings() {
           <GoenkaButton />
           <SupportUsButton />
           <ResetDataButton />
+
+          {/* Version number */}
+          <View className="items-center pb-4">
+            <Text className="text-xs" style={{ color: '#999999' }}>
+              Version {Constants.expoConfig?.version || '1.0.1'}
+            </Text>
+          </View>
         </ScrollView>
       </Container>
     </View>
