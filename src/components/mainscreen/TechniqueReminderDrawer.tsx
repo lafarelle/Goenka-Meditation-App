@@ -301,6 +301,15 @@ export const TechniqueReminderDrawer = forwardRef<
 
   const keyExtractor = useCallback((item: AudioItem) => item.id, []);
 
+  const handleSheetChanges = useCallback((index: number) => {
+    // Stop audio when drawer closes
+    if (index === -1 && playerRef.current) {
+      playerRef.current.pause();
+      playerRef.current = null;
+      setPlayingAudioId(null);
+    }
+  }, []);
+
   return (
     <BottomSheet
       ref={bottomSheetRef}
@@ -310,6 +319,7 @@ export const TechniqueReminderDrawer = forwardRef<
       enableOverDrag={false}
       enableContentPanningGesture={false}
       backdropComponent={renderBackdrop}
+      onChange={handleSheetChanges}
       backgroundStyle={{
         backgroundColor: '#F5F5EC',
         borderTopLeftRadius: 24,
