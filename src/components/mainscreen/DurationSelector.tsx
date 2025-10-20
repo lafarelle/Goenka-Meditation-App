@@ -1,4 +1,4 @@
-import { MinimalistSwitch } from '@/components/common/MinimalistSwitch';
+import { MinimalistSwitch } from '@/components/ui/MinimalistSwitch';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { lightHaptic, selectionHaptic } from '@/utils/haptics';

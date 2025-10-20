@@ -91,19 +91,8 @@ export function GongSelector() {
           selectionHaptic();
           setGongEnabled(!preferences.gongEnabled);
         }}
-        style={({ pressed }) => [
-          {
-            opacity: pressed ? 0.7 : 1,
-            backgroundColor: '#F5F5EC',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.08,
-            shadowRadius: 8,
-            elevation: 2,
-          },
-        ]}
-        className="flex-row items-center justify-between rounded-xl px-6 py-4">
-        <Text className="flex-1 text-base font-normal" style={{ color: '#333333' }}>
+        className="flex-row items-center justify-between rounded-xl bg-stone-100 px-6 py-4">
+        <Text className="flex-1 text-base font-normal text-slate-800">
           {preferences.gongEnabled ? 'Gong Enabled' : 'No Gong'}
         </Text>
         <Switch
@@ -127,19 +116,8 @@ export function GongSelector() {
               lightHaptic();
               setShowGongSelector(!showGongSelector);
             }}
-            style={({ pressed }) => [
-              {
-                opacity: pressed ? 0.7 : 1,
-                backgroundColor: '#F5F5EC',
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.08,
-                shadowRadius: 8,
-                elevation: 2,
-              },
-            ]}
-            className="flex-row items-center justify-between rounded-xl bg-orange-50 px-6 py-4">
-            <Text className="text-base font-normal" style={{ color: '#333333' }}>
+            className="flex-row items-center justify-between rounded-xl bg-stone-100 px-6 py-4">
+            <Text className="text-base font-normal text-slate-800">
               {'Current: '}
               {GONG_OPTIONS.find((g) => g.id === preferences.gongPreference)?.name || 'Select Gong'}
             </Text>
@@ -164,26 +142,11 @@ export function GongSelector() {
                         selectionHaptic();
                         setGongPreference(gong.id);
                       }}
-                      style={({ pressed }) => [
-                        {
-                          opacity: pressed ? 0.7 : 1,
-                          backgroundColor: isSelected ? '#F5C563' : '#F5F5EC',
-                          borderWidth: 2,
-                          borderColor: isSelected ? '#D4A444' : 'transparent',
-                          shadowColor: '#000',
-                          shadowOffset: { width: 0, height: 2 },
-                          shadowOpacity: isSelected ? 0.2 : 0.08,
-                          shadowRadius: 8,
-                          elevation: isSelected ? 4 : 2,
-                        },
-                      ]}
-                      className="flex-1 rounded-xl px-6 py-4"
+                      className={`flex-1 rounded-xl px-6 py-4 ${isSelected ? 'bg-amber-400 border-2 border-amber-600' : 'bg-stone-100'}`}
                       accessibilityRole="radio"
                       accessibilityState={{ checked: isSelected }}
                       accessibilityLabel={gong.name}>
-                      <Text
-                        className="text-center text-base font-semibold"
-                        style={{ color: isSelected ? '#1A1A1A' : '#666666' }}>
+                      <Text className={`text-center text-base font-semibold ${isSelected ? 'text-slate-900' : 'text-gray-500'}`}>
                         {gong.name}
                       </Text>
                     </Pressable>
@@ -195,18 +158,7 @@ export function GongSelector() {
                         handlePlayGong(gong.id, gong.audioPath);
                       }}
                       disabled={playingGong === gong.id || loadingGong === gong.id}
-                      style={({ pressed }) => [
-                        {
-                          opacity: pressed ? 0.7 : 1,
-                          backgroundColor: '#F5F5EC',
-                          shadowColor: '#000',
-                          shadowOffset: { width: 0, height: 2 },
-                          shadowOpacity: 0.08,
-                          shadowRadius: 8,
-                          elevation: 2,
-                        },
-                      ]}
-                      className="items-center justify-center rounded-xl px-6 py-4"
+                      className="items-center justify-center rounded-xl bg-stone-100 px-6 py-4"
                       accessibilityRole="button"
                       accessibilityLabel={`Preview ${gong.name}`}>
                       {loadingGong === gong.id ? (

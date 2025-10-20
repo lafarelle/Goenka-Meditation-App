@@ -19,7 +19,7 @@ export function PauseDurationSelector() {
 
   return (
     <View>
-      <Text className="mb-2 mt-6 text-base font-medium tracking-wide" style={{ color: '#333333' }}>
+      <Text className="mb-2 mt-6 text-base font-medium tracking-wide text-slate-800">
         Time between each audio
       </Text>
       <View className="flex-row gap-3">
@@ -33,26 +33,11 @@ export function PauseDurationSelector() {
                 selectionHaptic();
                 setPauseDuration(option.value);
               }}
-              style={({ pressed }) => [
-                {
-                  opacity: pressed ? 0.7 : 1,
-                  backgroundColor: isSelected ? '#E8B84B' : '#F5F5EC',
-                  borderWidth: isSelected ? 3 : 2,
-                  borderColor: isSelected ? '#C49A2F' : '#E0E0E0',
-                  shadowColor: isSelected ? '#E8B84B' : '#000',
-                  shadowOffset: { width: 0, height: isSelected ? 4 : 2 },
-                  shadowOpacity: isSelected ? 0.3 : 0.08,
-                  shadowRadius: isSelected ? 12 : 8,
-                  elevation: isSelected ? 6 : 2,
-                },
-              ]}
-              className="flex-1 rounded-xl px-6 py-4"
+              className={`flex-1 rounded-xl px-6 py-4 ${isSelected ? 'bg-amber-400' : 'bg-stone-100'}`}
               accessibilityRole="radio"
               accessibilityState={{ checked: isSelected }}
               accessibilityLabel={`${option.label} pause duration`}>
-              <Text
-                className="text-center text-base font-bold"
-                style={{ color: isSelected ? '#1A1A1A' : '#666666' }}>
+              <Text className={`text-center text-base font-bold ${isSelected ? 'text-slate-900' : 'text-gray-500'}`}>
                 {option.label}
               </Text>
             </Pressable>
