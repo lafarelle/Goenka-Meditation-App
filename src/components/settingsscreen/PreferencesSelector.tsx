@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { Text, View } from 'react-native';
 import { GongSelector } from './GongSelector';
 import { PauseDurationSelector } from './PauseDurationSelector';
-import { TimingPreference } from './TimingPreference';
 
 export function PreferencesSelector() {
   return (
@@ -29,7 +28,6 @@ export function PreferencesSelector() {
         </View>
 
         <View className="gap-2">
-          <TimingPreference />
           <GongSelector />
           <PauseDurationSelector />
         </View>

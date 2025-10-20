@@ -1,11 +1,17 @@
+import { MinimalistSwitch } from '@/components/common/MinimalistSwitch';
+import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSessionStore } from '@/store/sessionStore';
 import { lightHaptic, selectionHaptic } from '@/utils/haptics';
+import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { Alert, Pressable, Text, View } from 'react-native';
 
 export function DurationSelector() {
   const totalDurationMinutes = useSessionStore((state) => state.totalDurationMinutes);
   const setTotalDurationMinutes = useSessionStore((state) => state.setTotalDurationMinutes);
+
+  const { preferences, setTimingPreference } = usePreferencesStore();
+  const isTotalTiming = preferences.timingPreference === 'total';
 
   const handleValueChange = (value: number) => {
     selectionHaptic();
@@ -41,6 +47,17 @@ export function DurationSelector() {
     );
   };
 
+  const handleInfoPress = () => {
+    lightHaptic();
+    Alert.alert(
+      'Timing Preference',
+      isTotalTiming
+        ? 'Total Session: The duration includes both silent meditation and audio segments (intro, instructions, closing). Your entire session will last the selected time.'
+        : 'Silent Only: The duration counts only your silent meditation time. Audio segments (intro, instructions, closing) are added on top of this time.',
+      [{ text: 'Got it', style: 'default' }]
+    );
+  };
+
   return (
     <View
       className="w-full rounded-2xl bg-white p-6"
@@ -51,25 +68,34 @@ export function DurationSelector() {
         shadowRadius: 12,
         elevation: 3,
       }}>
-      <View className="mb-5 flex-row items-center justify-center">
-        <Pressable
-          onPress={handleTimePress}
-          style={({ pressed }) => [
-            {
+      {/* Top Section: Duration and Switch */}
+      <View className="mb-4">
+        <View className="mb-3 flex-row items-center justify-between px-6">
+          <Pressable
+            onPress={handleTimePress}
+            style={({ pressed }) => ({
               opacity: pressed ? 0.7 : 1,
-              backgroundColor: pressed ? '#E8B84B' : 'transparent',
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 12,
-            },
-          ]}>
-          <Text
-            className="text-center text-3xl font-light tracking-wide"
-            style={{ color: '#333333' }}>
-            {totalDurationMinutes} min
-          </Text>
-        </Pressable>
+            })}>
+            <Text className="text-3xl font-light tracking-wide" style={{ color: '#333333' }}>
+              {totalDurationMinutes} min
+            </Text>
+          </Pressable>
+
+          <View className="flex-row items-center" style={{ gap: 6 }}>
+            <Pressable onPress={handleInfoPress} hitSlop={8}>
+              <Ionicons name="information-circle-outline" size={18} color="#E8B84B" />
+            </Pressable>
+            <MinimalistSwitch
+              value={isTotalTiming}
+              onValueChange={(value) => setTimingPreference(value ? 'total' : 'silent')}
+              leftLabel="Silent"
+              rightLabel="Total"
+            />
+          </View>
+        </View>
       </View>
+
+      {/* Slider Section */}
       <Slider
         style={{ width: '100%', height: 30 }}
         minimumValue={5}
