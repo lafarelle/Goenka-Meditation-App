@@ -23,35 +23,17 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
       <View
         style={{
           flex: 1,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
           justifyContent: 'center',
           alignItems: 'center',
           paddingHorizontal: 20,
-          paddingVertical: 60,
+          paddingVertical: 80,
         }}>
-        <Pressable
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}
-          onPress={onClose}
-        />
+        <Pressable onPress={onClose} />
         {/* Modal Content */}
         <View
           style={{
-            width: '100%',
-            maxWidth: 600,
-            maxHeight: '100%',
-            backgroundColor: 'transparent',
             borderRadius: 24,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 10 },
-            shadowOpacity: 0.3,
-            shadowRadius: 20,
-            elevation: 10,
             overflow: 'hidden',
           }}>
           {/* Header */}
@@ -60,10 +42,10 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'space-between',
-              paddingHorizontal: 24,
-              paddingTop: 20,
+              paddingHorizontal: 20,
+              paddingTop: 12,
               paddingBottom: 16,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#F5F5F5',
             }}>
             <View className="w-full flex-row items-end justify-end">
               <Pressable
@@ -71,13 +53,8 @@ export function SessionPreviewModal({ visible, onClose }: SessionPreviewModalPro
                   lightHaptic();
                   onClose();
                 }}
-                style={({ pressed }) => ({
-                  opacity: pressed ? 0.7 : 1,
-                  backgroundColor: '#F5F5F5',
-                  borderRadius: 10,
-                  padding: 8,
-                })}>
-                <Ionicons name="close" size={20} color="#333333" />
+                className="p-2">
+                <Ionicons name="close" size={24} color="#333333" />
               </Pressable>
             </View>
             <SessionPreview />

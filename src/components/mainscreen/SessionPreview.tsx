@@ -106,13 +106,10 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
   };
 
   return (
-    <View className="#FFFFFF mb-8 rounded-2xl p-8">
-      <View className="mb-6 flex-row items-center justify-between">
+    <View className="mb-8 rounded-2xl bg-yellow-900/10 p-6">
+      <View className="mb-6 flex-row items-center justify-between gap-16">
         <View className="flex-row items-center gap-3">
-          <View className="rounded-xl bg-[#E8B84B]/10 p-3">
-            <Ionicons name="time-outline" size={24} color="#E8B84B" />
-          </View>
-          <Text className="text-xl font-bold text-[#333333]">Session Preview</Text>
+          <Text className="text-xl font-bold ">Session Preview</Text>
         </View>
         <Pressable
           onPress={handleSaveSession}
@@ -122,9 +119,9 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               transform: [{ scale: pressed ? 0.98 : 1 }],
             },
           ]}
-          className="flex-row items-center gap-2.5 rounded-2xl bg-gradient-to-r from-[#E8B84B] to-[#F0C86E] px-6 py-3.5 shadow-lg shadow-[#E8B84B]/40">
+          className="flex-row items-center gap-2 rounded-2xl p-2 shadow-lg">
           <Ionicons name="bookmark-outline" size={20} color="#333333" />
-          <Text className="text-base font-bold text-[#333333]">Save</Text>
+          <Text className="text-base font-bold ">Save</Text>
         </Pressable>
       </View>
 
