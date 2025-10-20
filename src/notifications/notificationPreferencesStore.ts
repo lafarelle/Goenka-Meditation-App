@@ -11,22 +11,12 @@ export interface NotificationPreferences {
   /**
    * Whether notifications are enabled globally
    */
-  enabled: boolean;
+  notificationsEnabled: boolean;
 
   /**
-   * Whether daily reminder notifications are enabled
+   * Timestamp of last completed meditation session
    */
-  dailyReminderEnabled: boolean;
-
-  /**
-   * Hour of day for daily reminder (0-23)
-   */
-  dailyReminderHour: number;
-
-  /**
-   * Minute of hour for daily reminder (0-59)
-   */
-  dailyReminderMinute: number;
+  lastMeditationTimestamp: number | null;
 
   /**
    * Whether to show notifications when app is in foreground
@@ -92,10 +82,8 @@ export interface NotificationPreferencesStore extends NotificationPreferences {
 }
 
 const defaultPreferences: NotificationPreferences = {
-  enabled: true,
-  dailyReminderEnabled: true,
-  dailyReminderHour: 9, // Default to 9 AM
-  dailyReminderMinute: 0,
+  notificationsEnabled: true,
+  lastMeditationTimestamp: null,
   showWhenInForeground: true,
   soundEnabled: true,
   badgeEnabled: true,

@@ -1,177 +1,140 @@
-import {
-  scheduleRepeatingNotification,
-  cancelAllNotifications,
-  getAllScheduledNotifications,
-} from './notificationService';
+import { scheduleNotification, cancelAllNotifications } from './notificationService';
 import { useNotificationPreferencesStore } from './notificationPreferencesStore';
 
 /**
- * Daily Notification Scheduler
- * Handles scheduling and rescheduling daily meditation reminders
+ * Meditation-Based Notification Scheduler
+ * Schedules notifications 16h and 22h after last meditation
  */
 
-const DAILY_REMINDER_TITLE = 'Time to Meditate';
-const DAILY_REMINDER_BODY = 'Take a moment to meditate with Goenka. Your mind and body will thank you.';
+const FIRST_REMINDER_TITLE = 'Time to Meditate';
+const FIRST_REMINDER_BODY =
+  'It has been 16 hours since your last meditation. Take a moment to meditate with Goenka.';
+const SECOND_REMINDER_TITLE = 'Meditation Reminder';
+const SECOND_REMINDER_BODY = "Don't forget to meditate today. Your mind and body will thank you.";
+
+const FIRST_REMINDER_HOURS = 16;
+const SECOND_REMINDER_HOURS = 22;
 
 /**
- * Schedule the daily meditation reminder
+ * Schedule notifications after meditation completion
+ * Called when a meditation session is completed
  */
-export const scheduleDailyReminder = async (): Promise<string | null> => {
+export const scheduleMeditationReminders = async (): Promise<void> => {
   try {
-    const { dailyReminderEnabled, dailyReminderHour, dailyReminderMinute } =
+    const { notificationsEnabled, permissionsGranted } =
       useNotificationPreferencesStore.getState();
 
-    if (!dailyReminderEnabled) {
-      console.log('Daily reminders are disabled');
-      return null;
+    if (!notificationsEnabled || !permissionsGranted) {
+      console.log('Notifications are disabled or permissions not granted');
+      return;
     }
 
-    const notificationId = await scheduleRepeatingNotification(
-      DAILY_REMINDER_TITLE,
-      DAILY_REMINDER_BODY,
-      dailyReminderHour,
-      dailyReminderMinute,
+    // Cancel any existing scheduled notifications
+    await cancelAllNotifications();
+    useNotificationPreferencesStore.getState().clearScheduledNotificationIds();
+
+    const now = Date.now();
+
+    // Update last meditation timestamp
+    useNotificationPreferencesStore.getState().updatePreferences({
+      lastMeditationTimestamp: now,
+    });
+
+    // Schedule first reminder (16 hours from now)
+    const firstReminderDate = new Date(now + FIRST_REMINDER_HOURS * 60 * 60 * 1000);
+    const firstNotificationId = await scheduleNotification(
+      FIRST_REMINDER_TITLE,
+      FIRST_REMINDER_BODY,
+      firstReminderDate,
       {
-        type: 'daily-reminder',
-        timestamp: Date.now(),
+        type: 'first-reminder',
+        scheduledAt: now,
       }
     );
 
-    if (notificationId) {
-      useNotificationPreferencesStore.getState().addScheduledNotificationId(notificationId);
-      console.log('Daily reminder scheduled:', notificationId);
+    if (firstNotificationId) {
+      useNotificationPreferencesStore.getState().addScheduledNotificationId(firstNotificationId);
+      console.log('First reminder scheduled for:', firstReminderDate);
     }
 
-    return notificationId;
+    // Schedule second reminder (22 hours from now)
+    const secondReminderDate = new Date(now + SECOND_REMINDER_HOURS * 60 * 60 * 1000);
+    const secondNotificationId = await scheduleNotification(
+      SECOND_REMINDER_TITLE,
+      SECOND_REMINDER_BODY,
+      secondReminderDate,
+      {
+        type: 'second-reminder',
+        scheduledAt: now,
+      }
+    );
+
+    if (secondNotificationId) {
+      useNotificationPreferencesStore.getState().addScheduledNotificationId(secondNotificationId);
+      console.log('Second reminder scheduled for:', secondReminderDate);
+    }
   } catch (error) {
-    console.error('Error scheduling daily reminder:', error);
-    return null;
+    console.error('Error scheduling meditation reminders:', error);
   }
 };
 
 /**
- * Reschedule daily reminder (used when user changes the time)
+ * Enable notification reminders
  */
-export const rescheduleDailyReminder = async (): Promise<string | null> => {
+export const enableNotificationReminders = async (): Promise<void> => {
   try {
+    useNotificationPreferencesStore.getState().updatePreferences({
+      notificationsEnabled: true,
+    });
+
+    // Reschedule notifications based on last meditation if available
+    const { lastMeditationTimestamp } = useNotificationPreferencesStore.getState();
+    if (lastMeditationTimestamp) {
+      await scheduleMeditationReminders();
+    }
+  } catch (error) {
+    console.error('Error enabling notification reminders:', error);
+  }
+};
+
+/**
+ * Disable notification reminders
+ */
+export const disableNotificationReminders = async (): Promise<void> => {
+  try {
+    useNotificationPreferencesStore.getState().updatePreferences({
+      notificationsEnabled: false,
+    });
+
     // Cancel all scheduled notifications
     await cancelAllNotifications();
     useNotificationPreferencesStore.getState().clearScheduledNotificationIds();
-
-    // Schedule the reminder again with new time
-    return await scheduleDailyReminder();
   } catch (error) {
-    console.error('Error rescheduling daily reminder:', error);
-    return null;
+    console.error('Error disabling notification reminders:', error);
   }
 };
 
 /**
- * Enable daily reminders
+ * Initialize notification reminders on app startup
+ * Reschedules them based on last meditation time if needed
  */
-export const enableDailyReminders = async (): Promise<void> => {
+export const initializeNotificationReminders = async (): Promise<void> => {
   try {
-    useNotificationPreferencesStore.getState().updatePreferences({
-      dailyReminderEnabled: true,
-    });
-
-    await scheduleDailyReminder();
-  } catch (error) {
-    console.error('Error enabling daily reminders:', error);
-  }
-};
-
-/**
- * Disable daily reminders
- */
-export const disableDailyReminders = async (): Promise<void> => {
-  try {
-    useNotificationPreferencesStore.getState().updatePreferences({
-      dailyReminderEnabled: false,
-    });
-
-    // Cancel all scheduled notifications
-    await cancelAllNotifications();
-    useNotificationPreferencesStore.getState().clearScheduledNotificationIds();
-  } catch (error) {
-    console.error('Error disabling daily reminders:', error);
-  }
-};
-
-/**
- * Update daily reminder time
- */
-export const updateDailyReminderTime = async (hour: number, minute: number = 0): Promise<void> => {
-  try {
-    // Validate hour and minute
-    if (hour < 0 || hour > 23) {
-      throw new Error('Hour must be between 0 and 23');
-    }
-    if (minute < 0 || minute > 59) {
-      throw new Error('Minute must be between 0 and 59');
-    }
-
-    useNotificationPreferencesStore.getState().updatePreferences({
-      dailyReminderHour: hour,
-      dailyReminderMinute: minute,
-    });
-
-    // Reschedule with new time
-    await rescheduleDailyReminder();
-  } catch (error) {
-    console.error('Error updating daily reminder time:', error);
-  }
-};
-
-/**
- * Initialize daily reminders on app startup
- * Reschedules them if they were previously enabled
- */
-export const initializeDailyReminders = async (): Promise<void> => {
-  try {
-    const { dailyReminderEnabled, permissionsGranted } =
+    const { notificationsEnabled, permissionsGranted, lastMeditationTimestamp } =
       useNotificationPreferencesStore.getState();
 
-    if (dailyReminderEnabled && permissionsGranted) {
-      // Get currently scheduled notifications
-      const scheduled = await getAllScheduledNotifications();
+    if (!notificationsEnabled || !permissionsGranted || !lastMeditationTimestamp) {
+      return;
+    }
 
-      // Only schedule if no daily reminders are already scheduled
-      const hasDailyReminder = scheduled.some(
-        (notif) => notif.content.data?.type === 'daily-reminder'
-      );
+    const now = Date.now();
+    const hoursSinceLastMeditation = (now - lastMeditationTimestamp) / (1000 * 60 * 60);
 
-      if (!hasDailyReminder) {
-        await scheduleDailyReminder();
-      }
+    // If it's been less than 16 hours since last meditation, reschedule notifications
+    if (hoursSinceLastMeditation < FIRST_REMINDER_HOURS) {
+      await scheduleMeditationReminders();
     }
   } catch (error) {
-    console.error('Error initializing daily reminders:', error);
+    console.error('Error initializing notification reminders:', error);
   }
-};
-
-/**
- * Get formatted reminder time as human-readable string
- */
-export const getFormattedReminderTime = (): string => {
-  const { dailyReminderHour, dailyReminderMinute } = useNotificationPreferencesStore.getState();
-
-  const hour = String(dailyReminderHour).padStart(2, '0');
-  const minute = String(dailyReminderMinute).padStart(2, '0');
-
-  return `${hour}:${minute}`;
-};
-
-/**
- * Get reminder time in 12-hour format
- */
-export const getFormattedReminderTime12Hour = (): string => {
-  const { dailyReminderHour, dailyReminderMinute } = useNotificationPreferencesStore.getState();
-
-  const isPM = dailyReminderHour >= 12;
-  const hour12 = dailyReminderHour % 12 || 12;
-  const minute = String(dailyReminderMinute).padStart(2, '0');
-  const period = isPM ? 'PM' : 'AM';
-
-  return `${hour12}:${minute} ${period}`;
 };

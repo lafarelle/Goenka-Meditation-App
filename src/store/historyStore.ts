@@ -12,6 +12,7 @@ import {
   isSessionOnDate,
 } from '@/schemas/history';
 import { SessionSegmentType } from '@/schemas/session';
+import { scheduleMeditationReminders } from '@/notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -110,6 +111,11 @@ export const useHistoryStore = create(
           ),
           currentSessionId: state.currentSessionId === sessionId ? null : state.currentSessionId,
         }));
+
+        // Schedule meditation reminders after successful completion
+        scheduleMeditationReminders().catch((error) => {
+          console.error('Failed to schedule meditation reminders:', error);
+        });
       },
 
       // Mark a session as stopped early

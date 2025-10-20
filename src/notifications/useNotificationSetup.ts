@@ -6,7 +6,7 @@ import {
   subscribeToNotificationResponse,
 } from './notificationService';
 import { useNotificationPreferencesStore } from './notificationPreferencesStore';
-import { initializeDailyReminders } from './dailyNotificationScheduler';
+import { initializeNotificationReminders } from './dailyNotificationScheduler';
 
 /**
  * Hook to set up notifications on app startup
@@ -33,8 +33,8 @@ export const useNotificationSetup = (): void => {
             expoPushToken: token,
           });
 
-          // Initialize daily reminders if they were enabled
-          await initializeDailyReminders();
+          // Initialize notification reminders if they were enabled
+          await initializeNotificationReminders();
 
           console.log('Push token:', token);
         } else {
