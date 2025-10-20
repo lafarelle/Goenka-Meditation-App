@@ -7,7 +7,7 @@ import {
   formatTotalMeditationTime,
   loadHistorySessionIntoStore,
 } from '@/utils/historyUtils';
-import { createSegmentsCopy } from '@/utils/session';
+import { createSegmentsCopy } from '@/utils/sessionUtils';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Alert, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';

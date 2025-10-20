@@ -1,6 +1,6 @@
 import { SavedSession } from '@/schemas/savedSession';
 import { SessionSegment, SessionSegmentType } from '@/schemas/session';
-import { createSegmentsCopy } from '@/utils/session';
+import { createSegmentsCopy } from '@/utils/sessionUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';

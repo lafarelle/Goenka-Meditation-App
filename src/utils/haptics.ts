@@ -52,29 +52,6 @@ export const heavyHaptic = async () => {
   }
 };
 
-/**
- * Rigid impact - for precise interactions
- * Use for: Precise selections, fine-tuning controls
- */
-export const rigidHaptic = async () => {
-  try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
-  } catch (error) {
-    // Silently fail if haptics are not available
-  }
-};
-
-/**
- * Soft impact - for gentle interactions
- * Use for: Soft transitions, gentle notifications
- */
-export const softHaptic = async () => {
-  try {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
-  } catch (error) {
-    // Silently fail if haptics are not available
-  }
-};
 
 /**
  * Success notification
@@ -101,18 +78,6 @@ export const warningHaptic = async () => {
 };
 
 /**
- * Error notification
- * Use for: Error messages, failed operations
- */
-export const errorHaptic = async () => {
-  try {
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-  } catch (error) {
-    // Silently fail if haptics are not available
-  }
-};
-
-/**
  * Selection feedback
  * Use for: Changing selections, scrolling through options, slider changes
  */
@@ -122,23 +87,4 @@ export const selectionHaptic = async () => {
   } catch (error) {
     // Silently fail if haptics are not available
   }
-};
-
-/**
- * Helper to wrap an onPress handler with haptics
- * @param onPress - Original onPress handler
- * @param hapticFn - Haptic function to trigger (defaults to mediumHaptic)
- */
-export const withHaptics = (
-  onPress: (() => void) | ((event: unknown) => void),
-  hapticFn: () => Promise<void> = mediumHaptic
-) => {
-  return (event?: unknown) => {
-    hapticFn();
-    if (event !== undefined) {
-      (onPress as (event: unknown) => void)(event);
-    } else {
-      (onPress as () => void)();
-    }
-  };
 };

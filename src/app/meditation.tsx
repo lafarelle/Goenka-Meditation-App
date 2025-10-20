@@ -5,9 +5,8 @@ import { Alert, Pressable, Text, View } from 'react-native';
 
 import { useAudioSession } from '@/audio/useAudioSession';
 import { MeditationPulse } from '@/components/meditation';
+import { formatTime } from '@/utils/audioUtils';
 import { heavyHaptic, mediumHaptic } from '@/utils/haptics';
-import { getSessionTotalDuration } from '@/utils/meditationTimer';
-import { formatTime } from '@/utils/timing';
 
 export default function Meditation() {
   const {
@@ -23,12 +22,6 @@ export default function Meditation() {
   } = useAudioSession();
 
   const hasShownCongrats = useRef(false);
-
-  // Initialize total duration (for reference, but we use sessionState.remainingTime)
-  useEffect(() => {
-    getSessionTotalDuration();
-    // Total duration is calculated by the session manager
-  }, []);
 
   // Auto-start session when component mounts and audio is initialized
   useEffect(() => {
