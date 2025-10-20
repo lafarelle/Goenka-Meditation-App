@@ -52,12 +52,12 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
 
   // Color mapping for segment types - using warm theme colors
   const getSegmentColor = (type: SessionSegmentType): string => {
-    if (type === 'openingChant' || type === 'closingChant') return '#D4A73D'; // darker gold
-    if (type === 'openingGuidance') return '#E8B84B'; // main gold
-    if (type === 'techniqueReminder') return '#F0C86E'; // lighter gold
-    if (type === 'metta') return '#C89635'; // bronze/amber
-    if (type === 'silent') return '#A8A8A8'; // neutral gray
-    return '#D4A73D'; // default gold
+    if (type === 'openingChant' || type === 'closingChant') return '#DC2626'; // warm red
+    if (type === 'openingGuidance') return '#EA580C'; // vibrant orange
+    if (type === 'techniqueReminder') return '#F59E0B'; // amber/yellow-orange
+    if (type === 'metta') return '#EAB308'; // golden yellow
+    if (type === 'silent') return '#F5E6D3'; // warm cream
+    return '#EA580C'; // default orange
   };
 
   // Get selected audio names for display
