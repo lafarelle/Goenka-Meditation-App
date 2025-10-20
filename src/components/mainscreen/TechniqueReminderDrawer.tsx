@@ -121,8 +121,14 @@ export const TechniqueReminderDrawer = forwardRef<
   const selectedAudioIds = useSessionStore(
     (state) => state.segments.techniqueReminder?.selectedAudioIds || []
   );
+  const isRandom = useSessionStore(
+    (state) => state.segments.techniqueReminder?.isRandom || false
+  );
   const toggleAudioInSegment = useSessionStore((state) => state.toggleAudioInSegment);
   const setSegmentEnabled = useSessionStore((state) => state.setSegmentEnabled);
+  const setSegmentAudioToRandom = useSessionStore((state) => state.setSegmentAudioToRandom);
+  const setSegmentTechniqueType = useSessionStore((state) => state.setSegmentTechniqueType);
+  const setSegmentIsRandom = useSessionStore((state) => state.setSegmentIsRandom);
 
   useImperativeHandle(ref, () => ({
     present: () => bottomSheetRef.current?.expand(),
@@ -162,6 +168,20 @@ export const TechniqueReminderDrawer = forwardRef<
     bottomSheetRef.current?.close();
   }, []);
 
+  const handleToggleRandom = useCallback(() => {
+    if (isRandom) {
+      // Deselect random
+      setSegmentIsRandom('techniqueReminder', false);
+      setSegmentEnabled('techniqueReminder', false);
+    } else {
+      // Select random - use currentAudios (filtered by active tab)
+      setSegmentAudioToRandom('techniqueReminder', currentAudios);
+      setSegmentEnabled('techniqueReminder', true);
+      // Set the technique type based on active tab so session builder knows which category to use
+      setSegmentTechniqueType('techniqueReminder', activeTab);
+    }
+  }, [isRandom, currentAudios, activeTab, setSegmentAudioToRandom, setSegmentEnabled, setSegmentTechniqueType, setSegmentIsRandom]);
+
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
@@ -178,14 +198,22 @@ export const TechniqueReminderDrawer = forwardRef<
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: AudioItem }) => (
-      <AudioOptionItem
-        option={item}
-        selectionOrder={getSelectionOrder(item.id)}
-        onToggle={() => handleToggleAudio(item.id)}
-      />
-    ),
-    [getSelectionOrder, handleToggleAudio]
+    ({ item }: { item: AudioItem }) => {
+      // Don't show selection order or allow selection if random is enabled
+      const selectionOrder = isRandom ? null : getSelectionOrder(item.id);
+      const onToggle = isRandom ? () => {} : () => handleToggleAudio(item.id);
+
+      return (
+        <View style={{ opacity: isRandom ? 0.4 : 1 }}>
+          <AudioOptionItem
+            option={item}
+            selectionOrder={selectionOrder}
+            onToggle={onToggle}
+          />
+        </View>
+      );
+    },
+    [isRandom, getSelectionOrder, handleToggleAudio]
   );
 
   const keyExtractor = useCallback((item: AudioItem) => item.id, []);
@@ -290,12 +318,74 @@ export const TechniqueReminderDrawer = forwardRef<
         </View>
       </View>
 
+      {/* Random Option */}
+      <View className="px-4 pt-4">
+        <Pressable
+          onPress={handleToggleRandom}
+          style={({ pressed }) => [
+            {
+              opacity: pressed ? 0.7 : 1,
+              backgroundColor: isRandom ? '#FFF9E6' : '#FFFFFF',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: isRandom ? 0.1 : 0.06,
+              shadowRadius: 8,
+              elevation: isRandom ? 3 : 2,
+            },
+          ]}
+          className="mb-3 overflow-hidden rounded-2xl px-4 py-3"
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: isRandom }}
+          accessibilityLabel="Random">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-1">
+              <Text
+                className="text-base font-medium"
+                style={{ color: isRandom ? '#333333' : '#666666' }}>
+                Random
+              </Text>
+              <Text className="mt-1 text-xs font-normal" style={{ color: '#999999' }}>
+                Pick a random {activeTab} audio when session starts
+              </Text>
+            </View>
+
+            <View className="ml-3 flex-row items-center gap-3">
+              <Ionicons
+                name="shuffle"
+                size={20}
+                color={isRandom ? '#E8B84B' : '#999999'}
+              />
+              {isRandom && (
+                <View
+                  className="h-8 w-8 flex-row items-center justify-center rounded-lg"
+                  style={{
+                    backgroundColor: '#E8B84B',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 4,
+                    elevation: 2,
+                  }}>
+                  <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                </View>
+              )}
+              {!isRandom && (
+                <View
+                  className="h-8 w-8 rounded-lg"
+                  style={{ backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#E5E5E5' }}
+                />
+              )}
+            </View>
+          </View>
+        </Pressable>
+      </View>
+
       {/* Options List */}
       <BottomSheetFlatList
         data={currentAudios}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        contentContainerStyle={{ paddingVertical: 20 }}
+        contentContainerStyle={{ paddingVertical: 0, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       />

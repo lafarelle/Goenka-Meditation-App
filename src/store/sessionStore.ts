@@ -21,6 +21,7 @@ interface SessionState {
   toggleAudioInSegment: (type: SessionSegmentType, audioId: string) => void;
   setSegmentTechniqueType: (type: SessionSegmentType, techniqueType: TechniqueType) => void;
   setSegmentAudioToRandom: (type: SessionSegmentType, audioOptions: AudioItem[]) => void;
+  setSegmentIsRandom: (type: SessionSegmentType, isRandom: boolean) => void;
   setTotalDurationMinutes: (minutes: number) => void;
   resetSession: () => void;
   getActiveSegmentsDurationSec: () => number;
@@ -85,7 +86,11 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       return {
         segments: {
           ...state.segments,
-          [type]: { ...state.segments[type], selectedAudioIds: newIds },
+          [type]: {
+            ...state.segments[type],
+            selectedAudioIds: newIds,
+            isRandom: false // Clear random flag when manually selecting audio
+          },
         },
       };
     }),
@@ -105,17 +110,32 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
   setSegmentAudioToRandom: (type, audioOptions) =>
     set((state) => {
-      const randomAudio = pickRandomAudio(audioOptions);
-      if (randomAudio) {
-        return {
-          segments: {
-            ...state.segments,
-            [type]: { ...state.segments[type], selectedAudioIds: [randomAudio.id] },
+      // Instead of picking a random audio now, just set the isRandom flag
+      // The actual random selection will happen when the session starts
+      return {
+        segments: {
+          ...state.segments,
+          [type]: {
+            ...state.segments[type],
+            selectedAudioIds: [], // Clear any specific selections
+            isRandom: true // Mark as random
           },
-        };
-      }
-      return state; // Do nothing if no random audio was selected
+        },
+      };
     }),
+
+  setSegmentIsRandom: (type, isRandom) =>
+    set((state) => ({
+      segments: {
+        ...state.segments,
+        [type]: {
+          ...state.segments[type],
+          isRandom,
+          // Clear selectedAudioIds when setting to random
+          selectedAudioIds: isRandom ? [] : state.segments[type].selectedAudioIds
+        },
+      },
+    })),
 
   setTotalDurationMinutes: (minutes) => set({ totalDurationMinutes: minutes }),
 

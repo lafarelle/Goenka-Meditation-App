@@ -1,8 +1,40 @@
-import { getGongAudioByPreference } from '@/data/audioData';
+import { getGongAudioByPreference, segmentTypeToAudioMap } from '@/data/audioData';
 import { MeditationSession } from '@/schemas/audio';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { calculateSessionTiming } from '@/utils/preferences/timingUtils';
+import { pickRandomAudio } from '@/utils/audioUtils';
+import { SessionSegmentType } from '@/schemas/session';
+
+/**
+ * Helper function to get audio IDs for a segment, handling random selection
+ */
+function getSegmentAudioIds(
+  segmentType: SessionSegmentType,
+  selectedAudioIds: string[],
+  isRandom?: boolean,
+  techniqueType?: 'anapana' | 'vipassana'
+): string[] {
+  // If random flag is set, pick a random audio from available options
+  if (isRandom) {
+    let availableAudios = segmentTypeToAudioMap[segmentType];
+
+    // For technique reminders, filter by techniqueType (anapana starts with 'a', vipassana with 'v')
+    if (segmentType === 'techniqueReminder' && techniqueType) {
+      const prefix = techniqueType === 'anapana' ? 'a' : 'v';
+      availableAudios = availableAudios.filter((audio) => audio.id.startsWith(prefix));
+    }
+
+    if (availableAudios && availableAudios.length > 0) {
+      const randomAudio = pickRandomAudio(availableAudios);
+      return randomAudio ? [randomAudio.id] : [];
+    }
+    return [];
+  }
+
+  // Otherwise, use the selected audio IDs
+  return selectedAudioIds;
+}
 
 /**
  * Builds a MeditationSession from the session store state
@@ -36,52 +68,85 @@ export function buildSessionFromStore(sessionStore: any): MeditationSession {
   // Collect before-silent audio (opening chant, guidance, technique reminder)
   const beforeSilentAudioIds: string[] = [];
   let beforeSilentDuration = 0;
-  if (segments.openingChant.isEnabled && segments.openingChant.selectedAudioIds.length > 0) {
-    beforeSilentAudioIds.push(...segments.openingChant.selectedAudioIds);
-    beforeSilentDuration += getSegmentDisplayDuration(
+  if (segments.openingChant.isEnabled) {
+    const audioIds = getSegmentAudioIds(
       'openingChant',
       segments.openingChant.selectedAudioIds,
-      segments.openingChant.durationSec
+      segments.openingChant.isRandom
     );
+    if (audioIds.length > 0) {
+      beforeSilentAudioIds.push(...audioIds);
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'openingChant',
+        audioIds,
+        segments.openingChant.durationSec
+      );
+    }
   }
-  if (segments.openingGuidance.isEnabled && segments.openingGuidance.selectedAudioIds.length > 0) {
-    beforeSilentAudioIds.push(...segments.openingGuidance.selectedAudioIds);
-    beforeSilentDuration += getSegmentDisplayDuration(
+  if (segments.openingGuidance.isEnabled) {
+    const audioIds = getSegmentAudioIds(
       'openingGuidance',
       segments.openingGuidance.selectedAudioIds,
-      segments.openingGuidance.durationSec
+      segments.openingGuidance.isRandom
     );
+    if (audioIds.length > 0) {
+      beforeSilentAudioIds.push(...audioIds);
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'openingGuidance',
+        audioIds,
+        segments.openingGuidance.durationSec
+      );
+    }
   }
-  if (
-    segments.techniqueReminder.isEnabled &&
-    segments.techniqueReminder.selectedAudioIds.length > 0
-  ) {
-    beforeSilentAudioIds.push(...segments.techniqueReminder.selectedAudioIds);
-    beforeSilentDuration += getSegmentDisplayDuration(
+  if (segments.techniqueReminder.isEnabled) {
+    const audioIds = getSegmentAudioIds(
       'techniqueReminder',
       segments.techniqueReminder.selectedAudioIds,
-      segments.techniqueReminder.durationSec
+      segments.techniqueReminder.isRandom,
+      segments.techniqueReminder.techniqueType
     );
+    if (audioIds.length > 0) {
+      beforeSilentAudioIds.push(...audioIds);
+      beforeSilentDuration += getSegmentDisplayDuration(
+        'techniqueReminder',
+        audioIds,
+        segments.techniqueReminder.durationSec
+      );
+    }
   }
 
   // Collect after-silent audio (metta, closing chant)
   const afterSilentAudioIds: string[] = [];
   let afterSilentDuration = 0;
-  if (segments.metta.isEnabled && segments.metta.selectedAudioIds.length > 0) {
-    afterSilentAudioIds.push(...segments.metta.selectedAudioIds);
-    afterSilentDuration += getSegmentDisplayDuration(
+  if (segments.metta.isEnabled) {
+    const audioIds = getSegmentAudioIds(
       'metta',
       segments.metta.selectedAudioIds,
-      segments.metta.durationSec
+      segments.metta.isRandom
     );
+    if (audioIds.length > 0) {
+      afterSilentAudioIds.push(...audioIds);
+      afterSilentDuration += getSegmentDisplayDuration(
+        'metta',
+        audioIds,
+        segments.metta.durationSec
+      );
+    }
   }
-  if (segments.closingChant.isEnabled && segments.closingChant.selectedAudioIds.length > 0) {
-    afterSilentAudioIds.push(...segments.closingChant.selectedAudioIds);
-    afterSilentDuration += getSegmentDisplayDuration(
+  if (segments.closingChant.isEnabled) {
+    const audioIds = getSegmentAudioIds(
       'closingChant',
       segments.closingChant.selectedAudioIds,
-      segments.closingChant.durationSec
+      segments.closingChant.isRandom
     );
+    if (audioIds.length > 0) {
+      afterSilentAudioIds.push(...audioIds);
+      afterSilentDuration += getSegmentDisplayDuration(
+        'closingChant',
+        audioIds,
+        segments.closingChant.durationSec
+      );
+    }
   }
 
   return {

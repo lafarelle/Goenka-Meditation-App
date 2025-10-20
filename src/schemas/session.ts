@@ -21,6 +21,7 @@ export interface SessionSegment {
   // For technique reminder segment
   techniqueType?: TechniqueType;
   selectedAudioIds: string[]; // Array of selected audio IDs in playback order
+  isRandom?: boolean; // If true, pick random audio from available options at session start
 }
 
 export interface SessionAudioSegment {

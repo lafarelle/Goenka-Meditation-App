@@ -115,9 +115,13 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
     const selectedAudioIds = useSessionStore(
       (state) => state.segments[segmentType]?.selectedAudioIds || []
     );
+    const isRandom = useSessionStore(
+      (state) => state.segments[segmentType]?.isRandom || false
+    );
     const toggleAudioInSegment = useSessionStore((state) => state.toggleAudioInSegment);
     const setSegmentEnabled = useSessionStore((state) => state.setSegmentEnabled);
     const setSegmentAudioToRandom = useSessionStore((state) => state.setSegmentAudioToRandom);
+    const setSegmentIsRandom = useSessionStore((state) => state.setSegmentIsRandom);
 
     useImperativeHandle(ref, () => ({
       present: () => bottomSheetRef.current?.expand(),
@@ -131,6 +135,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         toggleAudioInSegment(segmentType, audioId);
 
         // Auto-enable segment when at least one audio is selected
+        // Note: toggleAudioInSegment will clear isRandom flag
         const currentIds = selectedAudioIds.includes(audioId)
           ? selectedAudioIds.filter((id: string) => id !== audioId)
           : [...selectedAudioIds, audioId];
@@ -144,13 +149,17 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
       bottomSheetRef.current?.close();
     }, []);
 
-    const handleRandomSelection = useCallback(() => {
-      const randomAudio = pickRandomAudio(audioOptions);
-      if (randomAudio) {
+    const handleToggleRandom = useCallback(() => {
+      if (isRandom) {
+        // Deselect random
+        setSegmentIsRandom(segmentType, false);
+        setSegmentEnabled(segmentType, false);
+      } else {
+        // Select random
         setSegmentAudioToRandom(segmentType, audioOptions);
         setSegmentEnabled(segmentType, true);
       }
-    }, [segmentType, audioOptions, setSegmentAudioToRandom, setSegmentEnabled]);
+    }, [isRandom, segmentType, audioOptions, setSegmentAudioToRandom, setSegmentEnabled, setSegmentIsRandom]);
 
     const renderBackdrop = useCallback(
       (props: any) => (
@@ -168,14 +177,22 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
     );
 
     const renderItem = useCallback(
-      ({ item }: { item: AudioItem }) => (
-        <AudioOptionItem
-          option={item}
-          selectionOrder={getSelectionOrder(item.id)}
-          onToggle={() => handleToggleAudio(item.id)}
-        />
-      ),
-      [getSelectionOrder, handleToggleAudio]
+      ({ item }: { item: AudioItem }) => {
+        // Don't show selection order or allow selection if random is enabled
+        const selectionOrder = isRandom ? null : getSelectionOrder(item.id);
+        const onToggle = isRandom ? () => {} : () => handleToggleAudio(item.id);
+
+        return (
+          <View style={{ opacity: isRandom ? 0.4 : 1 }}>
+            <AudioOptionItem
+              option={item}
+              selectionOrder={selectionOrder}
+              onToggle={onToggle}
+            />
+          </View>
+        );
+      },
+      [isRandom, getSelectionOrder, handleToggleAudio]
     );
 
     const keyExtractor = useCallback((item: AudioItem) => item.id, []);
@@ -219,49 +236,88 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
                 </Text>
               </View>
             </View>
-            <View className="flex-row items-center gap-2">
-              {/* Random Button */}
-              <Pressable
-                onPress={handleRandomSelection}
-                style={({ pressed }) => [
-                  {
-                    opacity: pressed ? 0.7 : 1,
-                    backgroundColor: '#FFFFFF',
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.06,
-                    shadowRadius: 4,
-                    elevation: 2,
-                  },
-                ]}
-                className="rounded-xl p-2.5"
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                accessibilityRole="button"
-                accessibilityLabel="Random">
-                <Ionicons name="shuffle" size={24} color="#E8B84B" />
-              </Pressable>
-              {/* Done Button */}
-              <Pressable
-                onPress={handleDone}
-                style={({ pressed }) => [
-                  {
-                    opacity: pressed ? 0.7 : 1,
-                    backgroundColor: '#FFFFFF',
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.06,
-                    shadowRadius: 4,
-                    elevation: 2,
-                  },
-                ]}
-                className="rounded-xl p-2.5"
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                accessibilityRole="button"
-                accessibilityLabel="Done">
-                <Ionicons name="checkmark" size={24} color="#333333" />
-              </Pressable>
-            </View>
+            <Pressable
+              onPress={handleDone}
+              style={({ pressed }) => [
+                {
+                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: '#FFFFFF',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.06,
+                  shadowRadius: 4,
+                  elevation: 2,
+                },
+              ]}
+              className="rounded-xl p-2.5"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityRole="button"
+              accessibilityLabel="Done">
+              <Ionicons name="checkmark" size={24} color="#333333" />
+            </Pressable>
           </View>
+        </View>
+
+        {/* Random Option */}
+        <View className="px-4 pt-4">
+          <Pressable
+            onPress={handleToggleRandom}
+            style={({ pressed }) => [
+              {
+                opacity: pressed ? 0.7 : 1,
+                backgroundColor: isRandom ? '#FFF9E6' : '#FFFFFF',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: isRandom ? 0.1 : 0.06,
+                shadowRadius: 8,
+                elevation: isRandom ? 3 : 2,
+              },
+            ]}
+            className="mb-3 overflow-hidden rounded-2xl px-4 py-3"
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: isRandom }}
+            accessibilityLabel="Random">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-1">
+                <Text
+                  className="text-base font-medium"
+                  style={{ color: isRandom ? '#333333' : '#666666' }}>
+                  Random
+                </Text>
+                <Text className="mt-1 text-xs font-normal" style={{ color: '#999999' }}>
+                  Pick a random audio when session starts
+                </Text>
+              </View>
+
+              <View className="ml-3 flex-row items-center gap-3">
+                <Ionicons
+                  name="shuffle"
+                  size={20}
+                  color={isRandom ? '#E8B84B' : '#999999'}
+                />
+                {isRandom && (
+                  <View
+                    className="h-8 w-8 flex-row items-center justify-center rounded-lg"
+                    style={{
+                      backgroundColor: '#E8B84B',
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 1 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 4,
+                      elevation: 2,
+                    }}>
+                    <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                  </View>
+                )}
+                {!isRandom && (
+                  <View
+                    className="h-8 w-8 rounded-lg"
+                    style={{ backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#E5E5E5' }}
+                  />
+                )}
+              </View>
+            </View>
+          </Pressable>
         </View>
 
         {/* Options List */}
@@ -269,7 +325,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
           data={audioOptions}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          contentContainerStyle={{ paddingVertical: 20 }}
+          contentContainerStyle={{ paddingVertical: 0, paddingBottom: 20 }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         />
