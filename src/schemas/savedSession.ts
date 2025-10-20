@@ -11,6 +11,7 @@ export interface SavedSession {
       durationSec: number;
       selectedAudioIds: string[];
       techniqueType?: 'anapana' | 'vipassana';
+      isRandom?: boolean;
     }
   >;
   createdAt: string; // ISO date string
