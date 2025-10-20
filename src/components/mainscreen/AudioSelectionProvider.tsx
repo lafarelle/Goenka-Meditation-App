@@ -43,12 +43,14 @@ export function AudioSelectionProvider({ children }: { children: React.ReactNode
         ref={openingChantDrawerRef}
         segmentType="openingChant"
         title="Select Opening Chant"
+        description="Traditional Pāli chant to begin meditation practice"
         audioOptions={openingChantAudios}
       />
       <AudioSelectionDrawer
         ref={openingGuidanceDrawerRef}
         segmentType="openingGuidance"
         title="Select Opening Guidance"
+        description="Instructions to prepare your mind and body for meditation"
         audioOptions={guidanceAudios}
       />
       <TechniqueReminderDrawer
@@ -59,12 +61,14 @@ export function AudioSelectionProvider({ children }: { children: React.ReactNode
         ref={mettaDrawerRef}
         segmentType="metta"
         title="Select Mettā Practice"
+        description="Cultivation of loving-kindness and compassion for all beings"
         audioOptions={mettaAudios}
       />
       <AudioSelectionDrawer
         ref={closingChantDrawerRef}
         segmentType="closingChant"
         title="Select Closing Chant"
+        description="Traditional chant to conclude and share merits of practice"
         audioOptions={closingChantAudios}
       />
     </AudioSelectionContext.Provider>

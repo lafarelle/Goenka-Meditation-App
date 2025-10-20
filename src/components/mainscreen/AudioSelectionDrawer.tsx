@@ -10,6 +10,7 @@ import { Pressable, Text, View } from 'react-native';
 interface AudioSelectionDrawerProps {
   segmentType: SessionSegmentType;
   title: string;
+  description: string;
   audioOptions: AudioItem[];
 }
 
@@ -109,7 +110,7 @@ const AudioOptionItem = React.memo<AudioOptionItemProps>(({ option, selectionOrd
 AudioOptionItem.displayName = 'AudioOptionItem';
 
 export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSelectionDrawerProps>(
-  ({ segmentType, title, audioOptions }, ref) => {
+  ({ segmentType, title, description, audioOptions }, ref) => {
     const bottomSheetRef = useRef<BottomSheet>(null);
 
     const selectedAudioIds = useSessionStore(
@@ -225,16 +226,12 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
           style={{ borderBottomWidth: 1, borderBottomColor: '#E5E5E5' }}>
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <View className="flex-row items-center gap-3">
-                <View
-                  className="h-10 w-10 items-center justify-center rounded-xl"
-                  style={{ backgroundColor: '#E8B84B' }}>
-                  <Ionicons name="musical-notes" size={20} color="#FFFFFF" />
-                </View>
-                <Text className="text-xl font-medium tracking-wide" style={{ color: '#333333' }}>
-                  {title}
-                </Text>
-              </View>
+              <Text className="text-xl font-medium tracking-wide" style={{ color: '#333333' }}>
+                {title}
+              </Text>
+              <Text className="mt-1 text-sm" style={{ color: '#999999' }}>
+                {description}
+              </Text>
             </View>
             <Pressable
               onPress={handleDone}
