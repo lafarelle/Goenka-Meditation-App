@@ -52,8 +52,8 @@ export function DurationSelector() {
     Alert.alert(
       'Timing Preference',
       isTotalTiming
-        ? 'Total Session: The duration includes both silent meditation and audio segments (intro, instructions, closing). Your entire session will last the selected time.'
-        : 'Silent Only: The duration counts only your silent meditation time. Audio segments (intro, instructions, closing) are added on top of this time.',
+        ? '"Total" means that your entire session will last the selected time.'
+        : '"Silent" means that audio segments are added on top of this time.',
       [{ text: 'Got it', style: 'default' }]
     );
   };

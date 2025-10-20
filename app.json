@@ -2,7 +2,7 @@
   "expo": {
     "name": "w/ Goenka",
     "slug": "meditatewithgoenka",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "scheme": "meditatewithgoenka",
     "platforms": ["ios", "android"],
     "web": {
