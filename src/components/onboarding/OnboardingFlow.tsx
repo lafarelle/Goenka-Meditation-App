@@ -5,6 +5,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { GoenkaFamiliarity } from '@/schemas/onboarding';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
+import { updateUserProfile } from '@/services/supabase';
 
 import { AppExplanationScreen } from './AppExplanationScreen';
 import { CountrySelector } from './CountrySelector';
@@ -71,10 +72,25 @@ export function OnboardingFlow() {
     setCurrentStep('explanation');
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     // Apply gong preference to settings
     if (onboarding.wantsGong !== null) {
       setGongEnabled(onboarding.wantsGong);
+    }
+
+    // Sync onboarding data to Supabase
+    try {
+      await updateUserProfile({
+        name: onboarding.userName,
+        country: onboarding.userCountry,
+        has_attended_retreat: onboarding.hasAttendedRetreat,
+        goenka_familiarity: onboarding.goenkaFamiliarity,
+        wants_gong: onboarding.wantsGong,
+      });
+      console.log('User profile synced to Supabase');
+    } catch (error) {
+      console.error('Failed to sync user profile to Supabase:', error);
+      // Continue with onboarding even if sync fails
     }
 
     completeOnboarding();

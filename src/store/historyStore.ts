@@ -16,6 +16,7 @@ import { scheduleMeditationReminders } from '@/notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { syncSession } from '@/services/supabase';
 
 type HistoryState = {
   // Data
@@ -112,6 +113,14 @@ export const useHistoryStore = create(
           currentSessionId: state.currentSessionId === sessionId ? null : state.currentSessionId,
         }));
 
+        // Sync completed session to Supabase
+        const completedSession = get().history.find((s) => s.id === sessionId);
+        if (completedSession) {
+          syncSession(completedSession).catch((error) => {
+            console.error('Failed to sync session to Supabase:', error);
+          });
+        }
+
         // Schedule meditation reminders after successful completion
         scheduleMeditationReminders().catch((error) => {
           console.error('Failed to schedule meditation reminders:', error);
@@ -147,6 +156,14 @@ export const useHistoryStore = create(
           ),
           currentSessionId: state.currentSessionId === sessionId ? null : state.currentSessionId,
         }));
+
+        // Sync stopped session to Supabase
+        const stoppedSession = get().history.find((s) => s.id === sessionId);
+        if (stoppedSession) {
+          syncSession(stoppedSession).catch((error) => {
+            console.error('Failed to sync session to Supabase:', error);
+          });
+        }
       },
 
       // Get a specific session by ID

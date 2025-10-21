@@ -8,6 +8,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AnimatedSplashScreen } from '@/components/AnimatedSplashScreen';
 import { useNotificationSetup } from '@/notifications';
+import { useSupabaseInit } from '@/hooks/useSupabaseInit';
+import { useNetworkSync } from '@/hooks/useNetworkSync';
 
 // Prevent the splash screen from auto-hiding before we're ready
 SplashScreen.preventAutoHideAsync();
@@ -17,6 +19,12 @@ export default function Layout() {
 
   // Initialize notifications on app startup
   useNotificationSetup();
+
+  // Initialize Supabase user on app startup
+  useSupabaseInit();
+
+  // Enable automatic sync when network becomes available
+  useNetworkSync();
 
   useEffect(() => {
     const hideSplashScreen = async () => {
