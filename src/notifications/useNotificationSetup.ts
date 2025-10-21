@@ -4,6 +4,7 @@ import {
   getExpoPushToken,
   setDefaultNotificationHandler,
   subscribeToNotificationResponse,
+  clearBadgeCount,
 } from './notificationService';
 import { useNotificationPreferencesStore } from './notificationPreferencesStore';
 import { initializeNotificationReminders } from './dailyNotificationScheduler';
@@ -16,6 +17,9 @@ export const useNotificationSetup = (): void => {
   useEffect(() => {
     const setupNotifications = async () => {
       try {
+        // Clear any existing badge count
+        await clearBadgeCount();
+
         // Set the default notification handler
         setDefaultNotificationHandler();
 

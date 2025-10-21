@@ -78,7 +78,6 @@ export const sendLocalNotification = async (
         body,
         data: data || {},
         sound: 'default',
-        badge: 1,
       },
       trigger: null, // Send immediately
     });
@@ -107,7 +106,6 @@ export const scheduleNotification = async (
         body,
         data: data || {},
         sound: 'default',
-        badge: 1,
       },
       trigger: {
         type: 'timeInterval',
@@ -154,7 +152,6 @@ export const scheduleRepeatingNotification = async (
         body,
         data: data || {},
         sound: 'default',
-        badge: 1,
       },
       trigger: {
         type: 'daily',
@@ -207,6 +204,17 @@ export const getAllScheduledNotifications = async (): Promise<
 };
 
 /**
+ * Clear the app icon badge count
+ */
+export const clearBadgeCount = async (): Promise<void> => {
+  try {
+    await Notifications.setBadgeCountAsync(0);
+  } catch (error) {
+    console.error('Error clearing badge count:', error);
+  }
+};
+
+/**
  * Set the default notification handler behavior
  * Determines what happens when a notification arrives while app is in foreground
  */
@@ -215,7 +223,7 @@ export const setDefaultNotificationHandler = (): void => {
     handleNotification: async () => ({
       shouldShowAlert: true,
       shouldPlaySound: true,
-      shouldSetBadge: true,
+      shouldSetBadge: false,
       shouldShowBanner: true,
       shouldShowList: true,
     }),
