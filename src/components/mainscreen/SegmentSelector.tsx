@@ -39,11 +39,13 @@ const SegmentButton = React.memo<SegmentButtonProps>(
             <View
               className="h-10 w-10 items-center justify-center rounded-xl"
               style={{
-                backgroundColor: isEnabled ? '#E8B84B' : '#F5F5F5',
+                backgroundColor: isEnabled ? '#E8B84B' : '#FFF9E6',
+                borderWidth: isEnabled ? 0 : 1,
+                borderColor: isEnabled ? 'transparent' : '#E8B84B33',
               }}>
               <Text
                 className="text-sm font-medium"
-                style={{ color: isEnabled ? '#FFFFFF' : '#333333' }}>
+                style={{ color: isEnabled ? '#FFFFFF' : '#C9A356' }}>
                 {number}
               </Text>
             </View>
