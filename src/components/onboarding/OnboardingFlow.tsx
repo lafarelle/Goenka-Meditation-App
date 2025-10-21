@@ -4,28 +4,34 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import { GoenkaFamiliarity } from '@/schemas/onboarding';
 import { useOnboardingStore } from '@/store/onboardingStore';
+import { usePreferencesStore } from '@/store/preferencesStore';
 
 import { AppExplanationScreen } from './AppExplanationScreen';
 import { CountrySelector } from './CountrySelector';
 import { GoenkaFamiliarityScreen } from './GoenkaFamiliarityScreen';
+import { GongPreferenceScreen } from './GongPreferenceScreen';
 import { RetreatExperienceScreen } from './RetreatExperienceScreen';
 import { WelcomeScreen } from './WelcomeScreen';
 
-type OnboardingStep = 'welcome' | 'country' | 'retreat' | 'familiarity' | 'explanation';
+type OnboardingStep = 'welcome' | 'country' | 'retreat' | 'familiarity' | 'gong' | 'explanation';
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 export function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [userName, setUserName] = useState('');
 
   const {
+    onboarding,
     setUserName: saveUserName,
     setUserCountry,
     setHasAttendedRetreat,
     setGoenkaFamiliarity,
+    setWantsGong,
     completeOnboarding,
   } = useOnboardingStore();
+
+  const setGongEnabled = usePreferencesStore((state) => state.setGongEnabled);
 
   const getCurrentStepNumber = (): number => {
     const stepMap: Record<OnboardingStep, number> = {
@@ -33,7 +39,8 @@ export function OnboardingFlow() {
       country: 2,
       retreat: 3,
       familiarity: 4,
-      explanation: 5,
+      gong: 5,
+      explanation: 6,
     };
     return stepMap[currentStep];
   };
@@ -56,10 +63,20 @@ export function OnboardingFlow() {
 
   const handleFamiliarityContinue = (familiarity: GoenkaFamiliarity) => {
     setGoenkaFamiliarity(familiarity);
+    setCurrentStep('gong');
+  };
+
+  const handleGongContinue = (wantsGong: boolean) => {
+    setWantsGong(wantsGong);
     setCurrentStep('explanation');
   };
 
   const handleComplete = () => {
+    // Apply gong preference to settings
+    if (onboarding.wantsGong !== null) {
+      setGongEnabled(onboarding.wantsGong);
+    }
+
     completeOnboarding();
   };
 
@@ -108,12 +125,23 @@ export function OnboardingFlow() {
         </Animated.View>
       )}
 
+      {currentStep === 'gong' && (
+        <Animated.View entering={FadeIn} exiting={FadeOut} className="flex-1">
+          <GongPreferenceScreen
+            onContinue={handleGongContinue}
+            onBack={() => setCurrentStep('familiarity')}
+            currentStep={getCurrentStepNumber()}
+            totalSteps={TOTAL_STEPS}
+          />
+        </Animated.View>
+      )}
+
       {currentStep === 'explanation' && (
         <Animated.View entering={FadeIn} exiting={FadeOut} className="flex-1">
           <AppExplanationScreen
             userName={userName}
             onComplete={handleComplete}
-            onBack={() => setCurrentStep('familiarity')}
+            onBack={() => setCurrentStep('gong')}
             currentStep={getCurrentStepNumber()}
             totalSteps={TOTAL_STEPS}
           />

@@ -8,6 +8,7 @@ export interface OnboardingData {
   userCountry: string | null;
   hasAttendedRetreat: boolean | null;
   goenkaFamiliarity: GoenkaFamiliarity;
+  wantsGong: boolean | null;
 }
 
 export const DEFAULT_ONBOARDING: OnboardingData = {
@@ -16,4 +17,5 @@ export const DEFAULT_ONBOARDING: OnboardingData = {
   userCountry: null,
   hasAttendedRetreat: null,
   goenkaFamiliarity: null,
+  wantsGong: null,
 };

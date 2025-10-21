@@ -9,6 +9,7 @@ type OnboardingState = {
   setUserCountry: (country: string) => void;
   setHasAttendedRetreat: (hasAttended: boolean) => void;
   setGoenkaFamiliarity: (familiarity: GoenkaFamiliarity) => void;
+  setWantsGong: (wantsGong: boolean) => void;
   completeOnboarding: () => void;
   resetOnboarding: () => void;
 };
@@ -47,6 +48,14 @@ export const useOnboardingStore = create<OnboardingState>()(
           onboarding: {
             ...state.onboarding,
             goenkaFamiliarity: familiarity,
+          },
+        })),
+
+      setWantsGong: (wantsGong) =>
+        set((state) => ({
+          onboarding: {
+            ...state.onboarding,
+            wantsGong,
           },
         })),
 
