@@ -191,10 +191,13 @@ export const TechniqueReminderDrawer = forwardRef<
           playerRef.current = null;
         }
 
-        // Get preloaded audio source
-        const audioSource = AudioPreloader.getPreloadedSound(audioId);
+        // Get preloaded audio source, fallback to original file URI
+        const preloadedSource = AudioPreloader.getPreloadedSound(audioId);
+        const audioOption = audioOptions.find((a) => a.id === audioId);
+        const audioSource = preloadedSource || audioOption?.fileUri;
+
         if (!audioSource) {
-          console.warn(`[TechniqueReminderDrawer] Audio ${audioId} not preloaded`);
+          console.warn(`[TechniqueReminderDrawer] Audio ${audioId} not found`);
           return;
         }
 
@@ -217,7 +220,7 @@ export const TechniqueReminderDrawer = forwardRef<
         setPlayingAudioId(null);
       }
     },
-    [playingAudioId]
+    [playingAudioId, audioOptions]
   );
 
   // Filter audio options by tab

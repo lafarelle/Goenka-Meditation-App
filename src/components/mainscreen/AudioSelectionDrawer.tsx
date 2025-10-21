@@ -191,10 +191,13 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
             playerRef.current = null;
           }
 
-          // Get preloaded audio source
-          const audioSource = AudioPreloader.getPreloadedSound(audioId);
+          // Get preloaded audio source, fallback to original file URI
+          const preloadedSource = AudioPreloader.getPreloadedSound(audioId);
+          const audioOption = audioOptions.find((a) => a.id === audioId);
+          const audioSource = preloadedSource || audioOption?.fileUri;
+
           if (!audioSource) {
-            console.warn(`[AudioSelectionDrawer] Audio ${audioId} not preloaded`);
+            console.warn(`[AudioSelectionDrawer] Audio ${audioId} not found`);
             return;
           }
 
@@ -217,7 +220,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
           setPlayingAudioId(null);
         }
       },
-      [playingAudioId]
+      [playingAudioId, audioOptions]
     );
 
     const handleToggleAudio = useCallback(
