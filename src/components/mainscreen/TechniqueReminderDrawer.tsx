@@ -1,4 +1,5 @@
 import { AudioPreloader } from '@/audio/AudioPreloader';
+import { AudioSessionConfig } from '@/audio/AudioSessionConfig';
 import { AudioItem } from '@/schemas/audio';
 import { useSessionStore } from '@/store/sessionStore';
 import { Ionicons } from '@expo/vector-icons';
@@ -188,6 +189,12 @@ export const TechniqueReminderDrawer = forwardRef<
       if (playerRef.current) {
         await playerRef.current.pause();
         playerRef.current = null;
+      }
+
+      // Ensure audio session is configured before loading audio
+      if (!AudioSessionConfig.isAudioSessionInitialized()) {
+        console.log('[TechniqueReminderDrawer] Initializing audio session before loading audio');
+        await AudioSessionConfig.initializeAudioSession();
       }
 
       // Get preloaded audio source
