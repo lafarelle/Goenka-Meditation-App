@@ -8,7 +8,12 @@ interface MinimalistSwitchProps {
   rightLabel: string;
 }
 
-export function MinimalistSwitch({ value, onValueChange, leftLabel, rightLabel }: MinimalistSwitchProps) {
+export function MinimalistSwitch({
+  value,
+  onValueChange,
+  leftLabel,
+  rightLabel,
+}: MinimalistSwitchProps) {
   const handlePress = () => {
     selectionHaptic();
     onValueChange(!value);

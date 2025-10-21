@@ -116,8 +116,7 @@ export function MeditationHeatmap({ months = 3 }: MeditationHeatmapProps) {
         <View className="flex-row gap-2">
           <Pressable
             onPress={() => setMonthOffset(monthOffset - 1)}
-            className="h-8 w-8 items-center justify-center rounded-lg bg-stone-100 active:bg-stone-200"
-          >
+            className="h-8 w-8 items-center justify-center rounded-lg bg-stone-100 active:bg-stone-200">
             <Ionicons name="chevron-back" size={18} color="#666666" />
           </Pressable>
 
@@ -126,8 +125,7 @@ export function MeditationHeatmap({ months = 3 }: MeditationHeatmapProps) {
             disabled={!canGoForward}
             className={`h-8 w-8 items-center justify-center rounded-lg ${
               canGoForward ? 'bg-stone-100 active:bg-stone-200' : 'bg-stone-50'
-            }`}
-          >
+            }`}>
             <Ionicons
               name="chevron-forward"
               size={18}

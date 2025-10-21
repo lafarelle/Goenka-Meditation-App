@@ -56,7 +56,6 @@ export function calculatePauseDuration(
   gongEnabled: boolean,
   gongPreference: 'none' | 'G1' | 'G2'
 ): number {
-
   // Separate before-silent and after-silent segments
   const beforeSilentTypes: SessionSegmentType[] = [
     'openingChant',
@@ -64,10 +63,7 @@ export function calculatePauseDuration(
     'techniqueReminder',
   ];
 
-  const afterSilentTypes: SessionSegmentType[] = [
-    'metta',
-    'closingChant',
-  ];
+  const afterSilentTypes: SessionSegmentType[] = ['metta', 'closingChant'];
 
   const beforeSilentCount = beforeSilentTypes.filter((type) => {
     const segment = segments[type];

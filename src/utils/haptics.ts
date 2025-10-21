@@ -23,7 +23,7 @@ import * as Haptics from 'expo-haptics';
 export const lightHaptic = async () => {
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  } catch (error) {
+  } catch {
     // Silently fail if haptics are not available
   }
 };
@@ -35,7 +35,7 @@ export const lightHaptic = async () => {
 export const mediumHaptic = async () => {
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-  } catch (error) {
+  } catch {
     // Silently fail if haptics are not available
   }
 };
@@ -47,11 +47,10 @@ export const mediumHaptic = async () => {
 export const heavyHaptic = async () => {
   try {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-  } catch (error) {
+  } catch {
     // Silently fail if haptics are not available
   }
 };
-
 
 /**
  * Success notification
@@ -60,7 +59,7 @@ export const heavyHaptic = async () => {
 export const successHaptic = async () => {
   try {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-  } catch (error) {
+  } catch {
     // Silently fail if haptics are not available
   }
 };
@@ -72,7 +71,7 @@ export const successHaptic = async () => {
 export const warningHaptic = async () => {
   try {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-  } catch (error) {
+  } catch {
     // Silently fail if haptics are not available
   }
 };
@@ -84,7 +83,7 @@ export const warningHaptic = async () => {
 export const selectionHaptic = async () => {
   try {
     await Haptics.selectionAsync();
-  } catch (error) {
+  } catch {
     // Silently fail if haptics are not available
   }
 };

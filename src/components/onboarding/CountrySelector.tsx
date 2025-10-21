@@ -89,7 +89,12 @@ interface CountrySelectorProps {
   totalSteps: number;
 }
 
-export function CountrySelector({ onContinue, onBack, currentStep, totalSteps }: CountrySelectorProps) {
+export function CountrySelector({
+  onContinue,
+  onBack,
+  currentStep,
+  totalSteps,
+}: CountrySelectorProps) {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
 

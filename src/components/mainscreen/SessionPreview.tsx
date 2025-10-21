@@ -140,7 +140,9 @@ export function SessionPreview({ onSaveSession }: SessionPreviewProps) {
               const color = getTimelineItemColor(item.type);
 
               return (
-                <View key={`${item.type}-${index}`} className="flex-row items-center justify-between py-2">
+                <View
+                  key={`${item.type}-${index}`}
+                  className="flex-row items-center justify-between py-2">
                   <View className="flex-1 flex-row items-center gap-4">
                     <View
                       className="h-4 w-4 rounded-full"

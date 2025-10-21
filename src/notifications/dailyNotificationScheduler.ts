@@ -21,8 +21,7 @@ const SECOND_REMINDER_HOURS = 22;
  */
 export const scheduleMeditationReminders = async (): Promise<void> => {
   try {
-    const { notificationsEnabled, permissionsGranted } =
-      useNotificationPreferencesStore.getState();
+    const { notificationsEnabled, permissionsGranted } = useNotificationPreferencesStore.getState();
 
     if (!notificationsEnabled || !permissionsGranted) {
       console.log('Notifications are disabled or permissions not granted');

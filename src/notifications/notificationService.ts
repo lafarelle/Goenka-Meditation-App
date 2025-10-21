@@ -195,7 +195,9 @@ export const cancelAllNotifications = async (): Promise<void> => {
 /**
  * Get all scheduled notifications
  */
-export const getAllScheduledNotifications = async (): Promise<Notifications.NotificationRequest[]> => {
+export const getAllScheduledNotifications = async (): Promise<
+  Notifications.NotificationRequest[]
+> => {
   try {
     return await Notifications.getAllScheduledNotificationsAsync();
   } catch (error) {

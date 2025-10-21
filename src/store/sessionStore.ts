@@ -7,7 +7,6 @@ import {
 import { AudioItem } from '@/schemas/audio';
 import { getSegmentDisplayDuration } from '@/utils/audioDurationUtils';
 import { calculateSessionTiming } from '@/utils/preferences/timingUtils';
-import { pickRandomAudio } from '@/utils/audioUtils';
 import { create } from 'zustand';
 import { usePreferencesStore } from './preferencesStore';
 
@@ -89,7 +88,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
           [type]: {
             ...state.segments[type],
             selectedAudioIds: newIds,
-            isRandom: false // Clear random flag when manually selecting audio
+            isRandom: false, // Clear random flag when manually selecting audio
           },
         },
       };
@@ -118,7 +117,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
           [type]: {
             ...state.segments[type],
             selectedAudioIds: [], // Clear any specific selections
-            isRandom: true // Mark as random
+            isRandom: true, // Mark as random
           },
         },
       };
@@ -132,7 +131,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
           ...state.segments[type],
           isRandom,
           // Clear selectedAudioIds when setting to random
-          selectedAudioIds: isRandom ? [] : state.segments[type].selectedAudioIds
+          selectedAudioIds: isRandom ? [] : state.segments[type].selectedAudioIds,
         },
       },
     })),

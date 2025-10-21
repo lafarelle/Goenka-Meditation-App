@@ -52,10 +52,7 @@ export function buildSessionTimeline(
     'techniqueReminder',
   ];
 
-  const afterSilentTypes: SessionSegmentType[] = [
-    'metta',
-    'closingChant',
-  ];
+  const afterSilentTypes: SessionSegmentType[] = ['metta', 'closingChant'];
 
   // Track if we need to add a pause before the next item
   let needsPauseBeforeNext = false;

@@ -45,7 +45,7 @@ export function ResetDataButton() {
 
               // Show success message
               Alert.alert('Success', 'All data has been reset successfully.', [{ text: 'OK' }]);
-            } catch (error) {
+            } catch {
               Alert.alert('Error', 'Failed to reset some data. Please try again.', [
                 { text: 'OK' },
               ]);

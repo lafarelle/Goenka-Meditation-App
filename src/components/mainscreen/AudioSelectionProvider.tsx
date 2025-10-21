@@ -53,10 +53,7 @@ export function AudioSelectionProvider({ children }: { children: React.ReactNode
         description="Instructions to prepare your mind and body for meditation"
         audioOptions={guidanceAudios}
       />
-      <TechniqueReminderDrawer
-        ref={techniqueReminderDrawerRef}
-        audioOptions={techniqueAudios}
-      />
+      <TechniqueReminderDrawer ref={techniqueReminderDrawerRef} audioOptions={techniqueAudios} />
       <AudioSelectionDrawer
         ref={mettaDrawerRef}
         segmentType="metta"
