@@ -335,7 +335,7 @@ export const TechniqueReminderDrawer = forwardRef<
         duration: 600,
       }}
       backgroundStyle={{
-        backgroundColor: '#F5F5EC',
+        backgroundColor: '#FFFFFF',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,
       }}
@@ -354,11 +354,6 @@ export const TechniqueReminderDrawer = forwardRef<
         <View className="flex-row items-center justify-between">
           <View className="flex-1">
             <View className="flex-row items-center gap-3">
-              <View
-                className="h-10 w-10 items-center justify-center rounded-xl"
-                style={{ backgroundColor: '#E8B84B' }}>
-                <Ionicons name="musical-notes" size={20} color="#FFFFFF" />
-              </View>
               <Text className="text-xl font-medium tracking-wide" style={{ color: '#333333' }}>
                 Technique Reminder
               </Text>

@@ -320,7 +320,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
           duration: 600,
         }}
         backgroundStyle={{
-          backgroundColor: '#F5F5EC',
+          backgroundColor: '#FFFFFF',
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
         }}
