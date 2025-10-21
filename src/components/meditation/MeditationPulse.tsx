@@ -1,149 +1,136 @@
-import { useEffect, useRef } from 'react';
-import { Animated, Easing, View } from 'react-native';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, {
+  Easing,
+  cancelAnimation,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface MeditationPulseProps {
   isPlaying?: boolean;
 }
 
-export function MeditationPulse({ isPlaying = true }: MeditationPulseProps) {
-  // Simple wave animations with offset timing
-  const wave1 = useRef(new Animated.Value(1)).current;
-  const wave2 = useRef(new Animated.Value(1)).current;
-  const wave3 = useRef(new Animated.Value(1)).current;
-  const opacity1 = useRef(new Animated.Value(0.4)).current;
-  const opacity2 = useRef(new Animated.Value(0.4)).current;
-  const opacity3 = useRef(new Animated.Value(0.4)).current;
+const RING_SIZE = 70;
+const ANIMATION_DURATION = 10000; // 10 seconds for slow breathing cycle
+const NUM_RINGS = 2;
+
+function PulseRing({ delay, isPlaying }: { delay: number; isPlaying: boolean }) {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(0.6);
 
   useEffect(() => {
-    if (!isPlaying) {
-      wave1.stopAnimation();
-      wave2.stopAnimation();
-      wave3.stopAnimation();
-      opacity1.stopAnimation();
-      opacity2.stopAnimation();
-      opacity3.stopAnimation();
-      return;
-    }
-
-    // Create smooth wave effect with 4-second breathing cycle
-    const createWave = (scaleAnim: Animated.Value, opacityAnim: Animated.Value, delay: number) => {
-      return Animated.loop(
-        Animated.parallel([
-          Animated.sequence([
-            Animated.delay(delay),
-            Animated.timing(scaleAnim, {
-              toValue: 1.6,
-              duration: 4000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1),
-              useNativeDriver: true,
-            }),
-          ]),
-          Animated.sequence([
-            Animated.delay(delay),
-            Animated.timing(opacityAnim, {
-              toValue: 0,
-              duration: 4000,
-              easing: Easing.bezier(0.42, 0, 0.58, 1),
-              useNativeDriver: true,
-            }),
-          ]),
-        ])
+    if (isPlaying) {
+      // Start the animation with delay for staggered effect
+      scale.value = withDelay(
+        delay,
+        withRepeat(
+          withTiming(2.5, {
+            duration: ANIMATION_DURATION,
+            easing: Easing.bezier(0.4, 0.0, 0.6, 1), // Smooth ease in-out
+          }),
+          -1, // Infinite repeat
+          false
+        )
       );
+
+      opacity.value = withDelay(
+        delay,
+        withRepeat(
+          withTiming(0, {
+            duration: ANIMATION_DURATION,
+            easing: Easing.bezier(0.4, 0.0, 0.6, 1),
+          }),
+          -1,
+          false
+        )
+      );
+    } else {
+      // Cancel animations when paused
+      cancelAnimation(scale);
+      cancelAnimation(opacity);
+      // Reset to initial state
+      scale.value = 1;
+      opacity.value = 0.6;
+    }
+  }, [isPlaying, delay, scale, opacity]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+      opacity: opacity.value,
     };
-
-    // Start waves with offset timing for fluid ripple effect
-    const animation1 = createWave(wave1, opacity1, 0);
-    const animation2 = createWave(wave2, opacity2, 1000);
-    const animation3 = createWave(wave3, opacity3, 2000);
-
-    animation1.start();
-    animation2.start();
-    animation3.start();
-
-    return () => {
-      animation1.stop();
-      animation2.stop();
-      animation3.stop();
-    };
-  }, [isPlaying, wave1, wave2, wave3, opacity1, opacity2, opacity3]);
+  });
 
   return (
-    <View className="items-center justify-center">
-      {/* Wave 3 - outermost */}
-      <Animated.View
-        style={{
-          position: 'absolute',
-          width: 120,
-          height: 120,
-          borderRadius: 60,
-          backgroundColor: 'rgba(251, 191, 36, 0.3)',
-          transform: [{ scale: wave3 }],
-          opacity: opacity3,
-        }}
-      />
+    <Animated.View
+      style={[
+        styles.ring,
+        animatedStyle,
+        {
+          width: RING_SIZE,
+          height: RING_SIZE,
+          borderRadius: RING_SIZE / 2,
+        },
+      ]}
+    />
+  );
+}
 
-      {/* Wave 2 - middle */}
-      <Animated.View
-        style={{
-          position: 'absolute',
-          width: 120,
-          height: 120,
-          borderRadius: 60,
-          backgroundColor: 'rgba(253, 224, 71, 0.35)',
-          transform: [{ scale: wave2 }],
-          opacity: opacity2,
-        }}
-      />
+export function MeditationPulse({ isPlaying = true }: MeditationPulseProps) {
+  return (
+    <View style={styles.container}>
+      {/* Animated pulse rings */}
+      {Array.from({ length: NUM_RINGS }).map((_, index) => (
+        <PulseRing
+          key={index}
+          delay={index * (ANIMATION_DURATION / NUM_RINGS)}
+          isPlaying={isPlaying}
+        />
+      ))}
 
-      {/* Wave 1 - innermost wave */}
-      <Animated.View
-        style={{
-          position: 'absolute',
-          width: 120,
-          height: 120,
-          borderRadius: 60,
-          backgroundColor: 'rgba(254, 240, 138, 0.4)',
-          transform: [{ scale: wave1 }],
-          opacity: opacity1,
-        }}
-      />
+      {/* Center core - solid white circle */}
+      <View style={styles.core} />
 
-      {/* Center core - white with yellow glow */}
-      <View
-        style={{
-          width: 120,
-          height: 120,
-          borderRadius: 60,
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          shadowColor: '#fbbf24',
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.8,
-          shadowRadius: 25,
-          elevation: 12,
-        }}
-      />
-
-      {/* Inner glow */}
-      <View
-        style={{
-          position: 'absolute',
-          width: 90,
-          height: 90,
-          borderRadius: 45,
-          backgroundColor: 'rgba(251, 191, 36, 0.6)',
-        }}
-      />
-
-      {/* Center bright spot */}
-      <View
-        style={{
-          position: 'absolute',
-          width: 50,
-          height: 50,
-          borderRadius: 25,
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        }}
-      />
+      {/* Inner subtle ring for depth */}
+      <View style={styles.innerRing} />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: RING_SIZE * 2.5,
+    height: RING_SIZE * 2.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ring: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  core: {
+    width: RING_SIZE,
+    height: RING_SIZE,
+    borderRadius: RING_SIZE / 2,
+    backgroundColor: 'black',
+    shadowColor: '#fff',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+  innerRing: {
+    position: 'absolute',
+    width: RING_SIZE - 20,
+    height: RING_SIZE - 20,
+    borderRadius: (RING_SIZE - 20) / 2,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.08)',
+  },
+});
