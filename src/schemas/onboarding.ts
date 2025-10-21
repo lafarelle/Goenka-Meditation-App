@@ -1,15 +1,19 @@
 // Onboarding-related schemas and types
 
+export type GoenkaFamiliarity = 'goat' | 'heard' | 'not-really' | null;
+
 export interface OnboardingData {
   hasCompletedOnboarding: boolean;
   userName: string | null;
-  hasAttendedRetreat: boolean | null; // true = yes, false = no, null = not answered
-  userLocation: string | null; // Country or location
+  userCountry: string | null;
+  hasAttendedRetreat: boolean | null;
+  goenkaFamiliarity: GoenkaFamiliarity;
 }
 
 export const DEFAULT_ONBOARDING: OnboardingData = {
   hasCompletedOnboarding: false,
   userName: null,
+  userCountry: null,
   hasAttendedRetreat: null,
-  userLocation: null,
+  goenkaFamiliarity: null,
 };

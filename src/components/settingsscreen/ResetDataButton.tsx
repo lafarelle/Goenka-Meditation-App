@@ -1,4 +1,5 @@
 import { useHistoryStore } from '@/store/historyStore';
+import { useOnboardingStore } from '@/store/onboardingStore';
 import { usePreferencesStore } from '@/store/preferencesStore';
 import { useSavedSessionsStore } from '@/store/savedSessionsStore';
 import { useSessionStore } from '@/store/sessionStore';
@@ -15,6 +16,7 @@ export function ResetDataButton() {
   const clearAllSessions = useSavedSessionsStore((state) => state.clearAllSessions);
   const resetSession = useSessionStore((state) => state.resetSession);
   const removeAllBears = useStore((state) => state.removeAllBears);
+  const resetOnboarding = useOnboardingStore((state) => state.resetOnboarding);
 
   const handleReset = () => {
     warningHaptic();
@@ -39,6 +41,7 @@ export function ResetDataButton() {
               clearAllSessions();
               resetSession();
               removeAllBears();
+              resetOnboarding();
 
               // Show success message
               Alert.alert('Success', 'All data has been reset successfully.', [{ text: 'OK' }]);
