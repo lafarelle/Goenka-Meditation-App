@@ -3,7 +3,7 @@ import { AudioItem } from '@/schemas/audio';
 import { useSessionStore } from '@/store/sessionStore';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { createAudioPlayer, AudioPlayer } from 'expo-audio';
+import { AudioPlayer, createAudioPlayer } from 'expo-audio';
 import React, {
   forwardRef,
   useCallback,
@@ -161,7 +161,7 @@ export const TechniqueReminderDrawer = forwardRef<
     dismiss: () => bottomSheetRef.current?.close(),
   }));
 
-  const snapPoints = useMemo(() => ['50%', '80%'], []);
+  const snapPoints = useMemo(() => ['75%'], []);
 
   // Cleanup audio on unmount
   React.useEffect(() => {
@@ -275,7 +275,7 @@ export const TechniqueReminderDrawer = forwardRef<
 
   const renderBackdrop = useCallback(
     (props: any) => (
-      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
+      <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.2} />
     ),
     []
   );
@@ -331,6 +331,9 @@ export const TechniqueReminderDrawer = forwardRef<
       enableContentPanningGesture={false}
       backdropComponent={renderBackdrop}
       onChange={handleSheetChanges}
+      animationConfigs={{
+        duration: 600,
+      }}
       backgroundStyle={{
         backgroundColor: '#F5F5EC',
         borderTopLeftRadius: 24,

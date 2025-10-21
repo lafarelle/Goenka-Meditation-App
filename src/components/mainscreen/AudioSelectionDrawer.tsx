@@ -161,7 +161,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
       dismiss: () => bottomSheetRef.current?.close(),
     }));
 
-    const snapPoints = useMemo(() => ['40%', '60%', '75%'], []);
+    const snapPoints = useMemo(() => ['75%'], []);
 
     // Cleanup audio on unmount
     React.useEffect(() => {
@@ -260,7 +260,7 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
 
     const renderBackdrop = useCallback(
       (props: any) => (
-        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.5} />
+        <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} opacity={0.2} />
       ),
       []
     );
@@ -316,6 +316,9 @@ export const AudioSelectionDrawer = forwardRef<AudioSelectionDrawerRef, AudioSel
         enableContentPanningGesture={false}
         backdropComponent={renderBackdrop}
         onChange={handleSheetChanges}
+        animationConfigs={{
+          duration: 600,
+        }}
         backgroundStyle={{
           backgroundColor: '#F5F5EC',
           borderTopLeftRadius: 24,
